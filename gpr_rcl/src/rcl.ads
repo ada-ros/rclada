@@ -15,6 +15,8 @@ package RCL is
 
 private
    
+   pragma Remove ("use C_Strings instead (and pack it into alire");
+   
    --  To simplify the use of the low-level binding through child packages,
    --    some convenience things are declared here, not intended for the
    --    actual users of this library.
