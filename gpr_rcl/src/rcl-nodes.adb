@@ -2,8 +2,6 @@ with Ada.Exceptions;
 
 package body RCL.Nodes is
 
-   use Rcl_Node_H;
-
    ----------
    -- Init --
    ----------
@@ -13,8 +11,6 @@ package body RCL.Nodes is
                   Opt       : Options := Default_Options) return Node
    is
       pragma Unreferenced (Opt);
-      Cname : C_String := To_C (Name);
-      Cns   : C_String := To_C (Namespace);
 
       Opts  : aliased constant Rcl_Node_Options_T :=
                 Rcl_Node_Get_Default_Options;
@@ -23,8 +19,8 @@ package body RCL.Nodes is
          N.Impl := Rcl_Get_Zero_Initialized_Node;
 
          Check (Rcl_Node_Init (N.Impl'Access,
-                Cname.To_Ptr,
-                Cns.To_Ptr,
+                To_C (Name).To_Ptr,
+                To_C (Namespace).To_Ptr,
                 Opts'Access));
       end return;
    end Init;

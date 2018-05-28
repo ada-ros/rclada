@@ -1,5 +1,7 @@
 with Ada.Unchecked_Conversion;
 
+with C_Strings; use C_Strings;
+
 --  with RCL.Logging;
 
 with Rcl_Types_H; use Rcl_Types_H;
