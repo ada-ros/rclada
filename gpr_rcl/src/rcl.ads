@@ -33,6 +33,6 @@ private
    
    procedure Check (Ret : rcl_types_h.Rcl_Ret_T);
    
-   function Correct (Ret : CX.Bool) return Boolean is (Ret = 0);
+   function To_Boolean (Ret : CX.Bool) return Boolean is (Ret /= 0);
    
 end RCL;

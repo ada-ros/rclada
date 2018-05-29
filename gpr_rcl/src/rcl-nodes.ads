@@ -1,11 +1,11 @@
+with Ada.Containers.Vectors;
 with Ada.Finalization;
 
-limited with Rcl.Subscriptions;
+with Rcl.Callbacks;
 
-with Rcl_Node_H; use Rcl_Node_H;
-with Rcl_Wait_H; use Rcl_Wait_H;
+with Rcl_Node_H;         use Rcl_Node_H;
 
-with ROSIDL.Dynamic;
+with ROSIDL.Typesupport;
 
 package RCL.Nodes is
 
@@ -32,15 +32,22 @@ package RCL.Nodes is
    overriding procedure Finalize (This : in out Node);
    --  Can be called prematurely to shut down a node   
    
+   ----------
+   -- Spin --
+   ----------
+
+   procedure Spin (This   : in out Node; 
+                   During :        Duration := 0.1);
+   --  Check blocking events and dispatch to callbacks for at least During seconds
+   
    ---------------
    -- Subscribe --
    ---------------
 
-   function Subscribe (This     : in out Node;                       
-                       Msg_Type :        ROSIDL.Typesupport.Msg_Support_Ptr;
-                       Topic    :        String;
-                       Callback : access procedure (Msg : ROSIDL.Dynamic.Message))
-                       return Subscriptions.Subscription;
+   procedure Subscribe (This     : in out Node;                       
+                        Msg_Type :        ROSIDL.Typesupport.Message_Support;
+                        Topic    :        String;
+                        Callback :        Callbacks.For_Subscription);
    
    -------------------------------------------------
    --  Low level access not intended for clients  --
@@ -52,13 +59,15 @@ package RCL.Nodes is
    
 private   
    
-   type Node is new Ada.Finalization.Limited_Controlled with record 
-      Impl : aliased Rcl_Node_T     := Rcl_Get_Zero_Initialized_Node;
-      Wait : aliased Rcl_Wait_Set_T := Rcl_Get_Zero_Initialized_Wait_Set;
-   end record;
+   use Callbacks;
    
-   procedure Add_Subscription (This : in out Node; 
-                               Sub  :        Subscriptions.Subscription);
+   package Sub_Vectors is new Ada.Containers.Vectors (Positive, 
+                                                      Callbacks.Subscription_Dispatcher);
+   
+   type Node is new Ada.Finalization.Limited_Controlled with record 
+      Impl          : aliased Rcl_Node_T := Rcl_Get_Zero_Initialized_Node;
+      Subscriptions :         Sub_Vectors.Vector;
+   end record;
    
    function To_C (This : aliased in out Node) return Reference is
      (Ptr => This.Impl'Access);

@@ -1,21 +1,13 @@
+with Ada.Containers;
 with Ada.Exceptions;
+with Ada.Calendar;
 
-with RCL.Allocators;
 with RCL.Subscriptions;
+with RCL.Wait;
 
 package body RCL.Nodes is
 
-   Default_Wait_Size : constant := 19; -- No reason
-
-   ----------------------
-   -- Add_Subscription --
-   ----------------------
-
-   procedure Add_Subscription (This : in out Node;
-                               Sub  :        Subscriptions.Subscription) is
-   begin
-      null;
-   end Add_Subscription;
+   use all type Ada.Containers.Count_Type;
 
    ----------
    -- Init --
@@ -36,15 +28,6 @@ package body RCL.Nodes is
                    To_C (Name).To_Ptr,
                    To_C (Namespace).To_Ptr,
                    Opts'Access));
-
-         Check (Rcl_Wait_Set_Init
-                (This.Wait'Access,
-                   Default_Wait_Size,
-                   Default_Wait_Size,
-                   Default_Wait_Size,
-                   Default_Wait_Size,
-                   Default_Wait_Size,
-                   Allocators.Get_Default_Allocator));
       end return;
    end Init;
 
@@ -54,7 +37,7 @@ package body RCL.Nodes is
 
    overriding procedure Finalize (This : in out Node) is
    begin
-      if Correct (Rcl_Node_Is_Valid (This.Impl'Access, null)) then
+      if To_Boolean (Rcl_Node_Is_Valid (This.Impl'Access, null)) then
          Check (Rcl_Node_Fini (This.Impl'Access));
       else
          null;
@@ -66,20 +49,79 @@ package body RCL.Nodes is
          Put_Line (Ada.Exceptions.Exception_Information (E));
    end Finalize;
 
+   ----------
+   -- Spin --
+   ----------
+
+   procedure Spin (This   : in out Node;
+                   During :        Duration := 0.1)
+   is
+      use Ada.Calendar;
+      Start : constant Time := Clock;
+
+      -------------
+      -- Process --
+      -------------
+
+      procedure Process (T : Wait.Trigger) is
+         use all type Wait.Kinds;
+      begin
+         case T.Kind is
+            when Subscription =>
+               This.Subscriptions (T.Index).Dispatch;
+         end case;
+      end Process;
+
+      ---------------
+      -- Spin_Once --
+      ---------------
+
+      procedure Spin_Once is
+         use all type Wait.Wait_Outcomes;
+
+         Set : Wait.Set := Wait.Init
+           (Num_Subscriptions => Natural (This.Subscriptions.Length));
+      begin
+         if This.Subscriptions.Length = 0 then
+            raise Constraint_Error with "Nothing to spin on!";
+         end if;
+
+         for Sub of This.Subscriptions loop
+            Set.Add (Sub.Subscription);
+         end loop;
+
+         case Set.Wait (During - (Clock - Start)) is
+            when Error     => raise Program_Error with "Error in Set.Wait";
+            when Timeout   => null;
+            when Triggered =>
+               for Trigger of Set loop
+                  Process (Trigger);
+               end loop;
+         end case;
+      end Spin_Once;
+
+   begin
+      loop
+         Spin_Once;
+
+         exit when Clock - Start >= During;
+      end loop;
+   end Spin;
+
    ---------------
    -- Subscribe --
    ---------------
 
-   function Subscribe (This     : in out Node;
-                       Msg_Type :        ROSIDL.Typesupport.Msg_Support_Ptr;
-                       Topic    :        String;
-                       Callback : access procedure (Msg : ROSIDL.Dynamic.Message))
-                       return Subscriptions.Subscription
+   procedure Subscribe (This     : in out Node;
+                        Msg_Type :        ROSIDL.Typesupport.Message_Support;
+                        Topic    :        String;
+                        Callback :        Callbacks.For_Subscription)
    is
+      Sub : constant Subscriptions.Subscription :=
+              Subscriptions.Init (This, Msg_Type, Topic);
    begin
-      return Sub : Subscriptions.Subscription := Subscriptions.Init (This, Msg_Type, Topic) do
-         This.Add_Subscription (Sub);
-      end return;
+      This.Subscriptions.Append
+        (Subscription_Dispatcher'(Sub.To_C, Callback, Msg_Type));
    end Subscribe;
 
 end RCL.Nodes;
