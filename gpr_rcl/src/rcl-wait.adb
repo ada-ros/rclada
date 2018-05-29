@@ -21,6 +21,29 @@ package body RCL.Wait is
                 Sub.C'Access));
    end Add;
 
+   -------------
+   -- Advance --
+   -------------
+
+   function Advance (This : Set;
+                     Pos  : Cursor) return Cursor is
+   begin
+      if Pos.Ended then
+         raise Program_Error with "Can't advance past ended cursor";
+      else
+         case Pos.T.Kind is
+            when Subscription =>
+               if Pos.T.Index < Natural (This.Impl.Size_Of_Subscriptions) then
+                  return (T     => (Pos.T.Kind, Pos.T.Index + 1),
+                          Ended => False);
+               else
+                  return (Ended  => True,
+                          others => <>);
+               end if;
+         end case;
+      end if;
+   end Advance;
+
    -----------
    -- Check --
    -----------
@@ -62,22 +85,26 @@ package body RCL.Wait is
    ---------------------
 
    function Find_Next_Valid (This : Set;
-                             Pos  : Cursor) return Cursor is
+                             Pos  : Cursor) return Cursor
+   is
+      Curr : Cursor := Pos;
    begin
-      case Pos.T.Kind is
-         when Subscription =>
-            if Pos.T.Index <= Integer (This.Impl.Size_Of_Subscriptions) then
-               if Check (This, Subscription, Pos.T.Index) then
-                  return Pos;
+      while not Curr.Ended loop
+         case Pos.T.Kind is
+            when Subscription =>
+               if Pos.T.Index <= Integer (This.Impl.Size_Of_Subscriptions) then
+                  if Check (This, Subscription, Pos.T.Index) then
+                     return Pos;
+                  else
+                     Curr := Advance (This, Curr);
+                  end if;
                else
-                  return Find_Next_Valid (This, (T     => (Pos.T.Kind, Pos.T.Index + 1),
-                                                 Ended => False));
+                  Curr := Advance (This, Curr);
                end if;
-            else
-               --  Nothing left to check
-               return (T => <>, Ended => True);
-            end if;
-      end case;
+         end case;
+      end loop;
+
+      return Curr;
    end Find_Next_Valid;
 
    -----------
@@ -130,9 +157,9 @@ package body RCL.Wait is
    -- Next --
    ----------
 
-   function Next (Object   : Iterator;
+   function Next (I        : Iterator;
                   Position : Cursor) return Cursor is
-      (Find_Next_Valid (Object.Over.all, Position));
+      (Find_Next_Valid (I.Over.all, Advance (I.Over.all, Position)));
 
    ----------
    -- Wait --
@@ -146,7 +173,7 @@ package body RCL.Wait is
 
       Ret : constant Rcl_Ret_T :=
               Rcl_Wait (This.Impl'Access,
-                        ROSIDL.Types.Int64 (Timeout * 1000)); -- Nanosecs
+                        ROSIDL.Types.Int64 (Timeout * 1000**3)); -- Nanosecs
    begin
       case Ret is
          when RMW_RET_OK =>

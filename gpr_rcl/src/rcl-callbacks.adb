@@ -13,7 +13,7 @@ package body RCL.Callbacks is
       then
          This.Callback (Msg, Info);
       else
-         Logging.Warn ("Subscription dispatcher: Take_Raw failed when expecting message");
+         raise Program_Error with "Subscription dispatcher: Take_Raw failed when message was expected";
       end if;
    end Dispatch;
 

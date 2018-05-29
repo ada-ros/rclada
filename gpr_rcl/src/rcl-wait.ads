@@ -63,13 +63,16 @@ private
       Ended : Boolean;
    end record;
    
+   Ended_Cursor : constant Cursor := (Ended  => True,
+                                      others => <>);
+   
    type Iterator is new Set_Iterators.Forward_Iterator with record
       Over : access constant Set;
    end record;
    
    overriding function First (I : Iterator) return Cursor;
    
-   overriding function Next (Object   : Iterator;
+   overriding function Next (I        : Iterator;
                              Position : Cursor) return Cursor;
 
 end RCL.Wait;
