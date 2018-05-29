@@ -13,7 +13,7 @@ with Rcl_Types_H;
 
 package RCL is
    
-   ROS_Exception : exception;   
+   ROS_Exception : exception;
 
 private
    

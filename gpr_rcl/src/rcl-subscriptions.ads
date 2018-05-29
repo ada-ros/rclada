@@ -1,6 +1,6 @@
 with Ada.Finalization;
 
-with RCL.Nodes;
+limited with RCL.Nodes;
 
 with Rcl_Subscription_H; use Rcl_Subscription_H; 
 
