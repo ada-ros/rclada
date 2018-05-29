@@ -15,12 +15,20 @@ package RCL.Subscriptions is
    --  See Node.Subscribe instead                        --
 
    type Subscription (<>) is new Ada.Finalization.Limited_Controlled with private;
-   type C_Subscription is new Rcl_Subscription_T;   
+   type C_Subscription is record
+      C : aliased Rcl_Subscription_T;  
+   end record;
+   --  This should be a subtype but there's a bug in GNAT 2017
    
    function Init (Node     : in out Nodes.Node;
                   Msg_Type :        ROSIDL.Typesupport.Message_Support;
                   Topic    :        String) return Subscription;
    --  TODO: options
+   
+   procedure Detach (This : in out Subscription);
+   --  Forget the internal C subscription, so it is not finished on this
+   --    object finalization
+   --  Somebody else should take care of freeing the C subscription!
    
    function Take_Raw (This   : aliased in out C_Subscription;
                       Buffer :                System.Address;
@@ -43,7 +51,7 @@ package RCL.Subscriptions is
 private 
    
    type Subscription is new Ada.Finalization.Limited_Controlled with record
-      Impl : aliased C_subscription := Rcl_Get_Zero_Initialized_Subscription;
+      Impl : aliased C_subscription := (C => Rcl_Get_Zero_Initialized_Subscription);
       Node : aliased Rcl_Node_T;
    end record;
 

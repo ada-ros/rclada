@@ -82,10 +82,6 @@ package body RCL.Nodes is
          Set : Wait.Set := Wait.Init
            (Num_Subscriptions => Natural (This.Subscriptions.Length));
       begin
-         if This.Subscriptions.Length = 0 then
-            raise Constraint_Error with "Nothing to spin on!";
-         end if;
-
          for Sub of This.Subscriptions loop
             Set.Add (Sub.Subscription);
          end loop;
@@ -117,11 +113,12 @@ package body RCL.Nodes is
                         Topic    :        String;
                         Callback :        Callbacks.For_Subscription)
    is
-      Sub : constant Subscriptions.Subscription :=
+      Sub : Subscriptions.Subscription :=
               Subscriptions.Init (This, Msg_Type, Topic);
    begin
       This.Subscriptions.Append
         (Subscription_Dispatcher'(Sub.To_C, Callback, Msg_Type));
+      Sub.Detach;
    end Subscribe;
 
 end RCL.Nodes;

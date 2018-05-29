@@ -12,14 +12,23 @@ with Rosidl_Generator_C_Message_Type_Support_Struct_H; use Rosidl_Generator_C_Me
 
 package body RCL.Subscriptions is
 
+   ------------
+   -- Detach --
+   ------------
+
+   procedure Detach (This : in out Subscription) is
+   begin
+      This.Impl.C := Rcl_Get_Zero_Initialized_Subscription;
+   end Detach;
+
    --------------
    -- Finalize --
    --------------
 
    overriding procedure Finalize (This : in out Subscription) is
    begin
-      if To_Boolean (Rcl_Subscription_Is_Valid (This.Impl'Access, null)) then
-         Check (Rcl_Subscription_Fini (This.Impl'Access, This.Node'Access));
+      if To_Boolean (Rcl_Subscription_Is_Valid (This.Impl.C'Access, null)) then
+         Check (Rcl_Subscription_Fini (This.Impl.C'Access, This.Node'Access));
       end if;
    exception
       when E : others =>
@@ -43,10 +52,11 @@ package body RCL.Subscriptions is
         Ada.Unchecked_Conversion (ROSIDL.Typesupport.Msg_Support_Handle,
                                   Ptr);
    begin
-                     return Sub : Subscription do
+      return Sub : Subscription do
+         Sub.Node := Node.To_C;
 
          Check (Rcl_Subscription_Init
-                  (Sub.Impl'Access,
+                  (Sub.Impl.C'Access,
                    Node.To_C.Ptr,
                    To_Ptr (Msg_Type.To_C),
                    To_C (Topic).To_Ptr,
@@ -64,7 +74,7 @@ package body RCL.Subscriptions is
                       return                  Boolean
    is
       Impl_Info : aliased Rmw_Message_Info_T;
-      Ret       : constant Rcl_Ret_T := Rcl_Take (This'Access,
+      Ret       : constant Rcl_Ret_T := Rcl_Take (This.C'Access,
                                                   Buffer,
                                                   Impl_Info'Access);
    begin

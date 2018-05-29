@@ -32,8 +32,8 @@ package RCL.Wait is
    function Init (Num_Subscriptions : Natural := 0) return Set;
    --  At least one of these must be nonzero
    
-   procedure Add (This : in out Set; 
-                  Sub  :        Subscriptions.C_Subscription); 
+   procedure Add (This : aliased in out Set; 
+                  Sub  : aliased in out Subscriptions.C_Subscription); 
    
    function Check (This : Set;
                    Kind : Kinds;
@@ -53,16 +53,21 @@ package RCL.Wait is
 private
    
    type Set is new Ada.Finalization.Limited_Controlled with record
-      Impl : Rcl_Wait_Set_T := Rcl_Get_Zero_Initialized_Wait_Set;
+      Impl : aliased Rcl_Wait_Set_T := Rcl_Get_Zero_Initialized_Wait_Set;
+      
+      Self : access Set := Set'Unchecked_Access;
    end record;
    
-   type Cursor is new Trigger;
+   type Cursor is record
+      T     : Trigger;
+      Ended : Boolean;
+   end record;
    
-   type Iterator is new Set_Iterators.Forward_Iterator with null record;
+   type Iterator is new Set_Iterators.Forward_Iterator with record
+      Over : access constant Set;
+   end record;
    
-   overriding function First (I : Iterator) return Cursor is 
-     ((Kind  => Subscription,
-       Index => 1));
+   overriding function First (I : Iterator) return Cursor;
    
    overriding function Next (Object   : Iterator;
                              Position : Cursor) return Cursor;
