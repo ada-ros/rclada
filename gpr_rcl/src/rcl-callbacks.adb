@@ -1,6 +1,8 @@
-with RCL.Logging;
-
 package body RCL.Callbacks is
+
+   --------------
+   -- Dispatch --
+   --------------
 
    procedure Dispatch (This : in out Subscription_Dispatcher) is
       Msg  : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (This.Support);
