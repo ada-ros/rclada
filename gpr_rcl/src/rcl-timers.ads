@@ -1,3 +1,5 @@
+limited with RCL.Nodes;
+
 with Rcl_Timer_H; use Rcl_Timer_H;
 
 with System;
@@ -10,13 +12,6 @@ package RCL.Timers is
    --  Although Ada has native timers, this may be useful if you want
    --  to stay in a single-threaded, ROS2-managed situation
    
-   --  To offer an Ada callback without the C types, this type incurs an
-   --  O (log N) time penalty on the number of registered timers:
-   --    There's a lookup table involved in each call back.
-   
-   --  You can use native Ada timers to avoid this penalty, that should be
-   --    anyway negligible.
-   
    type Timer_Id is private;
    
    function "=" (L, R : Timer_Id) return Boolean;
@@ -28,7 +23,11 @@ package RCL.Timers is
    
    type Callback is 
      access procedure (Timer   : in out Timers.Timer;
-                       Elapsed :        Duration);      
+                       Elapsed :        Duration);  
+   
+   procedure Cancel (This : in out Timer);
+   --  Will internally call Node.Timer_Cancel
+   --  Useful e.g. fromo a callback that has not the node in scope
    
    procedure Change_Period (This       : in out Timer; 
                             New_Period :        Duration);   
@@ -40,15 +39,18 @@ package RCL.Timers is
    -----------------------------------
    --  Not intended for client use  --
    
-   function Bind (C_Timer : Timer_Id) return Timer;   
+   function Bind (C_Timer :                Timer_Id; 
+                  Node    : aliased in out Nodes.Node) return Timer;   
    
    procedure Finalize (This : in out Timer);
    
    procedure Free (This : in out Timer_Id);
    
-   function Init (Period   : Duration) return Timer;
+   function Init (Period : Duration) return Timer;
    --  Note: the timer won't work by itself; it must be created through
    --  Node facilities
+   
+   function Is_Canceled (This : Timer_Id) return Boolean;
    
    function To_C (This : Timer_Id) return access Rcl_Timer_T;
    
@@ -59,6 +61,7 @@ private
    
    type Timer is tagged limited record
       Impl : Timer_Id := new Rcl_Timer_T;
+      Node : access Nodes.Node;
    end record;
    
    use all type System.Address;

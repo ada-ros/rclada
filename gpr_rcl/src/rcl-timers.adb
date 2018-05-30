@@ -1,6 +1,7 @@
 with Ada.Unchecked_Deallocation;
 
 with RCL.Allocators;
+with RCL.Nodes;
 
 with ROSIDL.Types;
 
@@ -10,7 +11,19 @@ package body RCL.Timers is
    -- Bind --
    ----------
 
-   function Bind (C_Timer : Timer_Id) return Timer is (Impl => C_Timer);
+   function Bind (C_Timer :                Timer_Id;
+                  Node    : aliased in out Nodes.Node) return Timer is
+     (Impl => C_Timer,
+      Node => Node'Access);
+
+   ------------
+   -- Cancel --
+   ------------
+
+   procedure Cancel (This : in out Timer) is
+   begin
+      This.Node.Timer_Cancel (This.Id);
+   end Cancel;
 
    -------------------
    -- Change_Period --
@@ -81,5 +94,16 @@ package body RCL.Timers is
                Allocators.Get_Default_Allocator));
       end return;
    end Init;
+
+   -----------------
+   -- Is_Canceled --
+   -----------------
+
+   function Is_Canceled (This : Timer_Id) return Boolean is
+      Canceled : aliased CX.Bool;
+   begin
+      Check (Rcl_Timer_Is_Canceled (This, Canceled'Access));
+      return To_Boolean (Canceled);
+   end Is_Canceled;
 
 end RCL.Timers;

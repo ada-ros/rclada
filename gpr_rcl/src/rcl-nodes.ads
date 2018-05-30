@@ -98,10 +98,16 @@ private
    package Timer_Vectors is new Vectors (Positive,
                                          Callbacks.Timer_Dispatcher);
    
+   type Timer_Vector is new Timer_Vectors.Vector with null record;
+   
+   procedure Delete_If_Existing (V     : in out Timer_Vector;
+                                 Timer : Timers.Timer_Id);
+   
    type Node is new Ada.Finalization.Limited_Controlled with record 
       Impl          : aliased Rcl_Node_T := Rcl_Get_Zero_Initialized_Node;
       Subscriptions :         Sub_Vectors.Vector;
-      Timers        :         Timer_Vectors.Vector;
+      Timers        :         Timer_Vector;
+      Self          :  access Node := Node'Unchecked_Access;
    end record;   
    
    procedure Timer_Assert (This  : Node;

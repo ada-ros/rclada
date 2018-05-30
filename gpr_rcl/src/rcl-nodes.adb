@@ -9,6 +9,23 @@ with Rcl_Timer_H; use Rcl_Timer_H;
 
 package body RCL.Nodes is
 
+   use all type Timers.Timer_Id;
+
+   ------------------------
+   -- Delete_If_Existing --
+   ------------------------
+
+   procedure Delete_If_Existing (V     : in out Timer_Vector;
+                                 Timer : Timers.Timer_Id) is
+   begin
+      for I in V.First_Index .. V.Last_Index loop
+         if V (I).Timer = Timer then
+            V.Delete (I);
+            return;
+         end if;
+      end loop;
+   end Delete_If_Existing;
+
    ----------
    -- Init --
    ----------
@@ -93,7 +110,9 @@ package body RCL.Nodes is
          end loop;
 
          for Timer of This.Timers loop
-            Set.Add (Timer.Timer);
+            if not Timers.Is_Canceled (Timer.Timer) then
+               Set.Add (Timer.Timer);
+            end if;
          end loop;
 
          case Set.Wait (During - (Clock - Start)) is
@@ -146,7 +165,8 @@ package body RCL.Nodes is
         (Timer_Dispatcher'
            (Timer.Id,
             Callback,
-            Last_Call => <>));
+            Last_Call => <>,
+            Node      => This.Self));
 
       return Timer.Id;
    end Timer_Add;
@@ -196,19 +216,15 @@ package body RCL.Nodes is
    procedure Timer_Delete (This  : in out Node;
                            Timer :        Timers.Timer_Id)
    is
-      use all type Timers.Timer_Id;
       Tmp : Timers.Timer_Id := Timer;
    begin
       This.Timer_Assert (Timer);
       Check (Rcl_Timer_Fini (Timers.To_C (Timer)));
 
-      for I in This.Timers.First_Index .. This.Timers.Last_Index loop
-         if This.Timers (I).Timer = Timer then
-            This.Timers.Delete (I);
-         end if;
-      end loop;
-
-      Timers.Free (Tmp);
+      if This.Timer_Exists (Timer) then
+         This.Timers.Delete_If_Existing (Timer);
+         Timers.Free (Tmp);
+      end if;
    end Timer_Delete;
 
    ------------------
@@ -216,9 +232,7 @@ package body RCL.Nodes is
    ------------------
 
    function Timer_Exists (This  : Node;
-                          Timer : Timers.Timer_Id) return Boolean
-   is
-      use all type Timers.Timer_Id;
+                          Timer : Timers.Timer_Id) return Boolean is
    begin
       for T of This.Timers loop
          if T.Timer = Timer then

@@ -31,7 +31,9 @@ private
    use all type C.size_t;
    use all type C.unsigned_char;
    
-   procedure Check (Ret : rcl_types_h.Rcl_Ret_T);
+   subtype Rcl_Error_Code is Rcl_Types_H.Rcl_Ret_T;
+   
+   procedure Check (Ret : Rcl_Error_Code);
    
    function To_Boolean (Ret : CX.Bool) return Boolean is (Ret /= 0);
    

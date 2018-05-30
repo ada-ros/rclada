@@ -1,5 +1,6 @@
 with Ada.Real_Time;
 
+limited with RCL.Nodes;
 with RCL.Subscriptions;
 with RCL.Timers;
 
@@ -34,8 +35,18 @@ package RCL.Callbacks is
       Timer     : aliased Timers.Timer_Id;
       Callback  :         Timers.Callback;
       Last_Call :         Ada.Real_Time.Time := Ada.Real_Time.Clock;
+      Node      :  access Nodes.Node;
    end record;
    
+   function "=" (L, R : Timer_Dispatcher) return Boolean;
+   
    procedure Dispatch (This : in out Timer_Dispatcher);
+   
+private
+   
+   use all type Timers.Timer_Id;
+   
+   function "=" (L, R : Timer_Dispatcher) return Boolean is
+      (L.Timer = R.Timer);
    
 end RCL.Callbacks;
