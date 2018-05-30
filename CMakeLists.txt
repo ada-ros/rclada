@@ -57,6 +57,7 @@ set(_extra_headers
 ada_generate_binding(
         ada_binding_rcl
         gpr_rcl
+        rcl.gpr
         "${_includes}"
         ${_headers}
         ${_extra_headers}
