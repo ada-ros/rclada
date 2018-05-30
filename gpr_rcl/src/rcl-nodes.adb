@@ -2,12 +2,12 @@ with Ada.Containers;
 with Ada.Exceptions;
 with Ada.Calendar;
 
-with RCL.Subscriptions;
+with RCL.Logging;
 with RCL.Wait;
 
-package body RCL.Nodes is
+with Rcl_Timer_H; use Rcl_Timer_H;
 
-   use all type Ada.Containers.Count_Type;
+package body RCL.Nodes is
 
    ----------
    -- Init --
@@ -21,12 +21,15 @@ package body RCL.Nodes is
 
       Opts  : aliased constant Rcl_Node_Options_T :=
                 Rcl_Node_Get_Default_Options;
+
+      Cname : C_String := To_C (Name);
+      Cnms  : C_String := To_C (Namespace);
    begin
       return This : Node do
          Check (Rcl_Node_Init
                   (This.Impl'Access,
-                   To_C (Name).To_Ptr,
-                   To_C (Namespace).To_Ptr,
+                   Cname.To_Ptr,
+                   Cnms.To_Ptr,
                    Opts'Access));
       end return;
    end Init;
@@ -69,6 +72,8 @@ package body RCL.Nodes is
          case T.Kind is
             when Subscription =>
                This.Subscriptions (T.Index).Dispatch;
+            when Timer =>
+               This.Timers (T.Index).Dispatch;
          end case;
       end Process;
 
@@ -80,10 +85,15 @@ package body RCL.Nodes is
          use all type Wait.Wait_Outcomes;
 
          Set : Wait.Set := Wait.Init
-           (Num_Subscriptions => Natural (This.Subscriptions.Length));
+           (Num_Subscriptions => Natural (This.Subscriptions.Length),
+            Num_Timers        => Natural (This.Timers.Length));
       begin
          for Sub of This.Subscriptions loop
             Set.Add (Sub.Subscription);
+         end loop;
+
+         for Timer of This.Timers loop
+            Set.Add (Timer.Timer);
          end loop;
 
          case Set.Wait (During - (Clock - Start)) is
@@ -111,7 +121,7 @@ package body RCL.Nodes is
    procedure Subscribe (This     : in out Node;
                         Msg_Type :        ROSIDL.Typesupport.Message_Support;
                         Topic    :        String;
-                        Callback :        Callbacks.For_Subscription)
+                        Callback :        Subscriptions.Callback)
    is
       Sub : Subscriptions.Subscription :=
               Subscriptions.Init (This, Msg_Type, Topic);
@@ -120,5 +130,115 @@ package body RCL.Nodes is
         (Subscription_Dispatcher'(Sub.To_C, Callback, Msg_Type));
       Sub.Detach;
    end Subscribe;
+
+   ---------------
+   -- Timer_Add --
+   ---------------
+
+   function Timer_Add (This     : in out Node;
+                       Period   :        Duration;
+                       Callback :        Timers.Callback)
+                       return            Timers.Timer_Id
+   is
+      Timer : constant Timers.Timer := Timers.Init (Period);
+   begin
+      This.Timers.Append
+        (Timer_Dispatcher'
+           (Timer.Id,
+            Callback,
+            Last_Call => <>));
+
+      return Timer.Id;
+   end Timer_Add;
+
+   ---------------
+   -- Timer_Add --
+   ---------------
+
+   procedure Timer_Add (This     : in out Node;
+                        Period   :        Duration;
+                        Callback :        Timers.Callback)
+   is
+      Id : constant Timers.Timer_Id := This.Timer_Add (Period, Callback)
+        with Unreferenced;
+   begin
+      null;
+   end Timer_Add;
+
+   ------------------
+   -- Timer_Assert --
+   ------------------
+
+   procedure Timer_Assert (This  : Node;
+                           Timer : Timers.Timer_Id) is
+   begin
+      if not This.Timer_Exists (Timer) then
+         raise Constraint_Error with "Timer doesn't exist";
+      end if;
+   end Timer_Assert;
+
+   ------------------
+   -- Timer_Cancel --
+   ------------------
+
+   procedure Timer_Cancel (This  : in out Node;
+                           Timer :        Timers.Timer_Id)
+   is
+   begin
+      This.Timer_Assert (Timer);
+      Check (Rcl_Timer_Cancel (Timers.To_C (Timer)));
+   end Timer_Cancel;
+
+   ------------------
+   -- Timer_Delete --
+   ------------------
+
+   procedure Timer_Delete (This  : in out Node;
+                           Timer :        Timers.Timer_Id)
+   is
+      use all type Timers.Timer_Id;
+      Tmp : Timers.Timer_Id := Timer;
+   begin
+      This.Timer_Assert (Timer);
+      Check (Rcl_Timer_Fini (Timers.To_C (Timer)));
+
+      for I in This.Timers.First_Index .. This.Timers.Last_Index loop
+         if This.Timers (I).Timer = Timer then
+            This.Timers.Delete (I);
+         end if;
+      end loop;
+
+      Timers.Free (Tmp);
+   end Timer_Delete;
+
+   ------------------
+   -- Timer_Exists --
+   ------------------
+
+   function Timer_Exists (This  : Node;
+                          Timer : Timers.Timer_Id) return Boolean
+   is
+      use all type Timers.Timer_Id;
+   begin
+      for T of This.Timers loop
+         if T.Timer = Timer then
+            return True;
+         end if;
+      end loop;
+
+      return False;
+   end Timer_Exists;
+
+   -----------------
+   -- Timer_Reset --
+   -----------------
+
+   procedure Timer_Reset (This  : in out Node;
+                          Timer :        Timers.Timer_Id)
+   is
+   begin
+      This.Timer_Assert (Timer);
+      Check (Rcl_Timer_Reset (Timers.To_C (Timer)));
+   end Timer_Reset;
 
 end RCL.Nodes;

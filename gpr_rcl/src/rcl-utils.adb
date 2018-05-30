@@ -1,6 +1,11 @@
-with Ada.Exceptions; use Ada.Exceptions;
+with Ada.Command_Line; use Ada.Command_Line;
+with Ada.Directories;  use Ada.Directories;
+with Ada.Exceptions;   use Ada.Exceptions;
 
 package body RCL.Utils is
+
+   function Command_Name return String is
+      (Simple_Name (Ada.Command_Line.Command_Name));
 
    ----------------
    -- Initialize --

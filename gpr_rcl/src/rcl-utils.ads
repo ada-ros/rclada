@@ -4,6 +4,9 @@ package RCL.Utils is
 
    --  Assorted helpers
    
+   function Command_Name return String;
+   --  Command name without path
+   
    type Parameterless is access procedure;
    
    type Initshut (On_Initialize : Parameterless;

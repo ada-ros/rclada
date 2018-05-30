@@ -5,11 +5,15 @@ limited with RCL.Nodes;
 with Rcl_Node_H;         use Rcl_Node_H;
 with Rcl_Subscription_H; use Rcl_Subscription_H; 
 
+with ROSIDL.Dynamic;
 with ROSIDL.Typesupport;
 
 with System;
 
 package RCL.Subscriptions is
+   
+   type Callback is access procedure (Msg  : in out ROSIDL.Dynamic.Message;
+                                      Info :        ROSIDL.Message_Info);
    
    --  Not really intended to be used by clients either  --
    --  See Node.Subscribe instead                        --

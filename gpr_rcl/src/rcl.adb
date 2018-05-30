@@ -95,8 +95,4 @@ package body RCL is
 
    RCL_Init : Initializer with Unreferenced;
 
-   procedure Rclada_Dark_Side with Import, Convention => C;
-
-begin
-   Rclada_Dark_Side;
 end RCL;

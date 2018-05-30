@@ -2,6 +2,7 @@ with Ada.Finalization;
 with Ada.Iterator_Interfaces;
 
 limited with RCL.Subscriptions;
+with RCL.Timers;
 
 with Rcl_Wait_H; use Rcl_Wait_H;
 
@@ -10,7 +11,7 @@ package RCL.Wait is
    --  Not really intended for clients, but the C structs are of so poor
    --    quality that even for internal use a manual binding is needed.
    
-   type Kinds is (Subscription);
+   type Kinds is (Subscription, Timer);
    
    type Wait_Outcomes is (Error, Timeout, Triggered);
    
@@ -29,11 +30,15 @@ package RCL.Wait is
    
    package Set_Iterators is new Ada.Iterator_Interfaces (Cursor, Has_Element);
    
-   function Init (Num_Subscriptions : Natural := 0) return Set;
+   function Init (Num_Subscriptions : Natural := 0;
+                  Num_Timers        : Natural := 0) return Set;
    --  At least one of these must be nonzero
    
    procedure Add (This : aliased in out Set; 
                   Sub  : aliased in out Subscriptions.C_Subscription); 
+   
+   procedure Add (This  : aliased in out Set; 
+                  Timer : aliased in out Timers.Timer_Id); 
    
    function Check (This : Set;
                    Kind : Kinds;
@@ -46,6 +51,9 @@ package RCL.Wait is
    
    overriding 
    procedure Finalize (This : in out Set);  
+   
+   function Size (This : Set;
+                  Kind : Kinds) return Natural;
    
    function Wait (This    : in out Set;
                   Timeout : Duration := Duration'Last) return Wait_Outcomes;

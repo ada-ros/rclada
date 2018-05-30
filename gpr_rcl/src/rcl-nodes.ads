@@ -1,7 +1,9 @@
 with Ada.Containers.Vectors;
 with Ada.Finalization;
 
-with Rcl.Callbacks;
+with RCL.Callbacks;
+with RCL.Subscriptions;
+with RCL.Timers;
 
 with Rcl_Node_H;         use Rcl_Node_H;
 
@@ -31,7 +33,7 @@ package RCL.Nodes is
 
    overriding procedure Finalize (This : in out Node);
    --  Can be called prematurely to shut down a node   
-   
+                         
    ----------
    -- Spin --
    ----------
@@ -47,7 +49,35 @@ package RCL.Nodes is
    procedure Subscribe (This     : in out Node;                       
                         Msg_Type :        ROSIDL.Typesupport.Message_Support;
                         Topic    :        String;
-                        Callback :        Callbacks.For_Subscription);
+                        Callback :        Subscriptions.Callback);
+   
+   ---------------
+   -- Timer_Add -- et other timer functions
+   ---------------
+
+   function Timer_Add (This     : in out Node;
+                       Period   :        Duration;
+                       Callback :        Timers.Callback)
+                       return            Timers.Timer_Id;
+   
+   procedure Timer_Add (This     : in out Node;
+                        Period   :        Duration;
+                        Callback :        Timers.Callback);
+   
+   procedure Timer_Cancel (This  : in out Node;
+                           Timer :        Timers.Timer_Id);
+   --  Disables (but not deletes) a timer
+   
+   procedure Timer_Delete (This  : in out Node;
+                           Timer :        Timers.Timer_Id);
+   --  Entirely removes a timer.
+   
+   function Timer_Exists (This  : Node; 
+                          Timer : Timers.Timer_Id) return Boolean;
+   
+   procedure Timer_Reset (This  : in out Node;
+                          Timer :        Timers.Timer_Id);
+   --  Resets the elapsed time (if enabled), or reenables (if cancelled) a timer
    
    -------------------------------------------------
    --  Low level access not intended for clients  --
@@ -59,15 +89,23 @@ package RCL.Nodes is
    
 private   
    
+   use Ada.Containers;   
    use Callbacks;
    
-   package Sub_Vectors is new Ada.Containers.Vectors (Positive, 
-                                                      Callbacks.Subscription_Dispatcher);
+   package Sub_Vectors is new Vectors (Positive, 
+                                       Callbacks.Subscription_Dispatcher);
+   
+   package Timer_Vectors is new Vectors (Positive,
+                                         Callbacks.Timer_Dispatcher);
    
    type Node is new Ada.Finalization.Limited_Controlled with record 
       Impl          : aliased Rcl_Node_T := Rcl_Get_Zero_Initialized_Node;
       Subscriptions :         Sub_Vectors.Vector;
-   end record;
+      Timers        :         Timer_Vectors.Vector;
+   end record;   
+   
+   procedure Timer_Assert (This  : Node;
+                           Timer : Timers.Timer_Id);
    
    function To_C (This : aliased in out Node) return Reference is
      (Ptr => This.Impl'Access);
