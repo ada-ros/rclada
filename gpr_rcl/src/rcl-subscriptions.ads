@@ -2,7 +2,6 @@ with Ada.Finalization;
 
 limited with RCL.Nodes;
 
-with Rcl_Node_H;         use Rcl_Node_H;
 with Rcl_Subscription_H; use Rcl_Subscription_H; 
 
 with ROSIDL.Dynamic;
@@ -56,7 +55,7 @@ private
    
    type Subscription is new Ada.Finalization.Limited_Controlled with record
       Impl : aliased C_subscription := (C => Rcl_Get_Zero_Initialized_Subscription);
-      Node : aliased Rcl_Node_T;
+      Node :  access Nodes.C_Node;
    end record;
 
 end RCL.Subscriptions;

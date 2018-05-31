@@ -1,8 +1,10 @@
+with Ada.Calendar;
 with Ada.Containers;
 with Ada.Exceptions;
-with Ada.Calendar;
 
 with RCL.Logging;
+with RCL.Publishers.Impl;
+with RCL.Subscriptions;
 with RCL.Wait;
 
 with Rcl_Timer_H; use Rcl_Timer_H;
@@ -44,7 +46,7 @@ package body RCL.Nodes is
    begin
       return This : Node do
          Check (Rcl_Node_Init
-                  (This.Impl'Access,
+                  (This.Impl.Impl'Access,
                    Cname.To_Ptr,
                    Cnms.To_Ptr,
                    Opts'Access));
@@ -57,8 +59,8 @@ package body RCL.Nodes is
 
    overriding procedure Finalize (This : in out Node) is
    begin
-      if To_Boolean (Rcl_Node_Is_Valid (This.Impl'Access, null)) then
-         Check (Rcl_Node_Fini (This.Impl'Access));
+      if To_Boolean (Rcl_Node_Is_Valid (This.Impl.Impl'Access, null)) then
+         Check (Rcl_Node_Fini (This.Impl.Impl'Access));
       else
          null;
          --  Log attempt at finalizing finalized node
@@ -68,6 +70,16 @@ package body RCL.Nodes is
          Put_Line ("Exception while finalizing node:");
          Put_Line (Ada.Exceptions.Exception_Information (E));
    end Finalize;
+
+   -------------
+   -- Publish --
+   -------------
+
+   function Publish (This     : in out Node;
+                     Msg_Type :        ROSIDL.Typesupport.Message_Support;
+                     Topic    :        String)
+                     return            Publishers.Publisher is
+      (Publishers.Impl.Init (This.Impl'Access, Msg_Type, Topic));
 
    ----------
    -- Spin --
@@ -131,6 +143,10 @@ package body RCL.Nodes is
 
          exit when Clock - Start >= During;
       end loop;
+   exception
+      when E : others =>
+         Logging.Error ("Node.Spin caught: " &
+                          Ada.Exceptions.Exception_Information (E));
    end Spin;
 
    ---------------

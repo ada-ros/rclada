@@ -60,7 +60,7 @@ private
    --  Rcl_Timer_T is just a husk on top of a pointer, we can use it directly
    
    type Timer is tagged limited record
-      Impl : Timer_Id := new Rcl_Timer_T;
+      Impl : Timer_Id;
       Node : access Nodes.Node;
    end record;
    

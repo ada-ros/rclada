@@ -28,7 +28,7 @@ package body RCL.Subscriptions is
    overriding procedure Finalize (This : in out Subscription) is
    begin
       if To_Boolean (Rcl_Subscription_Is_Valid (This.Impl.C'Access, null)) then
-         Check (Rcl_Subscription_Fini (This.Impl.C'Access, This.Node'Access));
+         Check (Rcl_Subscription_Fini (This.Impl.C'Access, This.Node.Impl'Access));
       end if;
    exception
       when E : others =>
@@ -53,11 +53,11 @@ package body RCL.Subscriptions is
                                   Ptr);
    begin
       return Sub : Subscription do
-         Sub.Node := Node.To_C;
+         Sub.Node := Node.To_C.Ptr;
 
          Check (Rcl_Subscription_Init
                   (Sub.Impl.C'Access,
-                   Node.To_C.Ptr,
+                   Sub.Node.Impl'Access,
                    To_Ptr (Msg_Type.To_C),
                    To_C (Topic).To_Ptr,
                    Opts'Access));

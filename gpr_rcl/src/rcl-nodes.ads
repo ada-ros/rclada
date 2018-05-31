@@ -2,7 +2,8 @@ with Ada.Containers.Vectors;
 with Ada.Finalization;
 
 with RCL.Callbacks;
-with RCL.Subscriptions;
+with RCL.Publishers;
+limited with RCL.Subscriptions;
 with RCL.Timers;
 
 with Rcl_Node_H;         use Rcl_Node_H;
@@ -41,6 +42,15 @@ package RCL.Nodes is
    procedure Spin (This   : in out Node; 
                    During :        Duration := 0.1);
    --  Check blocking events and dispatch to callbacks for at least During seconds
+   
+   -------------
+   -- Publish --
+   -------------
+
+   function Publish (This     : in out Node;
+                     Msg_Type :        ROSIDL.Typesupport.Message_Support;
+                     Topic    :        String)
+                     return            Publishers.Publisher;
    
    ---------------
    -- Subscribe --
@@ -82,7 +92,12 @@ package RCL.Nodes is
    -------------------------------------------------
    --  Low level access not intended for clients  --
    
-   type Reference (Ptr : access Rcl_Node_T) is null record
+   type C_Node is record 
+      Impl : aliased Rcl_Node_T;
+   end record;
+   --  Not directly the access because of the subtypes-blind bug
+   
+   type Reference (Ptr : access C_Node) is null record
      with Implicit_Dereference => Ptr;
    
    function To_C (This : aliased in out Node) return Reference;
@@ -104,7 +119,7 @@ private
                                  Timer : Timers.Timer_Id);
    
    type Node is new Ada.Finalization.Limited_Controlled with record 
-      Impl          : aliased Rcl_Node_T := Rcl_Get_Zero_Initialized_Node;
+      Impl          : aliased C_Node := (Impl => Rcl_Get_Zero_Initialized_Node);
       Subscriptions :         Sub_Vectors.Vector;
       Timers        :         Timer_Vector;
       Self          :  access Node := Node'Unchecked_Access;

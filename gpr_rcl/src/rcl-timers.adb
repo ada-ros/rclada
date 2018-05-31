@@ -85,6 +85,7 @@ package body RCL.Timers is
    is
    begin
       return This : aliased Timer do
+         This.Impl     := new Rcl_Timer_T;
          This.Impl.all := Rcl_Get_Zero_Initialized_Timer;
          Check
            (Rcl_Timer_Init
