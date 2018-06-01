@@ -39,11 +39,12 @@ package body RCL.Callbacks is
       Now  : constant Time := Clock;
       Ret  : Rcl_Error_Code;
    begin
+      Ret := Rcl_Timer_Call (Timers.To_C (This.Timer));
+      --  This "snoozes" the C timer
+
       This.Callback (Temp, -- temporary timer for the callee
                      To_Duration (Now - This.Last_Call));
       This.Last_Call := Now;
-
-      Ret := Rcl_Timer_Call (Timers.To_C (This.Timer));
 
       case Ret is
          when RCL_RET_TIMER_CANCELED =>
