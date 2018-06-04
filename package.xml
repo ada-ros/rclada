@@ -12,11 +12,15 @@
   <build_depend>rcl</build_depend>
   <build_depend>rcutils</build_depend>
   <build_depend>rmw</build_depend>
+  <build_depend>std_msgs</build_depend>
 
   <build_depend>rclada_common</build_depend>
   <build_depend>rosidl_generator_ada</build_depend>
 
-  <export>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
+   <export>
     <build_type>cmake</build_type>
   </export>
 </package>

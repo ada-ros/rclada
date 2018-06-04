@@ -4,5 +4,6 @@
 # Ada Library Information
 *.ali
 
+bin
 lib
 obj

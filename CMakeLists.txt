@@ -15,15 +15,17 @@ if(BUILD_TESTING)
   # Silence a warning (?)
 endif()
 
+# ROS2 imports
 find_package(rcl REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rmw REQUIRED)
 find_package(std_msgs REQUIRED)
 
+# Ada imports
 find_package(rclada_common REQUIRED)
 find_package(rosidl_generator_ada REQUIRED)
 
-# IMPORT THE C LIBRARIES
+# C imports for the Ada side
 
 ada_import_c_libraries(${rcutils_LIBRARIES})
 ada_import_c_libraries(${rcl_LIBRARIES})
