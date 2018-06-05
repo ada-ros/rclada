@@ -65,6 +65,17 @@ ada_generate_binding(
         ${_extra_headers}
 )
 
+ada_add_executables(
+        gpr_selftest
+        ${PROJECT_SOURCE_DIR}/gpr_selftest
+        bin
+        rclada_selftest
+)
+
+add_dependencies(
+        gpr_selftest
+        ada_binding_rcl)
+
 ada_export_package()
 
 #get_cmake_property(_variableNames VARIABLES)

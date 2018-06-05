@@ -1,5 +1,6 @@
 with "clib_rcutils";
 with "clib_rcl";
+with "clib_std_msgs_rosidl_typesupport_introspection_c";
 with "rosidl";
 
 library project Rcl is
