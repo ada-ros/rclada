@@ -1,6 +1,7 @@
 with Ada.Real_Time;
 
 limited with RCL.Nodes;
+with RCL.Services.Impl;
 with RCL.Subscriptions;
 with RCL.Timers;
 
@@ -15,6 +16,19 @@ package RCL.Callbacks is
    procedure Dispatch (This : in out Dispatcher) is abstract;
    --  Does whatever applies: fetch a message and call the back, etc
 
+   --------------
+   -- Services --
+   --------------
+   
+   type Service_Dispatcher is new Dispatcher with record
+      Service  : Services.Impl.C_Service;
+      Callback : Services.Callback;
+      Support  : ROSIDL.Typesupport.Service_Support;
+   end record;
+   
+   procedure Dispatch (This : in out Service_Dispatcher);
+   --  This is insufficient for what has to be done; actual logic is in Nodes
+   
    -------------------
    -- Subscriptions --
    -------------------

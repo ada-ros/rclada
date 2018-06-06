@@ -1,5 +1,6 @@
 with "rcl";
-with "ros2_msgs_rosidl_generator_ada";
+with "ros2_typesupport_example_interfaces";
+with "ros2_typesupport_rosidl_generator_ada";
 
 project Rcl_Selftest is
 

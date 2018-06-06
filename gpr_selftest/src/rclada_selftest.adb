@@ -182,6 +182,8 @@ procedure Rclada_Selftest is
          pragma Assert (Msg ("dyn_msg_arr").As_Array.Element (I).Get_Message.Field ("sec").As_Int32 = Int32 (I));
       end loop;
 
+      Assert_Matrix (Msg ("matrix").As_Matrix);
+
    end Receiver;
 
 begin

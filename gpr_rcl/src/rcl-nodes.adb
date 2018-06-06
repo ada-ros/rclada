@@ -4,10 +4,12 @@ with Ada.Exceptions;
 
 with RCL.Logging;
 with RCL.Publishers.Impl;
+with RCL.Services.Impl;
 with RCL.Subscriptions;
 with RCL.Wait;
 
-with Rcl_Timer_H; use Rcl_Timer_H;
+with Rcl_Service_H; use Rcl_Service_H;
+with Rcl_Timer_H;   use Rcl_Timer_H;
 
 package body RCL.Nodes is
 
@@ -81,6 +83,32 @@ package body RCL.Nodes is
                      return            Publishers.Publisher is
       (Publishers.Impl.Init (This.Impl'Access, Msg_Type, Topic));
 
+   -----------
+   -- Serve --
+   -----------
+
+   procedure Serve (This     : in out Node;
+                    Support  :        ROSIDL.Typesupport.Service_Support;
+                    Name     :        String;
+                    Callback :        Services.Callback)
+   is
+      Srv        : aliased Rcl_Service_T := Rcl_Get_Zero_Initialized_Service;
+      Opts       : aliased constant Rcl_Service_Options_T :=
+                     Rcl_Service_Get_Default_Options;
+   begin
+      Check
+        (Rcl_Service_Init
+           (Srv'Access,
+            This.Impl.Impl'Access,
+            Support.To_C,
+            C_Strings.To_C (Name).To_Ptr,
+            Opts'Access));
+      This.Services.Append (Callbacks.Service_Dispatcher'
+                              (Service  => Services.Impl.To_C_Service (Srv),
+                               Callback => Callback,
+                               Support  => Support));
+   end Serve;
+
    ----------
    -- Spin --
    ----------
@@ -99,6 +127,8 @@ package body RCL.Nodes is
          use all type Wait.Kinds;
       begin
          case T.Kind is
+            when Service =>
+               This.Services (T.Index).Dispatch;
             when Subscription =>
                This.Subscriptions (T.Index).Dispatch;
             when Timer =>
@@ -114,9 +144,14 @@ package body RCL.Nodes is
          use all type Wait.Wait_Outcomes;
 
          Set : Wait.Set := Wait.Init
-           (Num_Subscriptions => Natural (This.Subscriptions.Length),
+           (Num_Services      => Natural (This.Services.Length),
+            Num_Subscriptions => Natural (This.Subscriptions.Length),
             Num_Timers        => Natural (This.Timers.Length));
       begin
+         for Srv of This.Services loop
+            Set.Add (Srv.Service);
+         end loop;
+
          for Sub of This.Subscriptions loop
             Set.Add (Sub.Subscription);
          end loop;

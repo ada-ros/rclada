@@ -1,14 +1,40 @@
-with Rcl_Timer_H; use Rcl_Timer_H;
-with Rcl_Types_H; use Rcl_Types_H;
+with Rcl_Service_H; use Rcl_Service_H;
+with Rcl_Timer_H;   use Rcl_Timer_H;
+with Rcl_Types_H;   use Rcl_Types_H;
 
 with Rmw_Types_H; use Rmw_Types_H;
 
-with Rcl.Logging;
+with RCL.Logging;
 with RCL.Nodes; pragma Unreferenced (RCL.Nodes);
 
 with ROSIDL.Dynamic;
 
 package body RCL.Callbacks is
+
+   --------------
+   -- Dispatch --
+   --------------
+
+   procedure Dispatch (This : in out Service_Dispatcher) is
+      Request  : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (This.Support.Request_Support);
+      Response : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (This.Support.Response_Support);
+
+      Header  : aliased Rmw_Request_Id_T;
+   begin
+      Check
+        (Rcl_Take_Request
+           (This.Service.To_C,
+            Header'Access,
+            Request.To_Ptr));
+
+      This.Callback (Request, Response);
+
+      Check
+        (Rcl_Send_Response
+           (This.Service.To_C,
+            Header'Access,
+            Response.To_Ptr));
+   end Dispatch;
 
    --------------
    -- Dispatch --

@@ -4,6 +4,7 @@ with Ada.Finalization;
 with RCL.Callbacks;
 with RCL.Publishers;
 limited with RCL.Subscriptions;
+with Rcl.Services;
 with RCL.Timers;
 
 with Rcl_Node_H;         use Rcl_Node_H;
@@ -51,6 +52,15 @@ package RCL.Nodes is
                      Msg_Type :        ROSIDL.Typesupport.Message_Support;
                      Topic    :        String)
                      return            Publishers.Publisher;
+   
+   -----------
+   -- Serve --
+   -----------
+
+   procedure Serve (This     : in out Node;
+                    Support  :        ROSIDL.Typesupport.Service_Support;
+                    Name     :        String;
+                    Callback :        Services.Callback);
    
    ---------------
    -- Subscribe --
@@ -107,6 +117,9 @@ private
    use Ada.Containers;   
    use Callbacks;
    
+   package Srv_Vectors is new Vectors (Positive,
+                                       Callbacks.Service_Dispatcher);
+   
    package Sub_Vectors is new Vectors (Positive, 
                                        Callbacks.Subscription_Dispatcher);
    
@@ -120,6 +133,7 @@ private
    
    type Node is new Ada.Finalization.Limited_Controlled with record 
       Impl          : aliased C_Node := (Impl => Rcl_Get_Zero_Initialized_Node);
+      Services      :         Srv_Vectors.Vector;
       Subscriptions :         Sub_Vectors.Vector;
       Timers        :         Timer_Vector;
       Self          :  access Node := Node'Unchecked_Access;
