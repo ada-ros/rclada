@@ -31,6 +31,31 @@ procedure Rclada_Selftest is
    Test_Real : constant := Ada.Numerics.Pi;
    Test_Size : constant := 6;
 
+   Matrix_Indices : constant ROSIDL.Dynamic.Matrix_Indices := ( 2,  3, 4);
+   Matrix_Strides : constant ROSIDL.Dynamic.Matrix_Indices := (24, 12, 4);
+
+   procedure Assert_Matrix (Mat : ROSIDL.Dynamic.Matrix_View) is
+   begin
+      pragma Assert (Mat.Size = 2 * 3 * 4);
+      pragma Assert (Mat.Dimensions = Matrix_Indices'Length);
+      for I in 1 .. Mat.Dimensions loop
+         pragma Assert (Mat.Label  (I) = ROSIDL.Dynamic.Default_Names (I));
+         pragma Assert (Mat.Stride (I) = Matrix_Strides (I));
+      end loop;
+
+      for I in 1 .. Mat.Size loop
+         pragma Assert (Mat.As_Array.Element (I).As_Uint64 /= 0);
+      end loop;
+
+      for I in 1 .. Matrix_Indices (1) loop
+         for J in 1 .. Matrix_Indices (2) loop
+            for K in 1 .. Matrix_Indices (3) loop
+               pragma Assert (Mat.Element ((I, J, K)).As_Uint64 = Uint64 (I*100 + J*10 + K));
+            end loop;
+         end loop;
+      end loop;
+   end Assert_Matrix;
+
    ------------
    -- Sender --
    ------------
@@ -77,7 +102,30 @@ procedure Rclada_Selftest is
          end loop;
 
          --  Matrices
+         declare
+            Mat : ROSIDL.Dynamic.Matrix_View renames Msg ("matrix").As_Matrix;
+         begin
+            pragma Assert (Mat.Size = 0);
+            Mat.Resize (Matrix_Indices);
 
+            Logging.Info ("Filling as array");
+            for I in 1 .. Mat.Size loop
+               Mat.As_Array.Element (I).As_Uint64 := Uint64 (I);
+            end loop;
+
+            Logging.Info ("Filling as matrix");
+            for I in 1 .. Matrix_Indices (1) loop
+               for J in 1 .. Matrix_Indices (2) loop
+                  for K in 1 .. Matrix_Indices (3) loop
+                     Mat.Element ((I, J, K)).As_Uint64 := Uint64 (I*100 + J*10 + K);
+                  end loop;
+               end loop;
+            end loop;
+
+            Assert_Matrix (Mat);
+         end;
+
+         Logging.Info ("Publishing message");
          Pub.Publish (Msg);
       else
          Timer.Cancel;
