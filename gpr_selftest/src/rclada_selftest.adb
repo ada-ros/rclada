@@ -11,15 +11,11 @@ with ROSIDL.Dynamic;
 with ROSIDL.Types;
 with ROSIDL.Typesupport;
 
-with System.Address_Image;
+--  with System.Address_Image;
 
 procedure Rclada_Selftest is
    use RCL;
    use ROSIDL.Types;
-
-   use all type ROSIDL.Types.Int8;
-   use all type ROSIDL.Types.Int32;
-   use all type ROSIDL.Types.Int64;
 
    Support : constant ROSIDl.Typesupport.Message_Support :=
                ROSIDL.Typesupport.Get_Message_Support
@@ -60,7 +56,7 @@ procedure Rclada_Selftest is
          --  Arrays
          Msg ("dynamic_array").As_Array.Resize (Test_Size);
          for I in 1 .. Msg ("dynamic_array").As_Array.Length loop
-            Msg ("dynamic_array").As_Array.Element (I).As_Float32 := Float (I);
+            Msg ("dynamic_array").As_Array.Element (I).As_Float32 := Float32 (I);
          end loop;
 
          for I in 1 .. Msg ("static_array").As_Array.Length loop
@@ -109,7 +105,7 @@ procedure Rclada_Selftest is
       for I in 1 .. Msg ("dynamic_array").As_Array.Length loop
 --           Logging.Info (Msg ("dynamic_array").As_Array.Element (I).As_Float32.Element.all'Img);
 --           Logging.Info (System.Address_Image (Msg ("dynamic_array").As_Array.Element (I).As_Float32.Element.all'Address));
-         pragma Assert (Msg ("dynamic_array").As_Array.Element (I).As_Float32 = Float (I), "dynamic array assignment failed");
+         pragma Assert (Msg ("dynamic_array").As_Array.Element (I).As_Float32 = Float32 (I), "dynamic array assignment failed");
       end loop;
 
       for I in 1 .. Msg ("static_array").As_Array.Length loop

@@ -202,7 +202,7 @@ package body RCL.Wait is
 
       Ret : constant Rcl_Ret_T :=
               Rcl_Wait (This.Impl'Access,
-                        ROSIDL.Types.Int64 (Timeout * 1000**3)); -- Nanosecs
+                        C.long (Timeout * 1000**3)); -- Nanosecs
    begin
       case Ret is
          when RMW_RET_OK =>

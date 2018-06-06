@@ -3,8 +3,6 @@ with Ada.Unchecked_Deallocation;
 with RCL.Allocators;
 with RCL.Nodes;
 
-with ROSIDL.Types;
-
 package body RCL.Timers is
 
    ----------
@@ -32,12 +30,12 @@ package body RCL.Timers is
    procedure Change_Period (This       : in out Timer;
                             New_Period :        Duration)
    is
-      Old : aliased ROSIDL.Types.Int64;
+      Old : aliased C.long;
    begin
       Check
         (Rcl_Timer_Exchange_Period
            (This.Impl,
-            ROSIDL.Types.Int64 (New_Period * 1_000_000_000.0),
+            C.long (New_Period * 1_000_000_000.0),
             Old'Access));
    end Change_Period;
 
@@ -65,7 +63,7 @@ package body RCL.Timers is
    ----------------
 
    function Get_Period (This : Timer) return Duration is
-      Period : aliased ROSIDL.Types.Int64;
+      Period : aliased C.long;
    begin
       Check (Rcl_Timer_Get_Period (This.Impl, Period'Access));
       return Duration (Period) / 1_000_000_000.0;
@@ -90,7 +88,7 @@ package body RCL.Timers is
          Check
            (Rcl_Timer_Init
               (This.Impl,
-               ROSIDL.Types.Int64 (Period * 1_000_000_000.0),
+               C.long (Period * 1_000_000_000.0),
                Null,
                Allocators.Get_Default_Allocator));
       end return;
