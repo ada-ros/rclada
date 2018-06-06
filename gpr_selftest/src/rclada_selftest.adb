@@ -11,9 +11,14 @@ with ROSIDL.Dynamic;
 with ROSIDL.Types;
 with ROSIDL.Typesupport;
 
+with System.Address_Image;
+
 procedure Rclada_Selftest is
    use RCL;
+   use ROSIDL.Types;
 
+   use all type ROSIDL.Types.Int8;
+   use all type ROSIDL.Types.Int32;
    use all type ROSIDL.Types.Int64;
 
    Support : constant ROSIDl.Typesupport.Message_Support :=
@@ -24,7 +29,11 @@ procedure Rclada_Selftest is
    Topic : constant String := "/rclada_test";
    Node  :          Nodes.Node           := Nodes.Init (Utils.Command_Name);
    Pub   :          Publishers.Publisher := Node.Publish (Support, Topic);
-   Done  :          Boolean := False;
+   Done  :          Boolean := False with Volatile;
+
+   Test_Int  : constant := 6976;
+   Test_Real : constant := Ada.Numerics.Pi;
+   Test_Size : constant := 6;
 
    ------------
    -- Sender --
@@ -38,10 +47,31 @@ procedure Rclada_Selftest is
    begin
       if not Done then
          Logging.Info ("Chatting");
-         Msg ("number").As_Int64 := 6976;
+
+         --  Primitive types
+         Msg ("number").As_Int64 := Test_Int;
          Msg ("text").Set_String (Topic);
          Msg ("bounded_string").Set_String ("12345678");
-         Msg ("real").As_Float64 := ROSIDL.Types.Float64 (Ada.Numerics.Pi);
+         Msg ("real").As_Float64 := Test_Real;
+
+         --  Structured types
+         Msg ("time").Get_Message.Field ("sec").As_Int32 := Test_Int;
+
+         --  Arrays
+         Msg ("dynamic_array").As_Array.Resize (Test_Size);
+         for I in 1 .. Msg ("dynamic_array").As_Array.Length loop
+            Msg ("dynamic_array").As_Array.Element (I).As_Float32 := Float (I);
+         end loop;
+
+         for I in 1 .. Msg ("static_array").As_Array.Length loop
+            Msg ("static_array").As_Array.Element (I).As_Int32 := Int32 (I);
+         end loop;
+
+         Msg ("bounded_array").As_Array.Resize (Test_Size);
+         Msg ("bounded_array").As_Array.Element (Test_Size).As_Int8 := Test_Size;
+
+         --  Matrices
+
          Pub.Publish (Msg);
       else
          Timer.Cancel;
@@ -61,12 +91,33 @@ procedure Rclada_Selftest is
       pragma Unreferenced (Info);
    begin
       Done := True;
-      Logging.Info ("Got chatter");
       Msg.Print_Metadata;
+
+      Logging.Info ("Got chatter");
+
+      --  Primitive types
       pragma Assert (Msg ("number").As_Int64 = 6976,  "int64 failed");
       pragma Assert (Msg ("text").Get_String = Topic, "string failed");
       pragma Assert (Msg ("bounded_string").Get_String = "12345678", "bounded_string failed");
-      pragma Assert (Msg ("real").As_Float64 = ROSIDL.Types.Float64 (Ada.Numerics.Pi), "float64 failed");
+      pragma Assert (Msg ("real").As_Float64 = Test_Real, "float64 failed");
+
+      --  Structured types
+      pragma Assert (Msg ("time.sec").As_Int32 = Test_Int, "message field failed");
+
+      --  Arrays
+      pragma Assert (Msg ("dynamic_array").As_Array.Length = Test_Size, "dynamic resize failed");
+      for I in 1 .. Msg ("dynamic_array").As_Array.Length loop
+--           Logging.Info (Msg ("dynamic_array").As_Array.Element (I).As_Float32.Element.all'Img);
+--           Logging.Info (System.Address_Image (Msg ("dynamic_array").As_Array.Element (I).As_Float32.Element.all'Address));
+         pragma Assert (Msg ("dynamic_array").As_Array.Element (I).As_Float32 = Float (I), "dynamic array assignment failed");
+      end loop;
+
+      for I in 1 .. Msg ("static_array").As_Array.Length loop
+         pragma Assert (Msg ("static_array").As_Array.Element (I).As_Int32 = Int32 (I), "dynamic array assignment failed");
+      end loop;
+
+      pragma Assert (Msg ("bounded_array").As_Array.Element (Test_Size).As_Int8 = Test_Size, "bounded array assignment failed");
+
    end Receiver;
 
 begin
