@@ -66,6 +66,16 @@ procedure Rclada_Selftest is
          Msg ("bounded_array").As_Array.Resize (Test_Size);
          Msg ("bounded_array").As_Array.Element (Test_Size).As_Int8 := Test_Size;
 
+         for I in 1 .. Msg ("fix_msg_arr").As_Array.Length loop
+            Msg ("fix_msg_arr").As_Array.Element (I).Get_Message.Field ("sec").As_Int32 := Int32 (I);
+         end loop;
+
+         Msg ("dyn_msg_arr").As_Array.Resize (Test_Size);
+         pragma Assert (Msg ("dyn_msg_arr").As_Array.Length = Test_Size);
+         for I in 1 .. Msg ("dyn_msg_arr").As_Array.Length loop
+            Msg ("dyn_msg_arr").As_Array.Element (I).Get_Message.Field ("sec").As_Int32 := Int32 (I);
+         end loop;
+
          --  Matrices
 
          Pub.Publish (Msg);
@@ -113,6 +123,16 @@ procedure Rclada_Selftest is
       end loop;
 
       pragma Assert (Msg ("bounded_array").As_Array.Element (Test_Size).As_Int8 = Test_Size, "bounded array assignment failed");
+
+      pragma Assert (Msg ("fix_msg_arr").As_Array.Length /= 0);
+      for I in 1 .. Msg ("fix_msg_arr").As_Array.Length loop
+         pragma Assert (Msg ("fix_msg_arr").As_Array.Element (I).Get_Message.Field ("sec").As_Int32 = Int32 (I));
+      end loop;
+
+      pragma Assert (Msg ("dyn_msg_arr").As_Array.Length = Test_Size);
+      for I in 1 .. Msg ("dyn_msg_arr").As_Array.Length loop
+         pragma Assert (Msg ("dyn_msg_arr").As_Array.Element (I).Get_Message.Field ("sec").As_Int32 = Int32 (I));
+      end loop;
 
    end Receiver;
 

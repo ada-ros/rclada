@@ -2,8 +2,6 @@ with RCL.Allocators;
 with RCL.Logging;
 with RCL.Subscriptions;
 
-with ROSIDL.Types;
-
 with Rcl_Types_H;
 with Rmw_Types_H;
 
