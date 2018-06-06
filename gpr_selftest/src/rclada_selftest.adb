@@ -43,8 +43,8 @@ procedure Rclada_Selftest is
          pragma Assert (Mat.Stride (I) = Matrix_Strides (I));
       end loop;
 
-      for I in 1 .. Mat.Size loop
-         pragma Assert (Mat.As_Array.Element (I).As_Uint64 /= 0);
+      for E of Mat.As_Array loop
+         pragma Assert (E.As_Uint64 /= 0);
       end loop;
 
       for I in 1 .. Matrix_Indices (1) loop
