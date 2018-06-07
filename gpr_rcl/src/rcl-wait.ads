@@ -69,7 +69,7 @@ package RCL.Wait is
                   Kind : Kinds) return Natural;
    
    function Wait (This    : in out Set;
-                  Timeout : Duration := Duration'Last) return Wait_Outcomes;
+                  Timeout : ROS2_Duration := Forever) return Wait_Outcomes;
    
 private
    

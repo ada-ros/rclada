@@ -65,7 +65,7 @@ package body RCL.Nodes is
                          Support  :        ROSIDL.Typesupport.Service_Support;
                          Name     :        String;
                          Request  :        ROSIDL.Dynamic.Message;
-                         Timeout  :        Duration := Duration'Last)
+                         Timeout  :        ROS2_Duration := Forever)
                          return            ROSIDL.Dynamic.Shared_Message
    is
    begin
@@ -85,7 +85,7 @@ package body RCL.Nodes is
                        During => Timeout - (Clock - Start));
 
             if This.Clients (1).Success then
-               return Resp : ROSIDL.Dynamic.Shared_Message :=
+               return Resp : constant ROSIDL.Dynamic.Shared_Message :=
                                This.Clients (1).Response.Element
                do
                   This.Client_Free (This.Clients.First_Index);
@@ -107,7 +107,7 @@ package body RCL.Nodes is
                           Name     :        String;
                           Request  :        ROSIDL.Dynamic.Message;
                           Callback :        Clients.Callback;
-                          Timeout  :        Duration := 0.0)
+                          Timeout  :        ROS2_Duration := 0.0)
    is
    begin
       if Timeout = 0.0 then
@@ -244,8 +244,8 @@ package body RCL.Nodes is
    ----------
 
    procedure Spin (This   : in out Node;
-                   Once   :        Boolean  := False;
-                   During :        Duration := 0.1)
+                   Once   :        Boolean       := False;
+                   During :        ROS2_Duration := 0.1)
    is
       use Ada.Calendar;
       Start : constant Time := Clock;
@@ -307,6 +307,10 @@ package body RCL.Nodes is
             end if;
          end loop;
 
+--           Logging.Info ("WAITING:" & ROS2_Duration'Image (During - (Clock - Start)) &
+--                           " LONGLAST:" & C.Long'Last'Img &
+--                           " EQUIV:" & Long_Long_Integer'(Long_Long_Integer (During - (Clock - Start) * 1_000_000_000.0))'Img);
+
          case Set.Wait (During - (Clock - Start)) is
             when Error     =>
                raise Program_Error with "Error in Set.Wait";
@@ -325,8 +329,14 @@ package body RCL.Nodes is
 
    begin
       loop
-         if Spin_Once and then Once then
-            exit;
+         if This.Clients.Is_Empty       and then This.Services.Is_Empty and then
+            This.Subscriptions.Is_Empty and then This.Timers.Is_Empty
+         then
+            delay During - (Clock - Start);
+         else
+            if Spin_Once and then Once then
+               exit;
+            end if;
          end if;
 
          exit when Clock - Start >= During;

@@ -20,6 +20,13 @@ package RCL is
    RCL_Timeout   : exception;
    --  Raised on certain subprograms from the RCL Ada binding
    --  This is not necessarily a fatal error
+   
+   Forever : constant Duration := 
+               Duration (Long_Long_Integer (Interfaces.C.Long'Last) / 2 / 1_000_000_000);
+   --  Max nanoseconds that can be accepted by the C side
+   --  The / 2 is needed because some internal overflow in the C side 
+   
+   subtype ROS2_Duration is Duration range Duration'First .. Forever;
 
 private
    
@@ -34,10 +41,11 @@ private
    use C_Strings;
    
    use all type C.int;
+   use all type C.Long;
    use all type C.size_t;
    use all type C.unsigned_char;
    
-   subtype Rcl_Error_Code is Rcl_Types_H.Rcl_Ret_T;
+   subtype Rcl_Error_Code is Rcl_Types_H.Rcl_Ret_T;  
    
    procedure Check (Ret : Rcl_Error_Code);
    

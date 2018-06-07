@@ -43,8 +43,8 @@ package RCL.Nodes is
    ----------
 
    procedure Spin (This   : in out Node; 
-                   Once   :        Boolean  := False;
-                   During :        Duration := 0.1);
+                   Once   :        Boolean       := False;
+                   During :        ROS2_Duration := 0.1);
    --  Check blocking events and dispatch to callbacks for at least During seconds
    --  If Once, it will return early immediately after processing one event
    
@@ -60,7 +60,7 @@ package RCL.Nodes is
                          Support  :        ROSIDL.Typesupport.Service_Support;
                          Name     :        String;
                          Request  :        ROSIDL.Dynamic.Message;
-                         Timeout  :        Duration := Duration'Last)
+                         Timeout  :        ROS2_Duration := Forever)
                          return            ROSIDL.Dynamic.Shared_Message;
    --  See the documentation on Client_Call below
    
@@ -69,7 +69,7 @@ package RCL.Nodes is
                           Name     :        String;
                           Request  :        ROSIDL.Dynamic.Message;
                           Callback :        Clients.Callback;
-                          Timeout  :        Duration := 0.0);
+                          Timeout  :        ROS2_Duration := 0.0);
    --  If Timeout > 0.0 the call will block for as much time
    --    or raise RCL_Timeout.
    --    In either case the callback won't be called after the call returns.
