@@ -56,6 +56,14 @@ package RCL.Nodes is
    -- Client_Call --
    -----------------
    
+   function Client_Call (This     : in out Node;
+                         Support  :        ROSIDL.Typesupport.Service_Support;
+                         Name     :        String;
+                         Request  :        ROSIDL.Dynamic.Message;
+                         Timeout  :        Duration := Duration'Last)
+                         return            ROSIDL.Dynamic.Shared_Message;
+   --  See the documentation on Client_Call below
+   
    procedure Client_Call (This     : in out Node;
                           Support  :        ROSIDL.Typesupport.Service_Support;
                           Name     :        String;
@@ -169,10 +177,6 @@ private
       Services      :         Srv_Vectors.Vector;
       Subscriptions :         Sub_Vectors.Vector;
       Timers        :         Timer_Vector;
-                  
-      Block_Success : Boolean;
-      --  For the client blocking call
-      --  Set to true by Spin once the client response is received
    end record;   
    
    procedure Client_Free (This : in out Node;

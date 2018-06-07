@@ -13,20 +13,22 @@ with Rcl_Client_H;  use Rcl_Client_H;
 with Rcl_Service_H; use Rcl_Service_H;
 with Rcl_Timer_H;   use Rcl_Timer_H;
 
+with ROSIDL.Impl;
+
 package body RCL.Nodes is
 
    use all type Timers.Timer_Id;
 
-   -----------------
-   -- Client_Call --
-   -----------------
+   -------------------------
+   -- Client_Call_Prepare --
+   -------------------------
 
-   procedure Client_Call (This     : in out Node;
-                          Support  :        ROSIDL.Typesupport.Service_Support;
-                          Name     :        String;
-                          Request  :        ROSIDL.Dynamic.Message;
-                          Callback :        Clients.Callback;
-                          Timeout  :        Duration := 0.0)
+   procedure Client_Call_Prepare (This     : in out Node;
+                                  Support  :        ROSIDL.Typesupport.Service_Support;
+                                  Name     :        String;
+                                  Request  :        ROSIDL.Dynamic.Message;
+                                  Callback :        Clients.Callback;
+                                  Blocking :        Boolean)
    is
       Client : aliased Rcl_Client_T         := Rcl_Get_Zero_Initialized_Client;
       Opts   : aliased Rcl_Client_Options_T := Rcl_Client_Get_Default_Options;
@@ -43,33 +45,84 @@ package body RCL.Nodes is
       This.Clients.Prepend (Callbacks.Client_Dispatcher'
                               (Client   => Clients.Impl.To_C_Client (Client),
                                Callback => Callback,
-                               Support  => Support,
-                               Blocking => Timeout /= 0.0));
+                               Blocking => Blocking,
+                               Response => ROSIDL.Impl.Message_Holders.To_Holder
+                                 (ROSIDL.Dynamic.Init_Shared (Support.Response_Support)),
+                               Success  => False));
 
       Check
         (Rcl_Send_Request
            (Client'Access,
             Request.To_Ptr,
             Seq'Access));
+   end Client_Call_Prepare;
 
-      if Timeout /= 0.0 then
-         This.Block_Success := False;
+   -----------------
+   -- Client_Call --
+   -----------------
 
-         declare
-            use Ada.Calendar;
-            Start : constant Time := Clock;
-         begin
-            loop
-               This.Spin (Once   => True,
-                          During => Timeout - (Clock - Start));
+   function Client_Call (This     : in out Node;
+                         Support  :        ROSIDL.Typesupport.Service_Support;
+                         Name     :        String;
+                         Request  :        ROSIDL.Dynamic.Message;
+                         Timeout  :        Duration := Duration'Last)
+                         return            ROSIDL.Dynamic.Shared_Message
+   is
+   begin
+      Client_Call_Prepare (This     => This,
+                           Support  => Support,
+                           Name     => Name,
+                           Request  => Request,
+                           Callback => null,
+                           Blocking => True);
 
-               if This.Block_Success then
-                  return;
-               elsif Clock - Start >= Timeout then
+      declare
+         use Ada.Calendar;
+         Start : constant Time := Clock;
+      begin
+         loop
+            This.Spin (Once   => True,
+                       During => Timeout - (Clock - Start));
+
+            if This.Clients (1).Success then
+               return Resp : ROSIDL.Dynamic.Shared_Message :=
+                               This.Clients (1).Response.Element
+               do
                   This.Client_Free (This.Clients.First_Index);
-                  raise RCL_Timeout;
-               end if;
-            end loop;
+               end return;
+            elsif Clock - Start >= Timeout then
+               This.Client_Free (This.Clients.First_Index);
+               raise RCL_Timeout;
+            end if;
+         end loop;
+      end;
+   end Client_Call;
+
+   -----------------
+   -- Client_Call --
+   -----------------
+
+   procedure Client_Call (This     : in out Node;
+                          Support  :        ROSIDL.Typesupport.Service_Support;
+                          Name     :        String;
+                          Request  :        ROSIDL.Dynamic.Message;
+                          Callback :        Clients.Callback;
+                          Timeout  :        Duration := 0.0)
+   is
+   begin
+      if Timeout = 0.0 then
+         Client_Call_Prepare (This     => This,
+                              Support  => Support,
+                              Name     => Name,
+                              Request  => Request,
+                              Callback => Callback,
+                              Blocking => False);
+      else
+         declare
+            Response : constant ROSIDL.Dynamic.Shared_Message :=
+                         This.Client_Call (Support, Name, Request, Timeout);
+         begin
+            Callback (Response.Msg.all);
          end;
       end if;
    end Client_Call;
@@ -82,6 +135,11 @@ package body RCL.Nodes is
                           Pos  : Positive) is
    begin
       Check (Rcl_Client_Fini (This.Clients (Pos).Client.To_C, This.Impl.Impl'Access));
+
+      This.Clients (Pos).Response.Clear;
+      --  This should happen automatically on deletion from the container,
+      --    but it doesn't. The Indefinite_Holders where buggy in 2017
+
       This.Clients.Delete (Pos);
    end Client_Free;
 
@@ -201,11 +259,12 @@ package body RCL.Nodes is
       begin
          case T.Kind is
             when Client =>
-               if This.Clients (T.Index).Blocking then
-                  This.Block_Success := True;
-               end if;
                This.Clients (T.Index).Dispatch;
-               This.Client_Free (T.Index);
+               if not This.Clients (T.Index).Blocking then
+                  --  If blocking, the returned response is needed yet, and
+                  --    will be freed in function Client_Call
+                  This.Client_Free (T.Index);
+               end if;
             when Service =>
                This.Services (T.Index).Dispatch;
             when Subscription =>

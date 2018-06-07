@@ -17,16 +17,20 @@ package body RCL.Callbacks is
    --------------
 
    procedure Dispatch (This : in out Client_Dispatcher) is
-      Header   : aliased Rmw_Request_Id_T;
-      Response : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (This.Support.Response_Support);
+      use all type Clients.Callback;
+      Header : aliased Rmw_Request_Id_T;
    begin
+      This.Success := True;
+
       Check
         (Rcl_Take_Response
            (This.Client.To_C,
             Header'Access,
-            Response.To_Ptr));
+            This.Response.Element.Msg.To_Ptr));
 
-      This.Callback (Response);
+      if not This.Blocking and then This.Callback /= null then
+         This.Callback (This.Response.Element);
+      end if;
    end Dispatch;
 
    --------------

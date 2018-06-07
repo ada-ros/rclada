@@ -7,6 +7,7 @@ with RCL.Services.Impl;
 with RCL.Subscriptions;
 with RCL.Timers;
 
+with ROSIDL.Impl;
 with ROSIDL.Typesupport;
 
 package RCL.Callbacks is
@@ -25,8 +26,11 @@ package RCL.Callbacks is
    type Client_Dispatcher is new Dispatcher with record
       Client   : Clients.Impl.C_Client;
       Callback : Clients.Callback;
-      Support  : ROSIDL.Typesupport.Service_Support;
+      
+      --  Used for the blocking version
       Blocking : Boolean;
+      Response : ROSIDL.Impl.Message_Holder;
+      Success  : Boolean;
    end record;
    
    procedure Dispatch (This : in out Client_Dispatcher);

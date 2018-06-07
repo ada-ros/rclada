@@ -231,6 +231,7 @@ begin
    Request ("a").As_UInt64 := 2;
    Request ("b").As_UInt64 := 3;
    Node.Client_Call (Service_Support, Service_Name, Request, Client_Listener'Unrestricted_Access);
+   --  Non-blocking client test
 
    Node.Subscribe (Support, Topic, Receiver'Unrestricted_Access);
    Node.Timer_Add (0.1,            Sender'Unrestricted_Access);
@@ -239,11 +240,12 @@ begin
       Node.Spin;
    end loop;
 
+   --  Blocking client test (callback version)
    declare
       procedure Get_Sum (Resp : ROSIDL.Dynamic.Message) is
       begin
          Logging.Info ("Got reply, sum is" & Resp ("sum").As_Uint64.Image);
-         Logging.Info ("Client blocking testing done");
+         Logging.Info ("Client blocking (procedure) testing done");
       end Get_Sum;
    begin
       Node.Client_Call (Service_Support,
@@ -251,6 +253,18 @@ begin
                         Request,
                         Get_Sum'Unrestricted_Access,
                         Timeout => 1.0);
+   end;
+
+   --  Blocking client test (function version)
+   declare
+      Response : constant ROSIDL.Dynamic.Shared_Message :=
+                   Node.Client_Call (Service_Support,
+                                     Service_Name,
+                                     Request,
+                                     Timeout => 1.0);
+   begin
+      Logging.Info ("Got reply, sum is" & Response ("sum").As_Uint64.Image);
+      Logging.Info ("Client blocking (function) testing done");
    end;
 
    Logging.Info ("Test successful");
