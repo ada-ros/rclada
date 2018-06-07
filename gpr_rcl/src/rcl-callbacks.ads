@@ -26,6 +26,7 @@ package RCL.Callbacks is
       Client   : Clients.Impl.C_Client;
       Callback : Clients.Callback;
       Support  : ROSIDL.Typesupport.Service_Support;
+      Blocking : Boolean;
    end record;
    
    procedure Dispatch (This : in out Client_Dispatcher);

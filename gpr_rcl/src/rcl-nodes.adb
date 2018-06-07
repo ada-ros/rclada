@@ -21,29 +21,12 @@ package body RCL.Nodes is
    -- Client_Call --
    -----------------
 
-   function Client_Call (This    : in out Node;
-                         Support :        ROSIDL.Typesupport.Service_Support;
-                         Name    :        String;
-                         Request :        ROSIDL.Dynamic.Message;
-                         Timeout :        Duration := Duration'Last)
-                         return           ROSIDL.Dynamic.Message is
-   begin
-      raise Program_Error;
-      return Client_Call (This, Support, Name, Request, Timeout);
-   end Client_Call;
-   --  Blocking call to a service.
-   --  May raise RCL_Timeout, in which case the returned value won't be valid
-   --  Spins the node internally, so other callbacks might get through
-
-   -----------------
-   -- Client_Call --
-   -----------------
-
    procedure Client_Call (This     : in out Node;
                           Support  :        ROSIDL.Typesupport.Service_Support;
                           Name     :        String;
                           Request  :        ROSIDL.Dynamic.Message;
-                          Callback :        Clients.Callback)
+                          Callback :        Clients.Callback;
+                          Timeout  :        Duration := 0.0)
    is
       Client : aliased Rcl_Client_T         := Rcl_Get_Zero_Initialized_Client;
       Opts   : aliased Rcl_Client_Options_T := Rcl_Client_Get_Default_Options;
@@ -57,17 +40,50 @@ package body RCL.Nodes is
             C_Strings.To_C (Name).To_Ptr,
             Opts'Access));
 
-      This.Clients.Append (Callbacks.Client_Dispatcher'
-                             (Client   => Clients.Impl.To_C_Client (Client),
-                              Callback => Callback,
-                              Support  => Support));
+      This.Clients.Prepend (Callbacks.Client_Dispatcher'
+                              (Client   => Clients.Impl.To_C_Client (Client),
+                               Callback => Callback,
+                               Support  => Support,
+                               Blocking => Timeout /= 0.0));
 
       Check
         (Rcl_Send_Request
            (Client'Access,
             Request.To_Ptr,
             Seq'Access));
+
+      if Timeout /= 0.0 then
+         This.Block_Success := False;
+
+         declare
+            use Ada.Calendar;
+            Start : constant Time := Clock;
+         begin
+            loop
+               This.Spin (Once   => True,
+                          During => Timeout - (Clock - Start));
+
+               if This.Block_Success then
+                  return;
+               elsif Clock - Start >= Timeout then
+                  This.Client_Free (This.Clients.First_Index);
+                  raise RCL_Timeout;
+               end if;
+            end loop;
+         end;
+      end if;
    end Client_Call;
+
+   -----------------
+   -- Client_Free --
+   -----------------
+
+   procedure Client_Free (This : in out Node;
+                          Pos  : Positive) is
+   begin
+      Check (Rcl_Client_Fini (This.Clients (Pos).Client.To_C, This.Impl.Impl'Access));
+      This.Clients.Delete (Pos);
+   end Client_Free;
 
    ------------------------
    -- Delete_If_Existing --
@@ -170,6 +186,7 @@ package body RCL.Nodes is
    ----------
 
    procedure Spin (This   : in out Node;
+                   Once   :        Boolean  := False;
                    During :        Duration := 0.1)
    is
       use Ada.Calendar;
@@ -184,9 +201,11 @@ package body RCL.Nodes is
       begin
          case T.Kind is
             when Client =>
+               if This.Clients (T.Index).Blocking then
+                  This.Block_Success := True;
+               end if;
                This.Clients (T.Index).Dispatch;
-               Check (Rcl_Client_Fini (This.Clients (T.Index).Client.To_C, This.Impl.Impl'Access));
-               This.Clients.Delete (T.Index);
+               This.Client_Free (T.Index);
             when Service =>
                This.Services (T.Index).Dispatch;
             when Subscription =>
@@ -200,7 +219,9 @@ package body RCL.Nodes is
       -- Spin_Once --
       ---------------
 
-      procedure Spin_Once is
+      function Spin_Once return Boolean is
+         --  True if something was processed
+
          use all type Wait.Wait_Outcomes;
 
          Set : Wait.Set := Wait.Init
@@ -228,18 +249,26 @@ package body RCL.Nodes is
          end loop;
 
          case Set.Wait (During - (Clock - Start)) is
-            when Error     => raise Program_Error with "Error in Set.Wait";
-            when Timeout   => null;
+            when Error     =>
+               raise Program_Error with "Error in Set.Wait";
+
+            when Timeout   =>
+               return False;
+
             when Triggered =>
                for Trigger of Set loop
                   Process (Trigger);
                end loop;
+               return True;
+
          end case;
       end Spin_Once;
 
    begin
       loop
-         Spin_Once;
+         if Spin_Once and then Once then
+            exit;
+         end if;
 
          exit when Clock - Start >= During;
       end loop;

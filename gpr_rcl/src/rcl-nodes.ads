@@ -43,8 +43,10 @@ package RCL.Nodes is
    ----------
 
    procedure Spin (This   : in out Node; 
+                   Once   :        Boolean  := False;
                    During :        Duration := 0.1);
    --  Check blocking events and dispatch to callbacks for at least During seconds
+   --  If Once, it will return early immediately after processing one event
    
    -----------------------
    --  ROS2 FACILITIES  --
@@ -53,22 +55,21 @@ package RCL.Nodes is
    -----------------
    -- Client_Call --
    -----------------
-
-   function Client_Call (This    : in out Node;
-                         Support :        ROSIDL.Typesupport.Service_Support;
-                         Name    :        String;
-                         Request :        ROSIDL.Dynamic.Message;
-                         Timeout :        Duration := Duration'Last) 
-                         return           ROSIDL.Dynamic.Message;
-   --  Blocking call to a service.
-   --  May raise RCL_Timeout, in which case the returned value won't be valid
-   --  Spins the node internally, so other callbacks might get through
    
    procedure Client_Call (This     : in out Node;
                           Support  :        ROSIDL.Typesupport.Service_Support;
                           Name     :        String;
                           Request  :        ROSIDL.Dynamic.Message;
-                          Callback :        Clients.Callback);
+                          Callback :        Clients.Callback;
+                          Timeout  :        Duration := 0.0);
+   --  If Timeout > 0.0 the call will block for as much time
+   --    or raise RCL_Timeout.
+   --    In either case the callback won't be called after the call returns.
+   --    It's thus safe to use a local callback for blocking calls
+   --    The node will be spun internally so calls to other unrelated callbacks
+   --       might happen nonetheless.
+   --  THIS IS INTENDED TO BE USED BY A SINGLE CLIENT SIMULTANEOUSLY AT MOST
+   --  In other words, no concurrent calls from several threads.
    
    -------------
    -- Publish --
@@ -162,13 +163,20 @@ private
    
    type Node is new Ada.Finalization.Limited_Controlled with record 
       Impl          : aliased C_Node := (Impl => Rcl_Get_Zero_Initialized_Node);
+      Self          :  access Node   := Node'Unchecked_Access;
       
       Clients       :         Client_Vectors.Vector;
       Services      :         Srv_Vectors.Vector;
       Subscriptions :         Sub_Vectors.Vector;
       Timers        :         Timer_Vector;
-      Self          :  access Node := Node'Unchecked_Access;
+                  
+      Block_Success : Boolean;
+      --  For the client blocking call
+      --  Set to true by Spin once the client response is received
    end record;   
+   
+   procedure Client_Free (This : in out Node;
+                          Pos  : Positive);
    
    procedure Timer_Assert (This  : Node;
                            Timer : Timers.Timer_Id);

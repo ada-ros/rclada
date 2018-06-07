@@ -239,5 +239,19 @@ begin
       Node.Spin;
    end loop;
 
+   declare
+      procedure Get_Sum (Resp : ROSIDL.Dynamic.Message) is
+      begin
+         Logging.Info ("Got reply, sum is" & Resp ("sum").As_Uint64.Image);
+         Logging.Info ("Client blocking testing done");
+      end Get_Sum;
+   begin
+      Node.Client_Call (Service_Support,
+                        Service_Name,
+                        Request,
+                        Get_Sum'Unrestricted_Access,
+                        Timeout => 1.0);
+   end;
+
    Logging.Info ("Test successful");
 end Rclada_Selftest;
