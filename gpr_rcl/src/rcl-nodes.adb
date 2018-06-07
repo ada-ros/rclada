@@ -2,11 +2,14 @@ with Ada.Calendar;
 with Ada.Containers;
 with Ada.Exceptions;
 
+with RCL.Allocators;
 with RCL.Clients.Impl;
 with RCL.Logging;
 with RCL.Publishers.Impl;
 with RCL.Services.Impl;
 with RCL.Subscriptions;
+with RCL.Utils.Names_And_Types;
+with RCL.Utils.String_Arrays;
 with RCL.Wait;
 
 with Rcl_Client_H;  use Rcl_Client_H;
@@ -222,6 +225,101 @@ package body RCL.Nodes is
          Put_Line ("Exception while finalizing node:");
          Put_Line (Ada.Exceptions.Exception_Information (E));
    end Finalize;
+
+   ----------------------------
+   -- Graph_Count_Publishers --
+   ----------------------------
+
+   function Graph_Count_Publishers (This : Node; Topic : String) return Natural is
+      Count : aliased C.Size_T;
+   begin
+      Check
+        (Rcl_Count_Publishers
+           (This.Impl.Impl'Access,
+            To_C (Topic).To_Ptr,
+            Count'Access));
+
+      return Natural (Count);
+   end Graph_Count_Publishers;
+
+   -----------------------------
+   -- Graph_Count_Subscribers --
+   -----------------------------
+
+   function Graph_Count_Subscribers (This : Node; Topic : String) return Natural is
+      Count : aliased C.Size_T;
+   begin
+      Check
+        (Rcl_Count_Subscribers
+           (This.Impl.Impl'Access,
+            To_C (Topic).To_Ptr,
+            Count'Access));
+
+      return Natural (Count);
+   end Graph_Count_Subscribers;
+
+   ----------------------
+   -- Graph_Node_Names --
+   ----------------------
+
+   function Graph_Node_Names (This : Node) return Utils.Node_Name_Vector is
+      Arr : aliased Utils.String_Arrays.String_Array;
+   begin
+      Check
+        (Rcl_Get_Node_Names
+           (This.Impl.Impl'Access,
+            Allocators.Get_Default_Allocator,
+            Arr.To_C));
+
+      return V : Utils.Node_Name_Vector do
+         for I in 1 .. Arr.Length loop
+            V.Append (Arr.Element (I));
+         end loop;
+      end return;
+   end Graph_Node_Names;
+
+   --------------------
+   -- Graph_Services --
+   --------------------
+
+   function Graph_Services (This : Node) return Utils.Services_And_Types is
+      Arr   : aliased Utils.Names_And_Types.Vector;
+      Alloc : aliased Allocators.Allocator := Allocators.Get_Default_Allocator;
+   begin
+      Check
+        (rcl_get_service_names_and_types
+           (This.Impl.Impl'Access,
+            Alloc'Access,
+            Arr.To_C));
+
+      return V : Utils.Services_And_Types do
+         for I in 1 .. Arr.Length loop
+            V.Insert (Arr.Names (I), Arr.Types (I));
+         end loop;
+      end return;
+   end Graph_Services;
+
+   ------------------
+   -- Graph_Topics --
+   ------------------
+
+   function Graph_Topics (This : Node; Demangle : Boolean := True) return Utils.Topics_And_Types is
+      Arr   : aliased Utils.Names_And_Types.Vector;
+      Alloc : aliased Allocators.Allocator := Allocators.Get_Default_Allocator;
+   begin
+      Check
+        (rcl_get_topic_names_and_types
+           (This.Impl.Impl'Access,
+            Alloc'Access,
+            (if Demangle then 0 else 1), -- Note: in C side is No_Demangle (bool)
+            Arr.To_C));
+
+      return V : Utils.Topics_And_Types do
+         for I in 1 .. Arr.Length loop
+            V.Insert (Arr.Names (I), Arr.Types (I));
+         end loop;
+      end return;
+   end Graph_Topics;
 
    -------------
    -- Publish --

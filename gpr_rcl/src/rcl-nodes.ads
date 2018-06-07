@@ -5,8 +5,9 @@ with RCL.Callbacks;
 with RCL.Clients;
 with RCL.Publishers;
 limited with RCL.Subscriptions;
-with Rcl.Services;
+with RCL.Services;
 with RCL.Timers;
+with RCL.Utils;
 
 with Rcl_Node_H;         use Rcl_Node_H;
 
@@ -135,6 +136,21 @@ package RCL.Nodes is
    procedure Timer_Reset (This  : in out Node;
                           Timer :        Timers.Timer_Id);
    --  Resets the elapsed time (if enabled), or reenables (if cancelled) a timer
+   
+   ------------------
+   --  ROS2 GRAPH  --
+   ------------------
+   --  Functions returning information about the connection graph
+   
+   function Graph_Count_Publishers (This : Node; Topic : String) return Natural;
+   
+   function Graph_Count_Subscribers (This : Node; Topic : String) return Natural;
+   
+   function Graph_Node_Names (This : Node) return Utils.Node_Name_Vector;
+   
+   function Graph_Services (This : Node) return Utils.Services_And_Types;
+   
+   function Graph_Topics (This : Node; Demangle : Boolean := True) return Utils.Topics_And_Types;   
    
    -------------------------------------------------
    --  Low level access not intended for clients  --
