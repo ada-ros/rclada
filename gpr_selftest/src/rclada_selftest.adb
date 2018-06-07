@@ -25,7 +25,7 @@ procedure Rclada_Selftest is
    Topic : constant String := "/rclada_test";
    Node  :          Nodes.Node           := Nodes.Init (Utils.Command_Name);
    Pub   :          Publishers.Publisher := Node.Publish (Support, Topic);
-   Done  :          Boolean := False with Volatile;
+   Topic_Done :     Boolean := False with Volatile;
 
    Test_Int  : constant := 6976;
    Test_Real : constant := Ada.Numerics.Pi;
@@ -66,7 +66,7 @@ procedure Rclada_Selftest is
       Msg : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (Support);
 
    begin
-      if not Done then
+      if not Topic_Done then
          Logging.Info ("Chatting");
 
          --  Primitive types
@@ -132,7 +132,7 @@ procedure Rclada_Selftest is
       end if;
    exception
       when others =>
-         Done := True;
+         Topic_Done := True;
          raise;
    end Sender;
 
@@ -144,7 +144,7 @@ procedure Rclada_Selftest is
                        Info :        ROSIDL.Message_Info) is
       pragma Unreferenced (Info);
    begin
-      Done := True;
+      Topic_Done := True;
       Msg.Print_Metadata;
 
       Logging.Info ("Got chatter");
@@ -184,14 +184,58 @@ procedure Rclada_Selftest is
 
       Assert_Matrix (Msg ("matrix").As_Matrix);
 
+      Logging.Info ("Topic testing done");
    end Receiver;
 
+   Service_Support : constant ROSIDl.Typesupport.Service_Support :=
+                       ROSIDL.Typesupport.Get_Service_Support
+                         ("rosidl_generator_ada", "Test");
+
+   Service_Name : constant String := "rclada_test_service";
+
+   Service_Done : Boolean := False with Volatile;
+
+   -----------
+   -- Adder --
+   -----------
+
+   procedure Adder (Req  : in out ROSIDL.Dynamic.Message;
+                    Resp : in out ROSIDL.Dynamic.Message)
+   is
+      A : constant UInt64 := Req ("a").As_UInt64;
+      B : constant UInt64 := Req ("b").As_UInt64;
+   begin
+      Logging.Info ("Got request, serving" & A'Img & " +" & B'Img);
+      Resp ("sum").As_UInt64 := A + B;
+      Logging.Info ("Service testing done");
+   end Adder;
+
+   ---------------------
+   -- Client_Listener --
+   ---------------------
+
+   procedure Client_Listener (Resp : ROSIDL.Dynamic.Message) is
+   begin
+      Service_Done := True;
+      Logging.Info ("Got reply, sum is" & Resp ("sum").As_Uint64.Image);
+      Logging.Info ("Client testing done");
+   end Client_Listener;
+
+   Request : ROSIDL.Dynamic.Message :=
+               ROSIDL.Dynamic.Init (Service_Support.Request_Support);
 begin
    Logging.Set_Name (Utils.Command_Name);
+
+   Node.Serve (Service_Support, Service_Name, Adder'Unrestricted_Access);
+
+   Request ("a").As_UInt64 := 2;
+   Request ("b").As_UInt64 := 3;
+   Node.Client_Call (Service_Support, Service_Name, Request, Client_Listener'Unrestricted_Access);
+
    Node.Subscribe (Support, Topic, Receiver'Unrestricted_Access);
    Node.Timer_Add (0.1,            Sender'Unrestricted_Access);
 
-   while not Done loop
+   while not (Topic_Done and then Service_Done) loop
       Node.Spin;
    end loop;
 

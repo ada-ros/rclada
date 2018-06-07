@@ -12,6 +12,16 @@ package body RCL.Wait is
    ---------
 
    procedure Add (This : aliased in out Set;
+                  Cli  : aliased in out Clients.Impl.C_Client) is
+   begin
+      Check (Rcl_Wait_Set_Add_Client (This.Impl'Access, Cli.To_C));
+   end Add;
+
+   ---------
+   -- Add --
+   ---------
+
+   procedure Add (This : aliased in out Set;
                   Srv  : aliased in out Services.Impl.C_Service) is
    begin
       Check (Rcl_Wait_Set_Add_Service (This.Impl'Access, Srv.To_C));
@@ -74,6 +84,10 @@ package body RCL.Wait is
                                               Pos : C.Int)
                                               return CX.Bool with Convention => C;
 
+      function Rclada_Wait_Set_Client_Check (Set : access constant Rcl_Wait_Set_T;
+                                             Pos : C.Int)
+                                             return CX.Bool with Import, Convention => C;
+
       function Rclada_Wait_Set_Service_Check (Set : access constant Rcl_Wait_Set_T;
                                               Pos : C.Int)
                                               return CX.Bool with Import, Convention => C;
@@ -87,7 +101,8 @@ package body RCL.Wait is
                                                    return CX.Bool with Import, Convention => C;
 
       Checkers : constant array (Kinds) of Access_Checker
-        := (Service      => Rclada_Wait_Set_Service_Check'Access,
+        := (Client       => Rclada_Wait_Set_Client_Check'Access,
+            Service      => Rclada_Wait_Set_Service_Check'Access,
             Subscription => Rclada_Wait_Set_Subscription_Check'Access,
             Timer        => Rclada_Wait_Set_Timer_Check'Access);
 
@@ -152,11 +167,12 @@ package body RCL.Wait is
    -- Init --
    ----------
 
-   function Init (Num_Services      : Natural := 0;
+   function Init (Num_Clients       : Natural := 0;
+                  Num_Services      : Natural := 0;
                   Num_Subscriptions : Natural := 0;
                   Num_Timers        : Natural := 0) return Set is
    begin
-      if Num_Services + Num_Subscriptions + Num_Timers = 0 then
+      if Num_Clients + Num_Services + Num_Subscriptions + Num_Timers = 0 then
          raise Constraint_Error with "Nothing to wait on!";
       end if;
 
@@ -165,7 +181,7 @@ package body RCL.Wait is
            (Rcl_Wait_Set_Init
               (S.Impl'Access,
                Allocator                  => Allocators.Get_Default_Allocator,
-               Number_Of_Clients          => 0,
+               Number_Of_Clients          => C.Size_T (Num_Clients),
                Number_Of_Guard_Conditions => 0,
                Number_Of_Services         => C.Size_T (Num_Services),
                Number_Of_Subscriptions    => C.Size_T (Num_Subscriptions),
@@ -195,6 +211,7 @@ package body RCL.Wait is
    function Size (This : Set;
                   Kind : Kinds) return Natural is
      (case Kind is
+         when Client       => Natural (This.Impl.Size_Of_Clients),
          when Service      => Natural (This.Impl.Size_Of_Services),
          when Subscription => Natural (This.Impl.Size_Of_Subscriptions),
          when Timer        => Natural (This.Impl.Size_Of_Timers));

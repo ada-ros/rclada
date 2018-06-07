@@ -1,3 +1,4 @@
+with Rcl_Client_H;  use Rcl_Client_H;
 with Rcl_Service_H; use Rcl_Service_H;
 with Rcl_Timer_H;   use Rcl_Timer_H;
 with Rcl_Types_H;   use Rcl_Types_H;
@@ -10,6 +11,23 @@ with RCL.Nodes; pragma Unreferenced (RCL.Nodes);
 with ROSIDL.Dynamic;
 
 package body RCL.Callbacks is
+
+   --------------
+   -- Dispatch --
+   --------------
+
+   procedure Dispatch (This : in out Client_Dispatcher) is
+      Header   : aliased Rmw_Request_Id_T;
+      Response : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (This.Support.Response_Support);
+   begin
+      Check
+        (Rcl_Take_Response
+           (This.Client.To_C,
+            Header'Access,
+            Response.To_Ptr));
+
+      This.Callback (Response);
+   end Dispatch;
 
    --------------
    -- Dispatch --

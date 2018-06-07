@@ -2,6 +2,7 @@ with Ada.Containers.Vectors;
 with Ada.Finalization;
 
 with RCL.Callbacks;
+with RCL.Clients;
 with RCL.Publishers;
 limited with RCL.Subscriptions;
 with Rcl.Services;
@@ -9,6 +10,7 @@ with RCL.Timers;
 
 with Rcl_Node_H;         use Rcl_Node_H;
 
+with ROSIDL.Dynamic;
 with ROSIDL.Typesupport;
 
 package RCL.Nodes is
@@ -43,6 +45,30 @@ package RCL.Nodes is
    procedure Spin (This   : in out Node; 
                    During :        Duration := 0.1);
    --  Check blocking events and dispatch to callbacks for at least During seconds
+   
+   -----------------------
+   --  ROS2 FACILITIES  --
+   -----------------------
+   
+   -----------------
+   -- Client_Call --
+   -----------------
+
+   function Client_Call (This    : in out Node;
+                         Support :        ROSIDL.Typesupport.Service_Support;
+                         Name    :        String;
+                         Request :        ROSIDL.Dynamic.Message;
+                         Timeout :        Duration := Duration'Last) 
+                         return           ROSIDL.Dynamic.Message;
+   --  Blocking call to a service.
+   --  May raise RCL_Timeout, in which case the returned value won't be valid
+   --  Spins the node internally, so other callbacks might get through
+   
+   procedure Client_Call (This     : in out Node;
+                          Support  :        ROSIDL.Typesupport.Service_Support;
+                          Name     :        String;
+                          Request  :        ROSIDL.Dynamic.Message;
+                          Callback :        Clients.Callback);
    
    -------------
    -- Publish --
@@ -117,6 +143,9 @@ private
    use Ada.Containers;   
    use Callbacks;
    
+   package Client_Vectors is new Vectors (Positive,
+                                          Callbacks.Client_Dispatcher);
+   
    package Srv_Vectors is new Vectors (Positive,
                                        Callbacks.Service_Dispatcher);
    
@@ -133,6 +162,8 @@ private
    
    type Node is new Ada.Finalization.Limited_Controlled with record 
       Impl          : aliased C_Node := (Impl => Rcl_Get_Zero_Initialized_Node);
+      
+      Clients       :         Client_Vectors.Vector;
       Services      :         Srv_Vectors.Vector;
       Subscriptions :         Sub_Vectors.Vector;
       Timers        :         Timer_Vector;

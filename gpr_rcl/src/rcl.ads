@@ -14,6 +14,12 @@ with Rcl_Types_H;
 package RCL is
    
    ROS_Exception : exception;
+   --  Raised on errors from the C layer
+   --  Any raise will be a serious problem either in the user code or in ROS2
+   
+   RCL_Timeout   : exception;
+   --  Raised on certain subprograms from the RCL Ada binding
+   --  This is not necessarily a fatal error
 
 private
    

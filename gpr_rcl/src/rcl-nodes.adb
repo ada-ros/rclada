@@ -2,18 +2,72 @@ with Ada.Calendar;
 with Ada.Containers;
 with Ada.Exceptions;
 
+with RCL.Clients.Impl;
 with RCL.Logging;
 with RCL.Publishers.Impl;
 with RCL.Services.Impl;
 with RCL.Subscriptions;
 with RCL.Wait;
 
+with Rcl_Client_H;  use Rcl_Client_H;
 with Rcl_Service_H; use Rcl_Service_H;
 with Rcl_Timer_H;   use Rcl_Timer_H;
 
 package body RCL.Nodes is
 
    use all type Timers.Timer_Id;
+
+   -----------------
+   -- Client_Call --
+   -----------------
+
+   function Client_Call (This    : in out Node;
+                         Support :        ROSIDL.Typesupport.Service_Support;
+                         Name    :        String;
+                         Request :        ROSIDL.Dynamic.Message;
+                         Timeout :        Duration := Duration'Last)
+                         return           ROSIDL.Dynamic.Message is
+   begin
+      raise Program_Error;
+      return Client_Call (This, Support, Name, Request, Timeout);
+   end Client_Call;
+   --  Blocking call to a service.
+   --  May raise RCL_Timeout, in which case the returned value won't be valid
+   --  Spins the node internally, so other callbacks might get through
+
+   -----------------
+   -- Client_Call --
+   -----------------
+
+   procedure Client_Call (This     : in out Node;
+                          Support  :        ROSIDL.Typesupport.Service_Support;
+                          Name     :        String;
+                          Request  :        ROSIDL.Dynamic.Message;
+                          Callback :        Clients.Callback)
+   is
+      Client : aliased Rcl_Client_T         := Rcl_Get_Zero_Initialized_Client;
+      Opts   : aliased Rcl_Client_Options_T := Rcl_Client_Get_Default_Options;
+      Seq    : aliased C.Long;
+   begin
+      Check
+        (Rcl_Client_Init
+           (Client'Access,
+            This.Impl.Impl'Access,
+            Support.To_C,
+            C_Strings.To_C (Name).To_Ptr,
+            Opts'Access));
+
+      This.Clients.Append (Callbacks.Client_Dispatcher'
+                             (Client   => Clients.Impl.To_C_Client (Client),
+                              Callback => Callback,
+                              Support  => Support));
+
+      Check
+        (Rcl_Send_Request
+           (Client'Access,
+            Request.To_Ptr,
+            Seq'Access));
+   end Client_Call;
 
    ------------------------
    -- Delete_If_Existing --
@@ -61,11 +115,12 @@ package body RCL.Nodes is
 
    overriding procedure Finalize (This : in out Node) is
    begin
+      --  TODO: fini clients, services, etc
+
       if To_Boolean (Rcl_Node_Is_Valid (This.Impl.Impl'Access, null)) then
          Check (Rcl_Node_Fini (This.Impl.Impl'Access));
       else
-         null;
-         --  Log attempt at finalizing finalized node
+         Logging.Warn ("Attempt to finalize already finalized node");
       end if;
    exception
       when E : others =>
@@ -103,6 +158,7 @@ package body RCL.Nodes is
             Support.To_C,
             C_Strings.To_C (Name).To_Ptr,
             Opts'Access));
+
       This.Services.Append (Callbacks.Service_Dispatcher'
                               (Service  => Services.Impl.To_C_Service (Srv),
                                Callback => Callback,
@@ -127,6 +183,10 @@ package body RCL.Nodes is
          use all type Wait.Kinds;
       begin
          case T.Kind is
+            when Client =>
+               This.Clients (T.Index).Dispatch;
+               Check (Rcl_Client_Fini (This.Clients (T.Index).Client.To_C, This.Impl.Impl'Access));
+               This.Clients.Delete (T.Index);
             when Service =>
                This.Services (T.Index).Dispatch;
             when Subscription =>
@@ -144,10 +204,15 @@ package body RCL.Nodes is
          use all type Wait.Wait_Outcomes;
 
          Set : Wait.Set := Wait.Init
-           (Num_Services      => Natural (This.Services.Length),
+           (Num_Clients       => Natural (This.Clients.Length),
+            Num_Services      => Natural (This.Services.Length),
             Num_Subscriptions => Natural (This.Subscriptions.Length),
             Num_Timers        => Natural (This.Timers.Length));
       begin
+         for Cli of This.Clients loop
+            Set.Add (Cli.Client);
+         end loop;
+
          for Srv of This.Services loop
             Set.Add (Srv.Service);
          end loop;

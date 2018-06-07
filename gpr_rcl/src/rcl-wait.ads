@@ -1,6 +1,7 @@
 with Ada.Finalization;
 with Ada.Iterator_Interfaces;
 
+with RCL.Clients.Impl;
 with RCL.Services.Impl;
 limited with RCL.Subscriptions;
 with RCL.Timers;
@@ -12,7 +13,8 @@ package RCL.Wait is
    --  Not really intended for clients, but the C structs are of so poor
    --    quality that even for internal use a manual binding is needed.
    
-   type Kinds is (Service, 
+   type Kinds is (Client,
+                  Service, 
                   Subscription, 
                   Timer);
    
@@ -33,11 +35,15 @@ package RCL.Wait is
    
    package Set_Iterators is new Ada.Iterator_Interfaces (Cursor, Has_Element);
    
-   function Init (Num_Services      : Natural := 0;
+   function Init (Num_Clients       : Natural := 0;
+                  Num_Services      : Natural := 0;
                   Num_Subscriptions : Natural := 0;
                   Num_Timers        : Natural := 0) return Set;
    --  At least one of these must be nonzero
 
+   procedure Add (This : aliased in out Set; 
+                  Cli  : aliased in out Clients.Impl.C_Client); 
+   
    procedure Add (This : aliased in out Set; 
                   Srv  : aliased in out Services.Impl.C_Service); 
    
