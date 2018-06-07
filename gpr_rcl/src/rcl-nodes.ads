@@ -76,8 +76,10 @@ package RCL.Nodes is
    --    It's thus safe to use a local callback for blocking calls
    --    The node will be spun internally so calls to other unrelated callbacks
    --       might happen nonetheless.
-   --  THIS IS INTENDED TO BE USED BY A SINGLE CLIENT SIMULTANEOUSLY AT MOST
-   --  In other words, no concurrent calls from several threads.
+   --  BLOCKING concurrency depends on internal concurrency of ROS2.
+   --    At this time I'm unsure if this would be advisable.
+   --  Note that, even in the non-blocking case, a certain amount of blocking
+   --    might happen until the service becomes available to the client.
    
    -------------
    -- Publish --

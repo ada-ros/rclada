@@ -10,6 +10,7 @@ with RCL.Subscriptions;
 with RCL.Wait;
 
 with Rcl_Client_H;  use Rcl_Client_H;
+with Rcl_Graph_H;   use Rcl_Graph_H;
 with Rcl_Service_H; use Rcl_Service_H;
 with Rcl_Timer_H;   use Rcl_Timer_H;
 
@@ -28,7 +29,8 @@ package body RCL.Nodes is
                                   Name     :        String;
                                   Request  :        ROSIDL.Dynamic.Message;
                                   Callback :        Clients.Callback;
-                                  Blocking :        Boolean)
+                                  Blocking :        Boolean;
+                                  Timeout  :        ROS2_Duration)
    is
       Client : aliased Rcl_Client_T         := Rcl_Get_Zero_Initialized_Client;
       Opts   : aliased Rcl_Client_Options_T := Rcl_Client_Get_Default_Options;
@@ -50,6 +52,22 @@ package body RCL.Nodes is
                                  (ROSIDL.Dynamic.Init_Shared (Support.Response_Support)),
                                Success  => False));
 
+      declare
+         use Ada.Calendar;
+         Start     : constant Time    := Clock;
+         Available : aliased  CX.Bool := 0;
+      begin
+         while Clock - Start < Timeout loop
+            delay 0.01; -- Really...
+            Check (Rcl_Service_Server_Is_Available
+                     (This.Impl.Impl'Access,
+                      Client'Access,
+                      Available'Access));
+
+            exit when Available /= 0;
+         end loop;
+      end;
+
       Check
         (Rcl_Send_Request
            (Client'Access,
@@ -67,18 +85,20 @@ package body RCL.Nodes is
                          Request  :        ROSIDL.Dynamic.Message;
                          Timeout  :        ROS2_Duration := Forever)
                          return            ROSIDL.Dynamic.Shared_Message
-   is
+      is
+         use Ada.Calendar;
+         Start : constant Time := Clock;
    begin
       Client_Call_Prepare (This     => This,
                            Support  => Support,
                            Name     => Name,
                            Request  => Request,
                            Callback => null,
-                           Blocking => True);
+                           Blocking => True,
+                           Timeout  => Timeout);
 
       declare
-         use Ada.Calendar;
-         Start : constant Time := Clock;
+
       begin
          loop
             This.Spin (Once   => True,
@@ -116,7 +136,8 @@ package body RCL.Nodes is
                               Name     => Name,
                               Request  => Request,
                               Callback => Callback,
-                              Blocking => False);
+                              Blocking => False,
+                              Timeout  => Forever); -- Only for the connection attempt
       else
          declare
             Response : constant ROSIDL.Dynamic.Shared_Message :=

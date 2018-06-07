@@ -96,5 +96,6 @@ package body RCL is
    RCL_Init : Initializer with Unreferenced;
 
 begin
-   Put_Line ("ROS2_Duration'Last =" & ROS2_Duration'Last'Image);
+   --     Put_Line ("ROS2_Duration'Last =" & ROS2_Duration'Last'Image);
+   null;
 end RCL;
