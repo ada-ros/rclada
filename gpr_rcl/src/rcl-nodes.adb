@@ -48,7 +48,8 @@ package body RCL.Nodes is
             Opts'Access));
 
       This.Clients.Prepend (Callbacks.Client_Dispatcher'
-                              (Client   => Clients.Impl.To_C_Client (Client),
+                              (Node     => This.Self,
+                               Client   => Clients.Impl.To_C_Client (Client),
                                Callback => Callback,
                                Blocking => Blocking,
                                Response => ROSIDL.Impl.Message_Holders.To_Holder
@@ -146,7 +147,7 @@ package body RCL.Nodes is
             Response : constant ROSIDL.Dynamic.Shared_Message :=
                          This.Client_Call (Support, Name, Request, Timeout);
          begin
-            Callback (Response.Msg.all);
+            Callback (This.Self.all, Response.Msg.all);
          end;
       end if;
    end Client_Call;
@@ -353,7 +354,8 @@ package body RCL.Nodes is
             Opts'Access));
 
       This.Services.Append (Callbacks.Service_Dispatcher'
-                              (Service  => Services.Impl.To_C_Service (Srv),
+                              (Node     => This.Self,
+                               Service  => Services.Impl.To_C_Service (Srv),
                                Callback => Callback,
                                Support  => Support));
    end Serve;
@@ -479,7 +481,7 @@ package body RCL.Nodes is
               Subscriptions.Init (This, Msg_Type, Topic);
    begin
       This.Subscriptions.Append
-        (Subscription_Dispatcher'(Sub.To_C, Callback, Msg_Type));
+        (Subscription_Dispatcher'(This.Self, Sub.To_C, Callback, Msg_Type));
       Sub.Detach;
    end Subscribe;
 
@@ -496,10 +498,10 @@ package body RCL.Nodes is
    begin
       This.Timers.Append
         (Timer_Dispatcher'
-           (Timer.Id,
+           (This.Self,
+            Timer.Id,
             Callback,
-            Last_Call => <>,
-            Node      => This.Self));
+            Last_Call => <>));
 
       return Timer.Id;
    end Timer_Add;

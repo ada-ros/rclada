@@ -29,7 +29,7 @@ package body RCL.Callbacks is
             This.Response.Element.Msg.To_Ptr));
 
       if not This.Blocking and then This.Callback /= null then
-         This.Callback (This.Response.Element);
+         This.Callback (This.Node.all, This.Response.Element);
       end if;
    end Dispatch;
 
@@ -49,7 +49,7 @@ package body RCL.Callbacks is
             Header'Access,
             Request.To_Ptr));
 
-      This.Callback (Request, Response);
+      This.Callback (This.Node.all, Request, Response);
 
       Check
         (Rcl_Send_Response
@@ -71,7 +71,7 @@ package body RCL.Callbacks is
                                  Msg.To_Ptr,
                                  Info)
       then
-         This.Callback (Msg, Info);
+         This.Callback (This.Node.all, Msg, Info);
       else
          raise Program_Error with "Subscription dispatcher: Take_Raw failed when message was expected";
       end if;
@@ -90,7 +90,8 @@ package body RCL.Callbacks is
       Ret := Rcl_Timer_Call (Timers.To_C (This.Timer));
       --  This "snoozes" the C timer
 
-      This.Callback (Temp, -- temporary timer for the callee
+      This.Callback (This.Node.all,
+                     Temp, -- temporary timer for the callee
                      To_Duration (Now - This.Last_Call));
       This.Last_Call := Now;
 

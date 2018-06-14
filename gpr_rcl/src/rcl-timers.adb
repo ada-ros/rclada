@@ -10,7 +10,7 @@ package body RCL.Timers is
    ----------
 
    function Bind (C_Timer :                Timer_Id;
-                  Node    : aliased in out Nodes.Node) return Timer is
+                  Node    : aliased in out Nodes.Node'Class) return Timer is
      (Impl => C_Timer,
       Node => Node'Access);
 

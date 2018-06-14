@@ -14,7 +14,7 @@ package RCL.Callbacks is
 
    --  Helper types to couple an element with its callback, and dispatch calls
    
-   type Dispatcher is limited interface;
+   type Dispatcher (Node : not null access Nodes.Node'Class) is abstract tagged null record;
    
    procedure Dispatch (This : in out Dispatcher) is abstract;
    --  Does whatever applies: fetch a message and call the back, etc
@@ -67,7 +67,6 @@ package RCL.Callbacks is
       Timer     : aliased Timers.Timer_Id;
       Callback  :         Timers.Callback;
       Last_Call :         Ada.Real_Time.Time := Ada.Real_Time.Clock;
-      Node      :  access Nodes.Node;
    end record;
    
    function "=" (L, R : Timer_Dispatcher) return Boolean;

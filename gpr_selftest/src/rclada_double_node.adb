@@ -38,9 +38,10 @@ procedure Rclada_Double_Node is
       Node : Nodes.Node           := Nodes.Init (Utils.Command_Name & "_sender");
       Pub    : Publishers.Publisher := Node.Publish (Support, Topic);
 
-      procedure Sender (Timer   : in out Timers.Timer;
+      procedure Sender (Node    : in out Nodes.Node'Class;
+                        Timer   : in out Timers.Timer;
                         Elapsed :        Duration) is
-         pragma Unreferenced (Elapsed);
+         pragma Unreferenced (Elapsed, Node);
          Msg : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (Support);
 
       begin
@@ -72,9 +73,10 @@ procedure Rclada_Double_Node is
 
       Node : Nodes.Node           := Nodes.Init (Utils.Command_Name & "_receiver");
 
-      procedure Receiver (Msg  : in out ROSIDL.Dynamic.Message;
+      procedure Receiver (Node : in out Nodes.Node'Class;
+                          Msg  : in out ROSIDL.Dynamic.Message;
                           Info :        ROSIDL.Message_Info) is
-         pragma Unreferenced (Info);
+         pragma Unreferenced (Info, Node);
       begin
          Done := True;
          Msg.Print_Metadata;

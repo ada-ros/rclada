@@ -1,4 +1,4 @@
-with Ada.Containers.Vectors;
+with Ada.Containers.Indefinite_Vectors;
 with Ada.Finalization;
 
 with RCL.Callbacks;
@@ -170,17 +170,17 @@ private
    use Ada.Containers;   
    use Callbacks;
    
-   package Client_Vectors is new Vectors (Positive,
-                                          Callbacks.Client_Dispatcher);
+   package Client_Vectors is new Indefinite_Vectors (Positive,
+                                                     Callbacks.Client_Dispatcher);
    
-   package Srv_Vectors is new Vectors (Positive,
-                                       Callbacks.Service_Dispatcher);
+   package Srv_Vectors is new Indefinite_Vectors (Positive,
+                                                  Callbacks.Service_Dispatcher);
    
-   package Sub_Vectors is new Vectors (Positive, 
-                                       Callbacks.Subscription_Dispatcher);
+   package Sub_Vectors is new Indefinite_Vectors (Positive, 
+                                                  Callbacks.Subscription_Dispatcher);
    
-   package Timer_Vectors is new Vectors (Positive,
-                                         Callbacks.Timer_Dispatcher);
+   package Timer_Vectors is new Indefinite_Vectors (Positive,
+                                                    Callbacks.Timer_Dispatcher);
    
    type Timer_Vector is new Timer_Vectors.Vector with null record;
    

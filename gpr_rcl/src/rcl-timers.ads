@@ -22,7 +22,8 @@ package RCL.Timers is
    --  The Node finalizes it on timer deletion      
    
    type Callback is 
-     access procedure (Timer   : in out Timers.Timer;
+     access procedure (Node    : in out Nodes.Node'Class;
+                       Timer   : in out Timers.Timer;
                        Elapsed :        Duration);  
    
    procedure Cancel (This : in out Timer);
@@ -40,7 +41,7 @@ package RCL.Timers is
    --  Not intended for client use  --
    
    function Bind (C_Timer :                Timer_Id; 
-                  Node    : aliased in out Nodes.Node) return Timer;   
+                  Node    : aliased in out Nodes.Node'Class) return Timer;   
    
    procedure Finalize (This : in out Timer);
    

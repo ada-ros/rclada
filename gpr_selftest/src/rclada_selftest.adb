@@ -66,7 +66,8 @@ procedure Rclada_Selftest is
    -- Sender --
    ------------
 
-   procedure Sender (Timer   : in out Timers.Timer;
+   procedure Sender (Node    : in out Nodes.Node'Class;
+                     Timer   : in out Timers.Timer;
                      Elapsed :        Duration) is
       pragma Unreferenced (Elapsed);
       Msg : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (Support);
@@ -146,9 +147,10 @@ procedure Rclada_Selftest is
    -- Receiver --
    --------------
 
-   procedure Receiver (Msg  : in out ROSIDL.Dynamic.Message;
+   procedure Receiver (Node : in out Nodes.Node'Class;
+                       Msg  : in out ROSIDL.Dynamic.Message;
                        Info :        ROSIDL.Message_Info) is
-      pragma Unreferenced (Info);
+      pragma Unreferenced (Info, Node);
    begin
       Topic_Done := True;
       Msg.Print_Metadata;
@@ -205,9 +207,11 @@ procedure Rclada_Selftest is
    -- Adder --
    -----------
 
-   procedure Adder (Req  : in out ROSIDL.Dynamic.Message;
+   procedure Adder (Node : in out Nodes.Node'Class;
+                    Req  : in out ROSIDL.Dynamic.Message;
                     Resp : in out ROSIDL.Dynamic.Message)
    is
+      pragma Unreferenced (Node);
       A : constant UInt64 := Req ("a").As_UInt64;
       B : constant UInt64 := Req ("b").As_UInt64;
    begin
@@ -220,7 +224,9 @@ procedure Rclada_Selftest is
    -- Client_Listener --
    ---------------------
 
-   procedure Client_Listener (Resp : ROSIDL.Dynamic.Message) is
+   procedure Client_Listener (Node : in out Nodes.Node'Class;
+                              Resp : ROSIDL.Dynamic.Message) is
+      pragma Unreferenced (Node);
    begin
       Service_Done := True;
       Logging.Info ("Got reply, sum is" & Resp ("sum").As_Uint64.Image);
@@ -255,7 +261,8 @@ begin
 
    --  Blocking client test (callback version)
    declare
-      procedure Get_Sum (Resp : ROSIDL.Dynamic.Message) is
+      procedure Get_Sum (Node : in out Nodes.Node'Class;
+                         Resp : ROSIDL.Dynamic.Message) is
       begin
          Logging.Info ("Got reply, sum is" & Resp ("sum").As_Uint64.Image);
          Logging.Info ("Client blocking (procedure) testing done");

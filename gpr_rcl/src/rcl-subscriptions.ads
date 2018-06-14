@@ -11,7 +11,8 @@ with System;
 
 package RCL.Subscriptions is
    
-   type Callback is access procedure (Msg  : in out ROSIDL.Dynamic.Message;
+   type Callback is access procedure (Node : in out Nodes.Node'Class;
+                                      Msg  : in out ROSIDL.Dynamic.Message;
                                       Info :        ROSIDL.Message_Info);
    
    --  Not really intended to be used by clients either  --
