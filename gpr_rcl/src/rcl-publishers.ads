@@ -5,12 +5,18 @@ with Rcl_Publisher_H; use Rcl_Publisher_H;
 limited with RCL.Nodes;
 
 with ROSIDL.Dynamic;
+with ROSIDL.Typesupport;
 
 package RCL.Publishers is
 
-   type Publisher (<>) is new Ada.Finalization.Limited_Controlled with private;
+   type Publisher (Node : not null access Nodes.Node'Class) is 
+     new Ada.Finalization.Limited_Controlled with private;
    
-   --  Use the Node to get a publisher      
+   --  Use the Node to get a publisher directly, or the init function below
+   
+   procedure Init (This     : in out Publisher;
+                   Msg_Type :        ROSIDL.Typesupport.Message_Support;
+                   Topic    :        String);
    
    overriding
    procedure Finalize (This : in out Publisher);
@@ -25,10 +31,9 @@ package RCL.Publishers is
    
 private   
    
-   type Publisher is new Ada.Finalization.Limited_Controlled with record
-      Impl : aliased Rcl_Publisher_T;
-      Node :  access Nodes.C_Node;
-      Opts : aliased Rcl_Publisher_Options_T;
+   type Publisher (Node : not null access Nodes.Node'Class) is new Ada.Finalization.Limited_Controlled with record
+      Impl : aliased Rcl_Publisher_T         := Rcl_Get_Zero_Initialized_Publisher;
+      Opts : aliased Rcl_Publisher_Options_T := Rcl_Publisher_Get_Default_Options;
    end record;      
 
 end RCL.Publishers;

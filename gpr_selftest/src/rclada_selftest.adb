@@ -69,7 +69,7 @@ procedure Rclada_Selftest is
    procedure Sender (Node    : in out Nodes.Node'Class;
                      Timer   : in out Timers.Timer;
                      Elapsed :        Duration) is
-      pragma Unreferenced (Elapsed);
+      pragma Unreferenced (Elapsed, Node);
       Msg : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (Support);
 
    begin
@@ -263,6 +263,7 @@ begin
    declare
       procedure Get_Sum (Node : in out Nodes.Node'Class;
                          Resp : ROSIDL.Dynamic.Message) is
+         pragma Unreferenced (Node);
       begin
          Logging.Info ("Got reply, sum is" & Resp ("sum").As_Uint64.Image);
          Logging.Info ("Client blocking (procedure) testing done");

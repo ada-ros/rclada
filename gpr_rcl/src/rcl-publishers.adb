@@ -5,6 +5,23 @@ with RCL.Nodes; pragma Unreferenced (RCL.Nodes);
 
 package body RCL.Publishers is
 
+   ----------
+   -- Init --
+   ----------
+
+   procedure Init (This     : in out Publisher;
+                   Msg_Type :        ROSIDL.Typesupport.Message_Support;
+                   Topic    :        String) is
+   begin
+      Check
+        (Rcl_Publisher_Init
+           (This.Impl'Access,
+            This.Node.To_C.Ptr.Impl'Access,
+            Msg_Type.To_C,
+            C_Strings.To_C (Topic).To_Ptr,
+            This.Opts'Access));
+   end Init;
+
    --------------
    -- Finalize --
    --------------
@@ -13,7 +30,7 @@ package body RCL.Publishers is
    begin
       if This.Is_Valid then
          Check (Rcl_Publisher_Fini (This.Impl'Access,
-                                    This.Node.Impl'Access));
+                                    This.Node.To_C.Ptr.Impl'Access));
       end if;
    exception
       when E : others =>

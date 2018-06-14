@@ -322,6 +322,13 @@ package body RCL.Nodes is
       end return;
    end Graph_Topics;
 
+   ----------
+   -- Name --
+   ----------
+
+   function Name (This : in out Node) return String is
+      (C_Strings.Value (Rcl_Node_Get_Name (This.Impl.Impl'Access)));
+
    -------------
    -- Publish --
    -------------
@@ -330,7 +337,7 @@ package body RCL.Nodes is
                      Msg_Type :        ROSIDL.Typesupport.Message_Support;
                      Topic    :        String)
                      return            Publishers.Publisher is
-      (Publishers.Impl.Init (This.Impl'Access, Msg_Type, Topic));
+      (Publishers.Impl.Init (This.Self, Msg_Type, Topic));
 
    -----------
    -- Serve --

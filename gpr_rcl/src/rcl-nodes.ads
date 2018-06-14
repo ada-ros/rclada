@@ -30,7 +30,7 @@ package RCL.Nodes is
    function Init (Name      : String; 
                   Namespace : String  := "/";
                   Opt       : Options := Default_Options) return Node
-     with Pre => Name'Length > 0 and then Namespace'Length >= 0;
+     with Pre'Class => Name'Length > 0 and then Namespace'Length >= 0;
    
    --------------
    -- Finalize --
@@ -38,6 +38,12 @@ package RCL.Nodes is
 
    overriding procedure Finalize (This : in out Node);
    --  Can be called prematurely to shut down a node   
+   
+   ----------
+   -- Name --
+   ----------
+
+   function Name (This : in out Node) return String;
                          
    ----------
    -- Spin --

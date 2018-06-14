@@ -6,7 +6,7 @@ package RCL.Publishers.Impl is
 
    --  This package is reserved for the implementation, no use to users (ha)
    
-   function Init (Node     : access Nodes.C_Node;
+   function Init (Node     : access Nodes.Node;
                   Msg_Type :        ROSIDL.Typesupport.Message_Support;
                   Topic    :        String) return Publisher;
    
