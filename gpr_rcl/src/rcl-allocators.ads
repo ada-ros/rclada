@@ -9,4 +9,6 @@ package RCL.Allocators is
      Convention => C,
      External_Name => "rcutils_get_default_allocator";
 
+   Default_Allocator : aliased Allocator := Get_Default_Allocator;
+
 end RCL.Allocators;

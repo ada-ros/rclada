@@ -1,6 +1,7 @@
 with Ada.Command_Line; use Ada.Command_Line;
 with Ada.Numerics;
 
+with RCL.Calendar;
 with RCL.Logging;
 with RCL.Nodes;
 with RCL.Publishers;
@@ -14,8 +15,13 @@ with ROSIDL.Typesupport;
 --  with System.Address_Image;
 
 procedure Rclada_Selftest is
+
    use RCL;
    use ROSIDL.Types;
+
+   use all type RCL.Calendar.Time;
+
+   Clock : Calendar.Clock;
 
    Support : constant ROSIDl.Typesupport.Message_Support :=
                ROSIDL.Typesupport.Get_Message_Support
@@ -223,8 +229,15 @@ procedure Rclada_Selftest is
 
    Request : ROSIDL.Dynamic.Message :=
                ROSIDL.Dynamic.Init (Service_Support.Request_Support);
+
+   Start : Calendar.Time;
 begin
    Logging.Set_Name (Utils.Command_Name);
+
+   pragma Assert (not Clock.Is_Valid, "Uninitialized clock says it's valid!");
+   Clock.Init (Calendar.ROS);
+   pragma Assert (Clock.Is_Valid, "Initialized clock says it's invalid!");
+   Start := Clock.Now;
 
    Node.Serve (Service_Support, Service_Name, Adder'Unrestricted_Access);
 
@@ -268,4 +281,6 @@ begin
    end;
 
    Logging.Info ("Test successful");
+   Logging.Info ("Elapsed seconds (computed):  " & Duration'Image (Clock.Now - Start));
+   Logging.Info ("Elapsed seconds (from clock):" & Duration'Image (Clock.Elapsed));
 end Rclada_Selftest;
