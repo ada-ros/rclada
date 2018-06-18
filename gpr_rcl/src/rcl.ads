@@ -9,6 +9,8 @@ with C_Strings; pragma Unreferenced (C_Strings);
 with Interfaces.C.Extensions;
 with Interfaces.C.Strings; pragma Unreferenced (Interfaces.C.Strings);
 
+limited with RCL.Executors;
+
 with Rcl_Types_H;
 
 package RCL is
@@ -27,6 +29,8 @@ package RCL is
    --  The / 2 is needed because some internal overflow in the C side 
    
    subtype ROS2_Duration is Duration range Duration'First .. Forever;
+   
+   No_Executor : constant access Executors.Executor'Class := null;
 
 private
    

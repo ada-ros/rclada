@@ -10,9 +10,10 @@ with RCL.Timers;
 with ROSIDL.Impl;
 with ROSIDL.Typesupport;
 
-package RCL.Callbacks is
+private package RCL.Callbacks is
 
    --  Helper types to couple an element with its callback, and dispatch calls
+   --  Used only privately by the Node implementation
    
    type Dispatcher (Node : not null access Nodes.Node'Class) is abstract tagged null record;
    

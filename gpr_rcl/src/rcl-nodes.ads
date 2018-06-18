@@ -1,10 +1,12 @@
 with Ada.Containers.Indefinite_Vectors;
 with Ada.Finalization;
 
-with RCL.Callbacks;
+private with RCL.Callbacks;
+
 with RCL.Clients;
+with RCL.Executors;
 with RCL.Publishers;
-limited with RCL.Subscriptions;
+with RCL.Subscriptions;
 with RCL.Services;
 with RCL.Timers;
 with RCL.Utils;
@@ -16,7 +18,8 @@ with ROSIDL.Typesupport;
 
 package RCL.Nodes is
 
-   type Node (<>) is new Ada.Finalization.Limited_Controlled with private;
+   type Node (Executor : access Executors.Executor'Class) is 
+     new Ada.Finalization.Limited_Controlled with private;
    
    type Options is null record;
    --  TBD, nothing really critical in there right now
@@ -26,11 +29,19 @@ package RCL.Nodes is
    ----------
    -- Init --
    ----------
+   --  Classes overriding these should call the parent implementation
 
    function Init (Name      : String; 
                   Namespace : String  := "/";
-                  Opt       : Options := Default_Options) return Node
+                  Opt       : Options := Default_Options;
+                  Executor  : access Executors.Executor'Class := null) return Node
      with Pre'Class => Name'Length > 0 and then Namespace'Length >= 0;
+   
+   procedure Init (This      : in out Node;
+                   Name      : String; 
+                   Namespace : String  := "/";
+                   Opt       : Options := Default_Options) with
+     Pre'Class => Name'Length > 0 and then Namespace'Length >= 0;
    
    --------------
    -- Finalize --
@@ -193,15 +204,19 @@ private
    procedure Delete_If_Existing (V     : in out Timer_Vector;
                                  Timer : Timers.Timer_Id);
    
-   type Node is new Ada.Finalization.Limited_Controlled with record 
+   type Node (Executor : access Executors.Executor'Class)  is new Ada.Finalization.Limited_Controlled with record 
       Impl          : aliased C_Node := (Impl => Rcl_Get_Zero_Initialized_Node);
       Self          :  access Node   := Node'Unchecked_Access;
+      
+      Options       : aliased Rcl_Node_Options_T := Rcl_Node_Get_Default_Options; 
       
       Clients       :         Client_Vectors.Vector;
       Services      :         Srv_Vectors.Vector;
       Subscriptions :         Sub_Vectors.Vector;
       Timers        :         Timer_Vector;
    end record;   
+   
+   procedure Base_Init (This : in out Node'Class);
    
    procedure Client_Free (This : in out Node;
                           Pos  : Positive);

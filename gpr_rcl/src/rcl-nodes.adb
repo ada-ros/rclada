@@ -7,7 +7,6 @@ with RCL.Clients.Impl;
 with RCL.Logging;
 with RCL.Publishers.Impl;
 with RCL.Services.Impl;
-with RCL.Subscriptions;
 with RCL.Utils.Names_And_Types;
 with RCL.Utils.String_Arrays;
 with RCL.Wait;
@@ -22,6 +21,17 @@ with ROSIDL.Impl;
 package body RCL.Nodes is
 
    use all type Timers.Timer_Id;
+
+   ---------------
+   -- Base_Init --
+   ---------------
+
+   procedure Base_Init (This : in out Node'Class) is
+   begin
+      if This.Executor /= null then
+         This.Executor.Add (This);
+      end if;
+   end Base_Init;
 
    -------------------------
    -- Client_Call_Prepare --
@@ -189,23 +199,42 @@ package body RCL.Nodes is
 
    function Init (Name      : String;
                   Namespace : String  := "/";
-                  Opt       : Options := Default_Options) return Node
+                  Opt       : Options := Default_Options;
+                  Executor  : access Executors.Executor'Class := null) return Node
    is
       pragma Unreferenced (Opt);
-
-      Opts  : aliased constant Rcl_Node_Options_T :=
-                Rcl_Node_Get_Default_Options;
 
       Cname : C_String := To_C (Name);
       Cnms  : C_String := To_C (Namespace);
    begin
-      return This : Node do
+      return This : Node (Executor) do
          Check (Rcl_Node_Init
                   (This.Impl.Impl'Access,
                    Cname.To_Ptr,
                    Cnms.To_Ptr,
-                   Opts'Access));
+                   This.Options'Access));
+         This.Base_Init;
       end return;
+   end Init;
+
+   ----------
+   -- Init --
+   ----------
+
+   procedure Init (This      : in out Node;
+                   Name      : String;
+                   Namespace : String  := "/";
+                   Opt       : Options := Default_Options) is
+      pragma Unreferenced (Opt);
+      Cname : C_String := To_C (Name);
+      Cnms  : C_String := To_C (Namespace);
+   begin
+      Check (Rcl_Node_Init
+             (This.Impl.Impl'Access,
+                Cname.To_Ptr,
+                Cnms.To_Ptr,
+                This.Options'Access));
+      This.Base_Init;
    end Init;
 
    --------------
@@ -217,6 +246,9 @@ package body RCL.Nodes is
       --  TODO: fini clients, services, etc
 
       if To_Boolean (Rcl_Node_Is_Valid (This.Impl.Impl'Access, null)) then
+         if This.Executor /= null then
+            This.Executor.Remove (This);
+         end if;
          Check (Rcl_Node_Fini (This.Impl.Impl'Access));
       else
          Logging.Warn ("Attempt to finalize already finalized node");
