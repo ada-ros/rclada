@@ -49,6 +49,11 @@ private
    use all type C.size_t;
    use all type C.unsigned_char;
    
+   pragma Warnings (Off);
+   use all type CX.Bool;
+   pragma Warnings (On);
+   --  GPL 2018 has redefined that bool and versions prior now complain
+   
    subtype Rcl_Error_Code is Rcl_Types_H.Rcl_Ret_T;  
    
    procedure Check (Ret : Rcl_Error_Code);

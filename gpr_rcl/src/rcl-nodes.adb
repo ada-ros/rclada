@@ -30,6 +30,8 @@ package body RCL.Nodes is
    begin
       if This.Executor /= null then
          This.Executor.Add (This);
+      else
+         Default_Executor.Add (This);
       end if;
    end Base_Init;
 
@@ -248,6 +250,8 @@ package body RCL.Nodes is
       if To_Boolean (Rcl_Node_Is_Valid (This.Impl.Impl'Access, null)) then
          if This.Executor /= null then
             This.Executor.Remove (This);
+         else
+            Default_Executor.Remove (This);
          end if;
          Check (Rcl_Node_Fini (This.Impl.Impl'Access));
       else

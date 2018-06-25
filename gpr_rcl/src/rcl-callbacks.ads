@@ -10,7 +10,9 @@ with RCL.Timers;
 with ROSIDL.Impl;
 with ROSIDL.Typesupport;
 
-private package RCL.Callbacks is
+with System;
+
+package RCL.Callbacks is
 
    --  Helper types to couple an element with its callback, and dispatch calls
    --  Used only privately by the Node implementation
@@ -19,6 +21,11 @@ private package RCL.Callbacks is
    
    procedure Dispatch (This : in out Dispatcher) is abstract;
    --  Does whatever applies: fetch a message and call the back, etc
+   
+   function To_Ptr (This : in out Dispatcher) return System.Address is abstract;
+   --  This is the pointer to the C object that is expected by the
+   --    rcl_wait_add_* functions. It also serves to locate the dispatcher
+   --    once it has been triggered on the C side.
 
    -------------
    -- Clients --
@@ -36,6 +43,8 @@ private package RCL.Callbacks is
    
    procedure Dispatch (This : in out Client_Dispatcher);
    
+   function To_Ptr (This : in out Client_Dispatcher) return System.Address;
+   
    --------------
    -- Services --
    --------------
@@ -48,6 +57,8 @@ private package RCL.Callbacks is
    
    procedure Dispatch (This : in out Service_Dispatcher);
    
+   function To_Ptr (This : in out Service_Dispatcher) return System.Address;   
+   
    -------------------
    -- Subscriptions --
    -------------------
@@ -59,6 +70,8 @@ private package RCL.Callbacks is
    end record;
    
    procedure Dispatch (This : in out Subscription_Dispatcher);
+   
+   function To_Ptr (This : in out Subscription_Dispatcher) return System.Address;
    
    ------------
    -- Timers --
@@ -74,11 +87,25 @@ private package RCL.Callbacks is
    
    procedure Dispatch (This : in out Timer_Dispatcher);
    
+   function To_Ptr (This : in out Timer_Dispatcher) return System.Address;
+   
 private
    
    use all type Timers.Timer_Id;
    
    function "=" (L, R : Timer_Dispatcher) return Boolean is
-      (L.Timer = R.Timer);
+     (L.Timer = R.Timer);
+   
+   function To_Ptr (This : in out Client_Dispatcher) return System.Address is
+     (This.Client.To_C.all'Address);
+
+   function To_Ptr (This : in out Service_Dispatcher) return System.Address is
+     (This.Service.To_C.all'Address);
+   
+   function To_Ptr (This : in out Subscription_Dispatcher) return System.Address is
+     (This.Subscription.C'Address);
+   
+   function To_Ptr (This : in out Timer_Dispatcher) return System.Address is
+     (Timers.To_C (This.Timer).all'Address);
    
 end RCL.Callbacks;

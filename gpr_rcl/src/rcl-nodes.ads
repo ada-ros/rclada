@@ -5,6 +5,7 @@ private with RCL.Callbacks;
 
 with RCL.Clients;
 with RCL.Executors;
+with RCL.Executors.Sequential;
 with RCL.Publishers;
 with RCL.Subscriptions;
 with RCL.Services;
@@ -18,6 +19,8 @@ with ROSIDL.Typesupport;
 
 package RCL.Nodes is
 
+   Default_Executor : aliased Executors.Sequential.Executor;
+   
    type Node (Executor : access Executors.Executor'Class) is 
      new Ada.Finalization.Limited_Controlled with private;
    
@@ -215,6 +218,11 @@ private
       Subscriptions :         Sub_Vectors.Vector;
       Timers        :         Timer_Vector;
    end record;   
+   
+   function Current_Executor (This : in out Node'Class) return access Executors.Executor'Class is
+     (if This.Executor /= null 
+      then This.Executor
+      else Default_Executor'Access);
    
    procedure Base_Init (This : in out Node'Class);
    

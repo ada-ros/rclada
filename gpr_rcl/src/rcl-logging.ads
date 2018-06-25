@@ -59,9 +59,9 @@ package RCL.Logging with Elaborate_Body is
    procedure Shutdown;      
    
 private
-
+   
    function Initialized return Boolean is 
-     (G_Rcutils_Logging_Initialized /= 0);
+     (G_Rcutils_Logging_Initialized /= Bool_False);
    
    type Log_Location (Sub_Len, File_Len : Natural) is record
       Subprogram  : String (1 .. Sub_Len);

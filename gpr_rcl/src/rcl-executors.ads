@@ -1,6 +1,7 @@
 with Ada.Containers.Ordered_Sets;
 with Ada.Unchecked_Conversion;
 
+with RCL.Callbacks;
 limited with RCL.Nodes;
 
 with System;
@@ -20,6 +21,11 @@ package RCL.Executors is
    --  Nodes self-manage their registration-unregistration
    
    type Executor is abstract tagged limited private;
+   
+   procedure Dispatch (This : in out Executor;
+                       Call : in out Callbacks.Dispatcher'Class) is abstract;
+   --  This is the only procedure that derived Executors must override
+   
       
    procedure Add (This :         in out Executor; 
                   Node : aliased in out Nodes.Node'Class) is null;
@@ -40,6 +46,11 @@ private
    
    package Node_Sets is new Ada.Containers.Ordered_Sets (Node_Access);
    
-   type Executor is abstract tagged limited null record;
+   type Executor is abstract tagged limited record
+      Nodes : Node_Sets.Set;
+   end record;
+   
+   procedure Common_Dispatch (CB : in out Callbacks.Dispatcher'Class);
+   --  The actual logic of the dispatch that derived dispatchers may use
 
 end RCL.Executors;
