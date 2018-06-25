@@ -28,14 +28,18 @@ package RCL.Executors is
    
       
    procedure Add (This :         in out Executor; 
-                  Node : aliased in out Nodes.Node'Class) is null;
+                  Node : aliased in out Nodes.Node'Class);
    
    procedure Remove (This :         in out Executor; 
-                     Node : aliased in out Nodes.Node'Class) is null;
+                     Node : aliased in out Nodes.Node'Class);
+   
+   procedure Spin (This   : in out Executor; 
+                   Once   :        Boolean       := False;
+                   During :        ROS2_Duration := 0.1);
    
 private
    
-   type Node_Access is not null access Nodes.Node'Class;
+   type Node_Access is not null access all Nodes.Node'Class;
    
    function To_Ptr is new Ada.Unchecked_Conversion (Node_Access, System.Address);
    

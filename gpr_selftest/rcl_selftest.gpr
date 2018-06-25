@@ -24,7 +24,7 @@ project Rcl_Selftest is
    end Binder;
 
    package Linker is
-      for Switches ("ada") use ("-g");
+      for Switches ("ada") use ("-g", "-rdynamic", "-Wl,--no-as-needed");
    end Linker;
 
 end Rcl_Selftest;
