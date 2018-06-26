@@ -2,11 +2,14 @@ with Ada.Finalization;
 with Ada.Iterator_Interfaces;
 
 with RCL.Clients.Impl;
+with RCL.Callbacks;
 with RCL.Services.Impl;
 limited with RCL.Subscriptions;
 with RCL.Timers;
 
 with Rcl_Wait_H; use Rcl_Wait_H;
+
+with System;
 
 package RCL.Wait is
 
@@ -20,10 +23,9 @@ package RCL.Wait is
    
    type Wait_Outcomes is (Error, Timeout, Triggered);
    
-   type Trigger is record
-      Kind  : Kinds;
-      Index : Positive;
-   end record;
+   type Trigger is tagged private;
+   
+   function Ptr (This : Trigger) return System.Address;
    
    type Set (<>) is new Ada.Finalization.Limited_Controlled with private with 
      Default_Iterator  => Iterate,
@@ -40,25 +42,28 @@ package RCL.Wait is
                   Num_Subscriptions : Natural := 0;
                   Num_Timers        : Natural := 0) return Set;
    --  At least one of these must be nonzero
+   
+   function Init (Callbacks : RCL.Callbacks.Set) return Set;
+   --  Initializes and fills using the given set
 
    procedure Add (This : aliased in out Set; 
-                  Cli  : aliased in out Clients.Impl.C_Client); 
+                  Cli  : aliased        Clients.Impl.C_Client); 
    
    procedure Add (This : aliased in out Set; 
-                  Srv  : aliased in out Services.Impl.C_Service); 
+                  Srv  : aliased        Services.Impl.C_Service); 
    
    procedure Add (This : aliased in out Set; 
-                  Sub  : aliased in out Subscriptions.C_Subscription); 
+                  Sub  : aliased        Subscriptions.C_Subscription); 
    
    procedure Add (This  : aliased in out Set; 
-                  Timer : aliased in out Timers.Timer_Id); 
+                  Timer : aliased        Timers.Timer_Id); 
    
-   function Check (This : Set;
-                   Kind : Kinds;
-                   Pos  : Positive) return Boolean;
+   function Is_Ready (This : Set;
+                      Kind : Kinds;
+                      Pos  : Positive) return Boolean;
    --  Manually check if a member was triggered (after wait return!)
    
-   function Element (This : Set; Pos : Cursor) return Trigger;
+   function Element (This : Set; Pos : Cursor) return Trigger'Class;
    
    function Iterate (This : Set) return Set_Iterators.Forward_Iterator'Class;
    
@@ -72,6 +77,18 @@ package RCL.Wait is
                   Timeout : ROS2_Duration := Forever) return Wait_Outcomes;
    
 private
+   
+   function Get_Addr (This : Set;
+                      Kind : Kinds;
+                      Pos  : Positive) return System.Address;
+   
+   type Trigger is tagged record
+      Kind  : Kinds;
+      Index : Positive;
+      Ptr   : System.Address; -- This address is of the C type, and allows finding the callback in a set
+   end record;
+   
+   function Ptr (This : Trigger) return System.Address is (This.Ptr);
    
    type Set is new Ada.Finalization.Limited_Controlled with record
       Impl : aliased Rcl_Wait_Set_T := Rcl_Get_Zero_Initialized_Wait_Set;

@@ -3,6 +3,7 @@ with Ada.Unchecked_Conversion;
 
 with RCL.Callbacks;
 limited with RCL.Nodes;
+with RCL.Wait;
 
 with System;
 
@@ -22,8 +23,9 @@ package RCL.Executors is
    
    type Executor is abstract tagged limited private;
    
-   procedure Dispatch (This : in out Executor;
-                       Call : in out Callbacks.Dispatcher'Class) is abstract;
+   procedure Dispatch (This   : in out Executor;
+                       Node   : access Nodes.Node'Class;
+                       Handle :        Callbacks.Handle) is abstract;
    --  This is the only procedure that derived Executors must override
    
       
@@ -36,6 +38,11 @@ package RCL.Executors is
    procedure Spin (This   : in out Executor; 
                    Once   :        Boolean       := False;
                    During :        ROS2_Duration := 0.1);
+   
+   function Spin_Once (This    : in out Executor;
+                       Timeout :        ROS2_Duration;
+                       Node    : access Nodes.Node'Class := null) return Boolean;
+   --  Will spin on the given node or all of them when null
    
 private
    
@@ -54,7 +61,13 @@ private
       Nodes : Node_Sets.Set;
    end record;
    
-   procedure Common_Dispatch (CB : in out Callbacks.Dispatcher'Class);
+   procedure Common_Dispatch (Node   : access Nodes.Node'Class;
+                              Handle :        Callbacks.Handle);
    --  The actual logic of the dispatch that derived dispatchers may use
+   --    if they do not do anything special
+   
+   procedure Trigger (This : in out Executor'Class;
+                      Set  : in out Callbacks.Set;
+                      T    :        RCL.Wait.Trigger);
 
 end RCL.Executors;

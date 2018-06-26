@@ -79,7 +79,7 @@ package body RCL.Subscriptions is
                                                   Impl_Info'Access);
    begin
       if Ret = RMW_RET_OK then
-         Info.Intra_Process := Impl_Info.From_Intra_Process /= 0;
+         Info.Intra_Process := To_Boolean (Impl_Info.From_Intra_Process);
          return True;
       elsif Ret = RCL_RET_SUBSCRIPTION_TAKE_FAILED then
          return False;
@@ -97,8 +97,5 @@ package body RCL.Subscriptions is
                       Info   :    out ROSIDL.Message_Info)
                       return          Boolean is
       (Take_Raw (This.Impl, Buffer, Info));
-
-   function To_C (This : Subscription) return C_Subscription is
-      (This.Impl);
 
 end RCL.Subscriptions;

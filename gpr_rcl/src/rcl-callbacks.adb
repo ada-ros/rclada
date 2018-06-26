@@ -12,6 +12,18 @@ with ROSIDL.Dynamic;
 
 package body RCL.Callbacks is
 
+   ---------
+   -- "<" --
+   ---------
+
+   function "<" (L, R : Dispatcher'Class) return Boolean is
+      L2 : constant access Dispatcher'Class := L'Unrestricted_Access;
+      R2 : constant access Dispatcher'Class := R'Unrestricted_Access;
+      --  Should be safe as those are by ref (but yikes)
+   begin
+      return L2.To_Ptr < R2.To_Ptr;
+   end "<";
+
    --------------
    -- Dispatch --
    --------------
@@ -30,6 +42,10 @@ package body RCL.Callbacks is
 
       if not This.Blocking and then This.Callback /= null then
          This.Callback (This.Node.all, This.Response.Element);
+      end if;
+
+      if not This.Blocking then -- The client is not needed any longer
+         This.Node.Client_Free (This.To_Ptr);
       end if;
    end Dispatch;
 
@@ -105,5 +121,97 @@ package body RCL.Callbacks is
             Check (Ret);
       end case;
    end Dispatch;
+
+   function Force_Addr (This : Dispatcher'Class) return System.Address is
+      Ptr : constant access Dispatcher'Class := This'Unrestricted_Access;
+   begin
+      return Ptr.To_Ptr;
+   end Force_Addr;
+
+   package Keys is new Callback_Sets.Generic_Keys (System.Address,
+                                                   Force_Addr);
+
+   --------------
+   -- Contains --
+   --------------
+
+   function Contains (This : Set; Addr : System.Address) return Boolean is
+      (Keys.Contains (Callback_Sets.Set (This), Addr));
+
+   ------------
+   -- Delete --
+   ------------
+
+   procedure Delete (This : in out Set; Addr : System.Address) is
+   begin
+      Keys.Delete (Callback_Sets.Set (This), Addr);
+   end Delete;
+
+   ---------
+   -- Get --
+   ---------
+
+   function Get (This : in out Set; Addr : System.Address) return Reference is
+     (Element => Keys.Reference_Preserving_Key (Callback_Sets.Set (This), Addr).Element);
+
+   -----------------
+   -- Num_Clients --
+   -----------------
+
+   function Num_Clients       (This : Set) return Natural is
+      Num : Natural := 0;
+   begin
+      for D of This loop
+         if D in Client_Dispatcher'Class then
+            Num := Num + 1;
+         end if;
+      end loop;
+      return Num;
+   end Num_Clients;
+
+   ------------------
+   -- Num_Services --
+   ------------------
+
+   function Num_Services      (This : Set) return Natural is
+      Num : Natural := 0;
+   begin
+      for D of This loop
+         if D in Service_Dispatcher'Class then
+            Num := Num + 1;
+         end if;
+      end loop;
+      return Num;
+   end Num_Services;
+
+   -----------------------
+   -- Num_Subscriptions --
+   -----------------------
+
+   function Num_Subscriptions (This : Set) return Natural is
+      Num : Natural := 0;
+   begin
+      for D of This loop
+         if D in Subscription_Dispatcher'Class then
+            Num := Num + 1;
+         end if;
+      end loop;
+      return Num;
+   end Num_Subscriptions;
+
+   ----------------
+   -- Num_Timers --
+   ----------------
+
+   function Num_Timers        (This : Set) return Natural is
+      Num : Natural := 0;
+   begin
+      for D of This loop
+         if D in Timer_Dispatcher'Class then
+            Num := Num + 1;
+         end if;
+      end loop;
+      return Num;
+   end Num_Timers;
 
 end RCL.Callbacks ;

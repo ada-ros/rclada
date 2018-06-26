@@ -1,5 +1,4 @@
 with Ada.Containers.Bounded_Synchronized_Queues;
-with Ada.Containers.Indefinite_Holders;
 with Ada.Containers.Synchronized_Queue_Interfaces;
 with Ada.Finalization;
 
@@ -17,13 +16,18 @@ package RCL.Executors.Concurrent is
      new Executors.Executor with private;
    
    overriding 
-   procedure Dispatch (This : in out Executor;
-                       Call : in out Callbacks.Dispatcher'Class);
+   procedure Dispatch (This   : in out Executor;
+                       Node   : access Nodes.Node'Class;
+                       Handle :        Callbacks.Handle);
    
 private    
    
-   package Callback_Holders is new Indefinite_Holders (Callbacks.Dispatcher'Class, Callbacks."=");
-   package Queue_Elements is new Synchronized_Queue_Interfaces (Callback_Holders.Holder);
+   type Callable is record
+      Node   : access Nodes.Node'Class;
+      Handle :        Callbacks.Handle;
+   end record;
+   
+   package Queue_Elements is new Synchronized_Queue_Interfaces (Callable);
    package Queues is new Bounded_Synchronized_Queues (Queue_Elements,
                                                       Default_Capacity => 0);
    

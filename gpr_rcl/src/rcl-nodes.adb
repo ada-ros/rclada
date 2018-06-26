@@ -1,5 +1,4 @@
 with Ada.Calendar;
-with Ada.Containers;
 with Ada.Exceptions;
 
 with RCL.Allocators;
@@ -9,7 +8,6 @@ with RCL.Publishers.Impl;
 with RCL.Services.Impl;
 with RCL.Utils.Names_And_Types;
 with RCL.Utils.String_Arrays;
-with RCL.Wait;
 
 with Rcl_Client_H;  use Rcl_Client_H;
 with Rcl_Graph_H;   use Rcl_Graph_H;
@@ -59,19 +57,22 @@ package body RCL.Nodes is
             C_Strings.To_C (Name).To_Ptr,
             Opts'Access));
 
-      This.Clients.Prepend (Callbacks.Client_Dispatcher'
-                              (Node     => This.Self,
-                               Client   => Clients.Impl.To_C_Client (Client),
-                               Callback => Callback,
-                               Blocking => Blocking,
-                               Response => ROSIDL.Impl.Message_Holders.To_Holder
-                                 (ROSIDL.Dynamic.Init_Shared (Support.Response_Support)),
-                               Success  => False));
+      This.Callbacks.Insert (Callbacks.Client_Dispatcher'
+                               (Node     => This.Self,
+                                Client   => Clients.Impl.To_C_Client (Client),
+                                Callback => Callback,
+                                Blocking => Blocking,
+                                Response => ROSIDL.Impl.Message_Holders.To_Holder
+                                  (ROSIDL.Dynamic.Init_Shared (Support.Response_Support)),
+                                Success  => False));
+
+      This.Client := Clients.Impl.To_C_Client (Client).To_Unique_Addr;
 
       declare
          use Ada.Calendar;
          Start     : constant Time    := Clock;
-         Available : aliased  CX.Bool := 0;
+         Available : aliased  CX.Bool := Bool_False;
+         Bother    :          Time    := Clock - 1.1;
       begin
          while Clock - Start < Timeout loop
             delay 0.01; -- Really...
@@ -80,7 +81,12 @@ package body RCL.Nodes is
                       Client'Access,
                       Available'Access));
 
-            exit when Available /= 0;
+            exit when To_Boolean (Available);
+
+            if Clock - Bother >= 1.0 then
+               Logging.Warn ("Service unavailaible, waiting...");
+               Bother := Clock;
+            end if;
          end loop;
       end;
 
@@ -113,25 +119,20 @@ package body RCL.Nodes is
                            Blocking => True,
                            Timeout  => Timeout);
 
-      declare
-
-      begin
-         loop
-            This.Spin (Once   => True,
-                       During => Timeout - (Clock - Start));
-
-            if This.Clients (1).Success then
-               return Resp : constant ROSIDL.Dynamic.Shared_Message :=
-                               This.Clients (1).Response.Element
-               do
-                  This.Client_Free (This.Clients.First_Index);
-               end return;
-            elsif Clock - Start >= Timeout then
-               This.Client_Free (This.Clients.First_Index);
-               raise RCL_Timeout;
-            end if;
-         end loop;
-      end;
+      loop
+         This.Spin (Once   => True,
+                    During => Timeout - (Clock - Start));
+         if This.Current_Client.Success then
+            return Resp : constant ROSIDL.Dynamic.Shared_Message :=
+              This.Current_Client.Response.Element
+            do
+               This.Client_Free (This.Client);
+            end return;
+         elsif Clock - Start >= Timeout then
+            This.Client_Free (This.Client);
+            raise RCL_Timeout;
+         end if;
+      end loop;
    end Client_Call;
 
    -----------------
@@ -169,31 +170,18 @@ package body RCL.Nodes is
    -----------------
 
    procedure Client_Free (This : in out Node;
-                          Pos  : Positive) is
+                          Ptr  :        System.Address)
+   is
+      CB : Callbacks.Client_Dispatcher'Class := This.Callbacks.Get_Client (Ptr);
    begin
-      Check (Rcl_Client_Fini (This.Clients (Pos).Client.To_C, This.Impl.Impl'Access));
+      Check (Rcl_Client_Fini (CB.Client.To_Var_C, This.Impl.Impl'Access));
 
-      This.Clients (Pos).Response.Clear;
+      CB.Response.Clear;
       --  This should happen automatically on deletion from the container,
       --    but it doesn't. The Indefinite_Holders where buggy in 2017
 
-      This.Clients.Delete (Pos);
+      This.Callbacks.Delete (Ptr);
    end Client_Free;
-
-   ------------------------
-   -- Delete_If_Existing --
-   ------------------------
-
-   procedure Delete_If_Existing (V     : in out Timer_Vector;
-                                 Timer : Timers.Timer_Id) is
-   begin
-      for I in V.First_Index .. V.Last_Index loop
-         if V (I).Timer = Timer then
-            V.Delete (I);
-            return;
-         end if;
-      end loop;
-   end Delete_If_Existing;
 
    ----------
    -- Init --
@@ -262,6 +250,15 @@ package body RCL.Nodes is
          Put_Line ("Exception while finalizing node:");
          Put_Line (Ada.Exceptions.Exception_Information (E));
    end Finalize;
+
+   -------------------
+   -- Get_Callbacks --
+   -------------------
+
+   procedure Get_Callbacks (This : in out Node; Set : in out Callbacks.Set) is
+   begin
+      Set.Union (This.Callbacks);
+   end Get_Callbacks;
 
    ----------------------------
    -- Graph_Count_Publishers --
@@ -348,7 +345,7 @@ package body RCL.Nodes is
         (rcl_get_topic_names_and_types
            (This.Impl.Impl'Access,
             Alloc'Access,
-            (if Demangle then 0 else 1), -- Note: in C side is No_Demangle (bool)
+            (if Demangle then Bool_False else Bool_True), -- Note: in C side is No_Demangle (bool)
             Arr.To_C));
 
       return V : Utils.Topics_And_Types do
@@ -396,11 +393,11 @@ package body RCL.Nodes is
             C_Strings.To_C (Name).To_Ptr,
             Opts'Access));
 
-      This.Services.Append (Callbacks.Service_Dispatcher'
-                              (Node     => This.Self,
-                               Service  => Services.Impl.To_C_Service (Srv),
-                               Callback => Callback,
-                               Support  => Support));
+      This.Callbacks.Insert (Callbacks.Service_Dispatcher'
+                               (Node     => This.Self,
+                                Service  => Services.Impl.To_C_Service (Srv),
+                                Callback => Callback,
+                                Support  => Support));
    end Serve;
 
    ----------
@@ -413,92 +410,12 @@ package body RCL.Nodes is
    is
       use Ada.Calendar;
       Start : constant Time := Clock;
-
-      -------------
-      -- Process --
-      -------------
-
-      procedure Process (T : Wait.Trigger) is
-         use all type Wait.Kinds;
-      begin
-         case T.Kind is
-            when Client =>
-               This.Clients (T.Index).Dispatch;
-               if not This.Clients (T.Index).Blocking then
-                  --  If blocking, the returned response is needed yet, and
-                  --    will be freed in function Client_Call
-                  This.Client_Free (T.Index);
-               end if;
-            when Service =>
-               This.Services (T.Index).Dispatch;
-            when Subscription =>
-               This.Subscriptions (T.Index).Dispatch;
-            when Timer =>
-               This.Timers (T.Index).Dispatch;
-         end case;
-      end Process;
-
-      ---------------
-      -- Spin_Once --
-      ---------------
-
-      function Spin_Once return Boolean is
-         --  True if something was processed
-
-         use all type Wait.Wait_Outcomes;
-
-         Set : Wait.Set := Wait.Init
-           (Num_Clients       => Natural (This.Clients.Length),
-            Num_Services      => Natural (This.Services.Length),
-            Num_Subscriptions => Natural (This.Subscriptions.Length),
-            Num_Timers        => Natural (This.Timers.Length));
-      begin
-         for Cli of This.Clients loop
-            Set.Add (Cli.Client);
-         end loop;
-
-         for Srv of This.Services loop
-            Set.Add (Srv.Service);
-         end loop;
-
-         for Sub of This.Subscriptions loop
-            Set.Add (Sub.Subscription);
-         end loop;
-
-         for Timer of This.Timers loop
-            if not Timers.Is_Canceled (Timer.Timer) then
-               Set.Add (Timer.Timer);
-            end if;
-         end loop;
-
---           Logging.Info ("WAITING:" & ROS2_Duration'Image (During - (Clock - Start)) &
---                           " LONGLAST:" & C.Long'Last'Img &
---                           " EQUIV:" & Long_Long_Integer'(Long_Long_Integer (During - (Clock - Start) * 1_000_000_000.0))'Img);
-
-         case Set.Wait (During - (Clock - Start)) is
-            when Error     =>
-               raise Program_Error with "Error in Set.Wait";
-
-            when Timeout   =>
-               return False;
-
-            when Triggered =>
-               for Trigger of Set loop
-                  Process (Trigger);
-               end loop;
-               return True;
-
-         end case;
-      end Spin_Once;
-
    begin
       loop
-         if This.Clients.Is_Empty       and then This.Services.Is_Empty and then
-            This.Subscriptions.Is_Empty and then This.Timers.Is_Empty
-         then
+         if This.Callbacks.Is_Empty then
             delay During - (Clock - Start);
          else
-            if Spin_Once and then Once then
+            if This.Current_Executor.Spin_Once (During, This.Self) and then Once then
                exit;
             end if;
          end if;
@@ -509,6 +426,7 @@ package body RCL.Nodes is
       when E : others =>
          Logging.Error ("Node.Spin caught: " &
                           Ada.Exceptions.Exception_Information (E));
+         raise;
    end Spin;
 
    ---------------
@@ -523,7 +441,7 @@ package body RCL.Nodes is
       Sub : Subscriptions.Subscription :=
               Subscriptions.Init (This, Msg_Type, Topic);
    begin
-      This.Subscriptions.Append
+      This.Callbacks.Insert
         (Subscription_Dispatcher'(This.Self, Sub.To_C, Callback, Msg_Type));
       Sub.Detach;
    end Subscribe;
@@ -539,7 +457,7 @@ package body RCL.Nodes is
    is
       Timer : constant Timers.Timer := Timers.Init (Period);
    begin
-      This.Timers.Append
+      This.Callbacks.Insert
         (Timer_Dispatcher'
            (This.Self,
             Timer.Id,
@@ -600,26 +518,10 @@ package body RCL.Nodes is
       Check (Rcl_Timer_Fini (Timers.To_C (Timer)));
 
       if This.Timer_Exists (Timer) then
-         This.Timers.Delete_If_Existing (Timer);
+         This.Callbacks.Delete (Timers.To_Unique_Addr (Timer));
          Timers.Free (Tmp);
       end if;
    end Timer_Delete;
-
-   ------------------
-   -- Timer_Exists --
-   ------------------
-
-   function Timer_Exists (This  : Node;
-                          Timer : Timers.Timer_Id) return Boolean is
-   begin
-      for T of This.Timers loop
-         if T.Timer = Timer then
-            return True;
-         end if;
-      end loop;
-
-      return False;
-   end Timer_Exists;
 
    -----------------
    -- Timer_Reset --
@@ -632,5 +534,14 @@ package body RCL.Nodes is
       This.Timer_Assert (Timer);
       Check (Rcl_Timer_Reset (Timers.To_C (Timer)));
    end Timer_Reset;
+
+   -------------
+   -- Trigger --
+   -------------
+
+   procedure Trigger (This : in out Node; CB : System.Address) is
+   begin
+      This.Callbacks (CB).Dispatch;
+   end Trigger;
 
 end RCL.Nodes;

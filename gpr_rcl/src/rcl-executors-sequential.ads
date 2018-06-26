@@ -5,7 +5,8 @@ package RCL.Executors.Sequential is
    type Executor is new Executors.Executor with null record;
    
    overriding 
-   procedure Dispatch (This : in out Executor;
-                       Call : in out Callbacks.Dispatcher'Class);
+   procedure Dispatch (This   : in out Executor;
+                       Node   : access Nodes.Node'Class;
+                       Handle :        Callbacks.Handle);
    
 end RCL.Executors.Sequential;

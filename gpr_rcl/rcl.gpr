@@ -47,8 +47,8 @@ library project Rcl is
       for Switches ("ada") use ("-Es");
    end Binder;
 
-   package Linker is
-      for Linker_Options use ("-Wl,--no-as-needed");
-   end Linker;
+--     package Linker is
+--        for Linker_Options use ("-Wl,--no-as-needed");
+--     end Linker;
 
 end Rcl;

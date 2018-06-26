@@ -42,12 +42,13 @@ private
    package CS renames Interfaces.C.Strings;
    package CX renames Interfaces.C.Extensions;
    
-   use C_Strings;
-   
+   pragma Warnings (Off); --  Those are used in child packages   
+   use          C_Strings;   
    use all type C.int;
    use all type C.Long;
    use all type C.size_t;
    use all type C.unsigned_char;
+   pragma Warnings (On);
    
    pragma Warnings (Off);
    use all type CX.Bool;
@@ -59,6 +60,7 @@ private
    procedure Check (Ret : Rcl_Error_Code);
    
    Bool_False : constant CX.Bool := CX.Bool'First;
+   Bool_True  : constant CX.Bool := CX.Bool'Succ (Bool_False);
    --  Saves future problems with CX.bool being made a new Boolean instead of char
    
    function To_Boolean (Ret : CX.Bool) return Boolean is (Ret /= Bool_False);

@@ -7,15 +7,10 @@ with RCL.Timers;
 with RCL.Utils;
 
 with ROSIDL.Dynamic;
-with ROSIDL.Types;
 with ROSIDL.Typesupport;
 
 procedure Rclada_Double_Node is
    use RCL;
-
-   use all type ROSIDL.Types.Int8;
-   use all type ROSIDL.Types.Int32;
-   use all type ROSIDL.Types.Int64;
 
    Support : constant ROSIDl.Typesupport.Message_Support :=
                ROSIDL.Typesupport.Get_Message_Support

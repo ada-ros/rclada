@@ -1,8 +1,8 @@
-with Ada.Containers.Indefinite_Vectors;
 with Ada.Finalization;
 
-private with RCL.Callbacks;
+private with RCL.Impl;
 
+with RCL.Callbacks;
 with RCL.Clients;
 with RCL.Executors;
 with RCL.Executors.Sequential;
@@ -16,6 +16,8 @@ with Rcl_Node_H;         use Rcl_Node_H;
 
 with ROSIDL.Dynamic;
 with ROSIDL.Typesupport;
+
+with System;
 
 package RCL.Nodes is
 
@@ -185,52 +187,46 @@ package RCL.Nodes is
    
    function To_C (This : aliased in out Node) return Reference;
    
+   procedure Client_Free (This : in out Node;
+                          Ptr  :        System.Address);
+   
+   ---------------------------------------------------------------
+   --  Extras for executor interaction, also not needed by clients 
+   
+   procedure Get_Callbacks (This : in out Node; Set : in out Callbacks.Set);      
+   
+   procedure Trigger (This : in out Node; CB : System.Address);
+   
 private   
    
-   use Ada.Containers;   
    use Callbacks;
-   
-   package Client_Vectors is new Indefinite_Vectors (Positive,
-                                                     Callbacks.Client_Dispatcher);
-   
-   package Srv_Vectors is new Indefinite_Vectors (Positive,
-                                                  Callbacks.Service_Dispatcher);
-   
-   package Sub_Vectors is new Indefinite_Vectors (Positive, 
-                                                  Callbacks.Subscription_Dispatcher);
-   
-   package Timer_Vectors is new Indefinite_Vectors (Positive,
-                                                    Callbacks.Timer_Dispatcher);
-   
-   type Timer_Vector is new Timer_Vectors.Vector with null record;
-   
-   procedure Delete_If_Existing (V     : in out Timer_Vector;
-                                 Timer : Timers.Timer_Id);
    
    type Node (Executor : access Executors.Executor'Class)  is new Ada.Finalization.Limited_Controlled with record 
       Impl          : aliased C_Node := (Impl => Rcl_Get_Zero_Initialized_Node);
-      Self          :  access Node   := Node'Unchecked_Access;
+      Self          : access Node    := Node'Unchecked_Access;
       
       Options       : aliased Rcl_Node_Options_T := Rcl_Node_Get_Default_Options; 
       
-      Clients       :         Client_Vectors.Vector;
-      Services      :         Srv_Vectors.Vector;
-      Subscriptions :         Sub_Vectors.Vector;
-      Timers        :         Timer_Vector;
+      Callbacks     :         RCL.Callbacks.Set;
+      Client        :         System.Address; -- The client that's blocking and waiting
    end record;   
+   
+   function Current_Client (This : in out Node'Class) return Callbacks.Client_Dispatcher'Class is
+      (This.Callbacks.Get_Client (This.Client));
    
    function Current_Executor (This : in out Node'Class) return access Executors.Executor'Class is
      (if This.Executor /= null 
       then This.Executor
       else Default_Executor'Access);
    
-   procedure Base_Init (This : in out Node'Class);
+   procedure Base_Init (This : in out Node'Class);      
    
-   procedure Client_Free (This : in out Node;
-                          Pos  : Positive);
-   
-   procedure Timer_Assert (This  : Node;
+   procedure Timer_Assert (This  : Node; 
                            Timer : Timers.Timer_Id);
+   
+   function Timer_Exists (This  : Node; 
+                          Timer : Timers.Timer_Id) return Boolean is
+      (This.Callbacks.Contains (Timers.To_Unique_Addr (Timer)));
    
    function To_C (This : aliased in out Node) return Reference is
      (Ptr => This.Impl'Access);

@@ -8,8 +8,13 @@ package body RCL.Executors.Concurrent is
    -- Dispatch --
    --------------
 
-   procedure Dispatch (This : in out Executor;
-                       Call : in out Callbacks.Dispatcher'Class) is null;
+   procedure Dispatch (This   : in out Executor;
+                       Node   : access Nodes.Node'Class;
+                       Handle :        Callbacks.Handle) is
+   begin
+      This.Queue.Enqueue (Callable'(Node   => Node,
+                                    Handle => Handle));
+   end Dispatch;
 
    ----------------
    -- Initialize --
@@ -49,11 +54,12 @@ package body RCL.Executors.Concurrent is
 
       while not Done loop
          declare
-            Element : Callback_Holders.Holder;
+            Element : Callable;
          begin
             select
                Parent.Queue.Dequeue (Element);
-               Common_Dispatch (Element.Reference);
+               Common_Dispatch (Element.Node,
+                                Element.Handle);
             or
                delay 1.0;
             end select;

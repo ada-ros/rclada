@@ -19,7 +19,7 @@ package RCL.Subscriptions is
    --  See Node.Subscribe instead                        --
 
    type Subscription (<>) is new Ada.Finalization.Limited_Controlled with private;
-   type C_Subscription is record
+   type C_Subscription is tagged record
       C : aliased Rcl_Subscription_T;  
    end record;
    --  This should be a subtype but there's a bug in GNAT 2017
@@ -50,7 +50,9 @@ package RCL.Subscriptions is
    
    overriding procedure Finalize (This : in out Subscription);
    
-   function To_C (This : Subscription) return C_Subscription;
+   function To_C (This : Subscription'Class) return C_Subscription;
+   
+   function To_Unique_Addr (This : C_Subscription) return System.Address;
    
 private 
    
@@ -58,5 +60,11 @@ private
       Impl : aliased C_subscription := (C => Rcl_Get_Zero_Initialized_Subscription);
       Node :  access Nodes.C_Node;
    end record;
+      
+   function To_C (This : Subscription'Class) return C_Subscription is
+      (This.Impl);
+   
+   function To_Unique_Addr (This : C_Subscription) return System.Address is
+      (This.C.Impl);
 
 end RCL.Subscriptions;

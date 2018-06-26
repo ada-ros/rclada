@@ -16,11 +16,6 @@ with ROSIDL.Typesupport;
 
 procedure Rclada_Selftest is
 
-   procedure Keep1 with
-     Import,
-     Convention => C,
-     External_Name => "rosidl_typesupport_c__get_message_type_support_handle__rosidl_generator_ada__msg__Test";
-
    use RCL;
    use ROSIDL.Types;
 
@@ -262,6 +257,8 @@ begin
 
    while not (Topic_Done and then Service_Done) loop
       Node.Spin;
+      Nodes.Default_Executor.Spin;
+      --  Only one of the two is needed, but this way we test both
    end loop;
 
    --  Blocking client test (callback version)
@@ -296,7 +293,5 @@ begin
    Logging.Info ("Test successful");
    Logging.Info ("Elapsed seconds (computed):  " & Duration'Image (Clock.Now - Start));
    Logging.Info ("Elapsed seconds (from clock):" & Duration'Image (Clock.Elapsed));
-
---     Keep1;
 
 end Rclada_Selftest;

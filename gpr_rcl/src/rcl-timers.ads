@@ -54,6 +54,8 @@ package RCL.Timers is
    function Is_Canceled (This : Timer_Id) return Boolean;
    
    function To_C (This : Timer_Id) return access Rcl_Timer_T;
+      
+   function To_Unique_Addr (This : Timer_Id) return System.Address;
    
 private   
    
@@ -71,5 +73,8 @@ private
       (L.Impl = R.Impl);
 
    function To_C (This : Timer_Id) return access Rcl_Timer_T is (This);
+   
+   function To_Unique_Addr (This : Timer_Id) return System.Address is
+      (This.Impl);
    
 end RCL.Timers;

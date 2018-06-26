@@ -1,10 +1,10 @@
 with Ada.Exceptions;
 with Ada.Finalization;
 
-with RCL.Errors;
-
 with Rcl_Allocator_H; use Rcl_Allocator_H;
 with Rcl_Rcl_H; use Rcl_Rcl_H;
+
+with Rmw_Types_H; use Rmw_Types_H;
 
 with Rcutils_Allocator_H; use Rcutils_Allocator_H;
 
@@ -21,9 +21,8 @@ package body RCL is
    -------------------
 
    procedure Generic_Check (I : Int) is
-      use Errors;
    begin
-      if To_Error (Integer (I)) /= Ok then
+      if I /= RMW_RET_OK then
          raise ROS_Exception with "Code:" & I'Img;
       else
          null;
