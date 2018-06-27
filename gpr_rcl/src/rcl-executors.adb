@@ -3,6 +3,7 @@ with Ada.Exceptions;
 
 with RCL.Nodes;
 with RCL.Logging;
+with RCL.Wait;
 
 package body RCL.Executors is
 
@@ -105,25 +106,13 @@ package body RCL.Executors is
 
             when Triggered =>
                for Triggered of Set loop
-                  This.Trigger (CBs, Triggered);
+                  CBs.Get (Triggered.Ptr).Dispatch;
                end loop;
                return True;
 
          end case;
       end;
    end Spin_Once;
-
-   -------------
-   -- Trigger --
-   -------------
-
-   procedure Trigger (This : in out Executor'Class;
-                      Set  : in out Dispatchers.Set;
-                      T    :        Wait.Trigger) is
-   begin
-      This.Dispatch (Set.Get (T.Ptr).Node,
-                     T.Ptr);
-   end Trigger;
 
    --------------
    -- Node_Set --

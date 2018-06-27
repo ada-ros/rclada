@@ -9,8 +9,6 @@ with RCL.Utils;
 with ROSIDL.Dynamic;
 with ROSIDL.Typesupport;
 
-with System;
-
 procedure Rclada_test_multicore is
    
    --  Demo using concurrent executor dispatch. 
@@ -28,10 +26,8 @@ begin
    end if;
    
    declare
-      Pool     : aliased Executors.Concurrent.Executor (4, 1, System.Max_Priority);   
-      Executor : constant access Executors.Executor'Class := 
---                     Nodes.Default_Executor'Access;
-                   Pool'Access;
+      Pool     : aliased Executors.Concurrent.Executor;   
+      Executor : constant access Executors.Executor'Class := Pool'Access;
       
       Node     :         Nodes.Node := Nodes.Init (Name      => Utils.Command_Name,
                                                    Namespace => "/",
@@ -71,23 +67,32 @@ begin
       procedure Process_Work (Node : in out Nodes.Node'Class;
                               Msg  : in out ROSIDL.Dynamic.Message;
                               Info :        ROSIDL.Message_Info) is
+         pragma Unreferenced (Node, Info);
       begin
---           delay 1.0;
+         delay 1.0;
          Logging.Info (Msg ("data").Get_String & " done");
       end Process_Work;
       
-      task Boss;
+      Test_Period : constant Duration := 10.0;
+      
+      task Boss is
+         entry Start;
+      end Boss;
+      
       task body Boss is
       begin
-         loop
-            delay 1.0;
+         accept Start;
+         
+         for I in 1 .. Positive (Test_Period) loop
             Publish_Work;
+            delay 1.0;
          end loop;
       end Boss;
       
    begin
       Node.Subscribe (Support, Topic, Process_Work'Unrestricted_Access);
-      
-      Executor.Spin (During => Forever);
+      Boss.Start;
+      Executor.Spin (During => Test_Period);
+      Logging.Info ("Test period ended");
    end;
 end Rclada_test_multicore;

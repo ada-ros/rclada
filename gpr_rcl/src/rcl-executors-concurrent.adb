@@ -1,42 +1,68 @@
 with Ada.Exceptions; use Ada.Exceptions;
+with Ada.Unchecked_Deallocation;
 
 with RCL.Logging;
-with RCL.Nodes;
 
 package body RCL.Executors.Concurrent is
 
-   --------------
-   -- Dispatch --
-   --------------
+   ----------
+   -- Call --
+   ----------
 
-   procedure Dispatch (This   : in out Executor;
-                       Node   : access Nodes.Node'Class;
-                       Handle :        Dispatchers.Handle) is
+   procedure Call (This : in out Executor;
+                   CB   :        Impl.Callbacks.Callback'Class) is
    begin
-      This.Queue.Enqueue (Callable'(Node   => Node.all'Unchecked_Access,
-                                    Handle => Handle));
-      Logging.Info ("ENQUEUE:" & This.Queue.Current_Use'Img);
-
-      if not This.Started then
-         This.Started := True;
-         for I in This.Pool'Range loop
-            This.Pool (I).Set_Parent (This.Self);
-         end loop;
-      end if;
-   end Dispatch;
+      select
+         This.Queue.Enqueue (CB_Holders.To_Holder (CB));
+      else
+         Logging.Warn ("Queue full! Events are being DISCARDED!");
+      end select;
+   end Call;
 
    --------------
    -- Finalize --
    --------------
 
    overriding procedure Finalize   (This : in out Controller) is
+      procedure Free is new Ada.Unchecked_Deallocation (Runner, Runner_Access);
    begin
+      if This.Parent.Queue.Current_Use > 0 then
+         Logging.Warn ("Executor pool starting shutdown with" &
+                         This.Parent.Queue.Current_Use'Img &
+                         " queued pending calls!");
+      end if;
+
       for I in This.Parent.Pool'Range loop
-         Logging.Info ("Stopping down runner" & I'Img & "...");
+         Logging.Debug ("Stopping down runner" & I'Img & "...");
          This.Parent.Pool (I).Shutdown;
       end loop;
-      Logging.Info ("All stopped");
+
+      for I in This.Parent.Pool'Range loop
+         while not This.Parent.Pool (I)'terminated loop
+            delay 0.1;
+         end loop;
+         Free (This.Parent.Pool (I));
+      end loop;
+
+      Logging.Debug ("All stopped");
+
+      if This.Parent.Queue.Current_Use > 0 then
+         Logging.Warn ("Executor pool shut down with" &
+                         This.Parent.Queue.Current_Use'Img &
+                         " queued pending calls!");
+      end if;
    end Finalize;
+
+   ----------------
+   -- Initialize --
+   ----------------
+
+   overriding procedure Initialize (This : in out Controller) is
+   begin
+      for I in This.Parent.Pool'Range loop
+         This.Parent.Pool (I) := new Runner (This.Parent.all'Unchecked_Access);
+      end loop;
+   end Initialize;
 
    ------------
    -- Runner --
@@ -44,23 +70,16 @@ package body RCL.Executors.Concurrent is
 
    task body Runner is
       Done   : Boolean := False;
-      Parent : Executor_Access;
    begin
-      Logging.Info ("Runner ready");
-      accept Set_Parent (Parent : in Executor_Access) do
-         Runner.Parent := Parent;
-      end Set_Parent;
-      Logging.Info ("Runner started");
+      Logging.Debug ("Runner started");
 
       while not Done loop
          declare
-            Element : Callable;
+            CB : Callable;
          begin
             select
-               Parent.Queue.Dequeue (Element);
-               Logging.Info ("QUEUED:" & Parent.Queue.Current_Use'Img);
-               Common_Dispatch (Element.Node,
-                                Element.Handle);
+               Parent.Queue.Dequeue (CB);
+               CB.Element.Call;
             or
                delay 1.0;
             end select;

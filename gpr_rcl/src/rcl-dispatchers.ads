@@ -14,7 +14,7 @@ with System;
 
 package RCL.Dispatchers is
 
-   --  Helper types to couple an element with its callback, and dispatch calls
+   --  Helper types to couple an element with its dispatcher, and dispatch calls
    --  Used only privately by the Node implementation
    
    subtype Handle is System.Address;

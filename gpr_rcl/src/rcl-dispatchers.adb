@@ -1,18 +1,16 @@
-with Ada.Exceptions; use Ada.Exceptions;
-
 with Rcl_Client_H;  use Rcl_Client_H;
 with Rcl_Service_H; use Rcl_Service_H;
-with Rcl_Timer_H;   use Rcl_Timer_H;
-with Rcl_Types_H;   use Rcl_Types_H;
 
 with Rmw_Types_H; use Rmw_Types_H;
 
-with RCL.Logging;
+with RCL.Impl.Callbacks;
 with RCL.Nodes; pragma Unreferenced (RCL.Nodes);
 
 with ROSIDL.Dynamic;
 
 package body RCL.Dispatchers is
+
+   use Impl;
 
    ---------
    -- "<" --
@@ -43,12 +41,10 @@ package body RCL.Dispatchers is
             This.Response.Element.Msg.To_Ptr));
 
       if not This.Blocking and then This.Callback /= null then
-         begin
-            This.Callback (This.Node.all, This.Response.Element);
-         exception
-            when E : others =>
-               Logging.Error ("Client callback raised: " & Exception_Information (E));
-         end;
+         This.Node.Current_Executor.Call
+           (Callbacks.Client_Callback'(Node => This.Node,
+                                       User_Callback => This.Callback,
+                                       Response      => This.Response));
       end if;
 
       if not This.Blocking then -- The client is not needed any longer
@@ -61,10 +57,10 @@ package body RCL.Dispatchers is
    --------------
 
    procedure Dispatch (This : Service_Dispatcher) is
-      Request  : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (This.Support.Request_Support);
-      Response : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (This.Support.Response_Support);
+      Request  : constant ROSIDL.Dynamic.Shared_Message :=
+                   ROSIDL.Dynamic.Init_Shared (This.Support.Request_Support);
 
-      Header  : aliased Rmw_Request_Id_T;
+      Header   : aliased Rmw_Request_Id_T;
    begin
       Check
         (Rcl_Take_Request
@@ -72,18 +68,13 @@ package body RCL.Dispatchers is
             Header'Access,
             Request.To_Ptr));
 
-      begin
-         This.Callback (This.Node.all, Request, Response);
-      exception
-         when E : others =>
-            Logging.Error ("Service callback raised: " & Exception_Information (E));
-      end;
-
-      Check
-        (Rcl_Send_Response
-           (This.Service.To_C,
-            Header'Access,
-            Response.To_Ptr));
+      This.Node.Current_Executor.Call
+        (Callbacks.Service_Callback'(Node          => This.Node,
+                                     User_Callback => This.Callback,
+                                     Request       => ROSIDL.Impl.To_Holder (Request),
+                                     Header        => Header,
+                                     Service       => This.Service,
+                                     Support       => This.Support));
    end Dispatch;
 
    --------------
@@ -91,7 +82,7 @@ package body RCL.Dispatchers is
    --------------
 
    procedure Dispatch (This : Subscription_Dispatcher) is
-      Msg  : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (This.Support);
+      Msg  : constant ROSIDL.Dynamic.Shared_Message := ROSIDL.Dynamic.Init_Shared (This.Support);
         -- (This.Support.Message_Class.Package_Name, This.Support.Message_Class.Message_Name);
       Info : ROSIDL.Message_Info;
       Sub  : Subscriptions.C_Subscription := This.Subscription;
@@ -100,12 +91,11 @@ package body RCL.Dispatchers is
                                  Msg.To_Ptr,
                                  Info)
       then
-         begin
-            This.Callback (This.Node.all, Msg, Info);
-         exception
-            when E : others =>
-               Logging.Error ("Subscription callback raised: " & Exception_Information (E));
-         end;
+         This.Node.Current_Executor.Call
+           (Callbacks.Subscription_Callback'(Node          => This.Node,
+                                             User_Callback => This.Callback,
+                                             Message       => ROSIDL.Impl.To_Holder (Msg),
+                                             Info          => Info));
       else
          raise Program_Error with "Subscription dispatcher: Take_Raw failed when message was expected";
       end if;
@@ -116,29 +106,11 @@ package body RCL.Dispatchers is
    --------------
 
    procedure Dispatch (This : Timer_Dispatcher) is
-      Temp    : Timers.Timer  := Timers.Bind (This.Timer, This.Node.all);
-      Ret     : Rcl_Error_Code;
-      Elapsed : constant Duration := Temp.Time_Since_Last_Call;
    begin
-      Ret := Rcl_Timer_Call (Timers.To_C (This.Timer));
-      --  This "snoozes" the C timer and resets time since last call
-
-      case Ret is
-         when RCL_RET_TIMER_CANCELED =>
-            Logging.Warn ("Attempt to call canceled timer");
-            -- Happens once after canceling, not important
-         when Rmw_Ret_OK =>
-            begin
-               This.Callback (This.Node.all,
-                              Temp, -- temporary timer for the callee
-                              Elapsed);
-            exception
-               when E : others =>
-                  Logging.Error ("Timer callback raised: " & Exception_Information (E));
-            end;
-         when others =>
-            Check (Ret);
-      end case;
+      This.Node.Current_Executor.Call
+        (Callbacks.Timer_Callback'(Node          => This.Node,
+                                   User_Callback => This.Callback,
+                                   Timer         => This.Timer));
    end Dispatch;
 
    ----------------

@@ -2,8 +2,8 @@ with Ada.Containers.Ordered_Sets;
 with Ada.Unchecked_Conversion;
 
 with RCL.Dispatchers;
+with RCL.Impl.Callbacks;
 limited with RCL.Nodes;
-with RCL.Wait;
 
 with System;
 
@@ -21,13 +21,11 @@ package RCL.Executors is
    --  Executors are expected to outlive nodes (they should be library-level).
    --  Nodes self-manage their registration-unregistration
    
-   type Executor is abstract tagged limited private;
-   
-   procedure Dispatch (This   : in out Executor;
-                       Node   : access Nodes.Node'Class;
-                       Handle :        Dispatchers.Handle) is abstract;
-   --  This is the only procedure that derived Executors must override
-   
+   type Executor is abstract tagged limited private;   
+      
+   procedure Call (This : in out Executor; 
+                   CB   :        Impl.Callbacks.Callback'Class) is abstract;
+   --  Only procedure to be overriden, receives a ready call to user code
       
    procedure Add (This :         in out Executor; 
                   Node : aliased in out Nodes.Node'Class);
@@ -44,7 +42,7 @@ package RCL.Executors is
                        Node    : access Nodes.Node'Class := null) return Boolean;
    --  Will spin on the given node or all of them when null
    
-private
+private   
    
    type Node_Access is not null access all Nodes.Node'Class;
    
@@ -72,10 +70,6 @@ private
    procedure Common_Dispatch (Node   : access Nodes.Node'Class;
                               Handle :        Dispatchers.Handle);
    --  The actual logic of the dispatch that derived dispatchers may use
-   --    if they do not do anything special
-   
-   procedure Trigger (This : in out Executor'Class;
-                      Set  : in out Dispatchers.Set;
-                      T    :        RCL.Wait.Trigger);
+   --    if they do not do anything special   
 
 end RCL.Executors;

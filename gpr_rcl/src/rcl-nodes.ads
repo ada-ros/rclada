@@ -1,7 +1,5 @@
 with Ada.Finalization;
 
-private with RCL.Impl;
-
 with RCL.Dispatchers;
 with RCL.Clients;
 with RCL.Executors;
@@ -195,6 +193,8 @@ package RCL.Nodes is
    
    procedure Client_Success (This : in out Node; Client : Dispatchers.Handle);   
    
+   function Current_Executor (This : in out Node'Class) return access Executors.Executor'Class;
+   
    procedure Get_Callbacks (This : in out Node; Set : in out Dispatchers.Set);      
    
    procedure Trigger (This : in out Node; CB : System.Address);
@@ -230,11 +230,6 @@ private
       Dispatchers : Safe_Dispatchers (Node'Access);
    end record;   
    
-   function Current_Executor (This : in out Node'Class) return access Executors.Executor'Class is
-     (if This.Executor /= null 
-      then This.Executor
-      else Default_Executor'Access);
-   
    procedure Base_Init (This : in out Node'Class);      
    
    procedure Timer_Assert (This  : Node; 
@@ -247,6 +242,11 @@ private
    function To_C (This : aliased in out Node) return Reference is
      (Ptr => This.Impl'Access);
    
-   Default_Options : constant Options := (null record);
+   Default_Options  : constant Options := (null record);
+         
+   function Current_Executor (This : in out Node'Class) return access Executors.Executor'Class is
+     (if This.Executor /= null 
+      then This.Executor
+      else Default_Executor'Access);
 
 end RCL.Nodes;
