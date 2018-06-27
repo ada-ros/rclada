@@ -1,6 +1,7 @@
 with Ada.Exceptions; use Ada.Exceptions;
 
-with Rcl.Logging;
+with RCL.Logging;
+with RCL.Nodes;
 
 package body RCL.Executors.Concurrent is
 
@@ -10,22 +11,19 @@ package body RCL.Executors.Concurrent is
 
    procedure Dispatch (This   : in out Executor;
                        Node   : access Nodes.Node'Class;
-                       Handle :        Callbacks.Handle) is
+                       Handle :        Dispatchers.Handle) is
    begin
-      This.Queue.Enqueue (Callable'(Node   => Node,
+      This.Queue.Enqueue (Callable'(Node   => Node.all'Unchecked_Access,
                                     Handle => Handle));
+      Logging.Info ("ENQUEUE:" & This.Queue.Current_Use'Img);
+
+      if not This.Started then
+         This.Started := True;
+         for I in This.Pool'Range loop
+            This.Pool (I).Set_Parent (This.Self);
+         end loop;
+      end if;
    end Dispatch;
-
-   ----------------
-   -- Initialize --
-   ----------------
-
-   overriding procedure Initialize (This : in out Controller) is
-   begin
-      for I in This.Parent.Pool'Range loop
-         This.Parent.Pool (I).Set_Parent (This.Parent);
-      end loop;
-   end Initialize;
 
    --------------
    -- Finalize --
@@ -48,9 +46,11 @@ package body RCL.Executors.Concurrent is
       Done   : Boolean := False;
       Parent : Executor_Access;
    begin
+      Logging.Info ("Runner ready");
       accept Set_Parent (Parent : in Executor_Access) do
          Runner.Parent := Parent;
       end Set_Parent;
+      Logging.Info ("Runner started");
 
       while not Done loop
          declare
@@ -58,6 +58,7 @@ package body RCL.Executors.Concurrent is
          begin
             select
                Parent.Queue.Dequeue (Element);
+               Logging.Info ("QUEUED:" & Parent.Queue.Current_Use'Img);
                Common_Dispatch (Element.Node,
                                 Element.Handle);
             or
@@ -77,6 +78,9 @@ package body RCL.Executors.Concurrent is
             null;
          end select;
       end loop;
+   exception
+      when E : others =>
+         Logging.Error ("Executors.concurrent.runner [toplevel]:" & Exception_Information (E));
    end Runner;
 
 end RCL.Executors.Concurrent;

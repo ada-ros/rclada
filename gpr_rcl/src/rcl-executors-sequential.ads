@@ -7,6 +7,6 @@ package RCL.Executors.Sequential is
    overriding 
    procedure Dispatch (This   : in out Executor;
                        Node   : access Nodes.Node'Class;
-                       Handle :        Callbacks.Handle);
+                       Handle :        Dispatchers.Handle);
    
 end RCL.Executors.Sequential;

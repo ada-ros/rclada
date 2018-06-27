@@ -40,6 +40,10 @@ procedure Rclada_Selftest is
    Matrix_Indices : constant ROSIDL.Dynamic.Matrix_Indices := ( 2,  3, 4);
    Matrix_Strides : constant ROSIDL.Dynamic.Matrix_Indices := (24, 12, 4);
 
+   -------------------
+   -- Assert_Matrix --
+   -------------------
+
    procedure Assert_Matrix (Mat : ROSIDL.Dynamic.Matrix_View) is
    begin
       pragma Assert (Mat.Size = 2 * 3 * 4);

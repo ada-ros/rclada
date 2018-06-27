@@ -22,7 +22,7 @@ package body RCL.Executors is
    ---------------------
 
    procedure Common_Dispatch (Node   : access Nodes.Node'Class;
-                              Handle :        Callbacks.Handle) is
+                              Handle :        Dispatchers.Handle) is
    begin
       Node.Trigger (Handle);
    end Common_Dispatch;
@@ -75,16 +75,19 @@ package body RCL.Executors is
 
       use all type Wait.Wait_Outcomes;
 
-      CBs : Callbacks.Set;
+      CBs   : Dispatchers.Set;
+      Nodes : Node_Sets.Set;
    begin
-      for N of This.Nodes loop
+      This.Nodes.Get (Nodes);
+
+      for N of Nodes loop
          if Node = null or else N = Node then
             N.Get_Callbacks (CBs);
          end if;
       end loop;
 
       if CBs.Is_Empty then
-         Logging.Warn ("Nothing to spin on: sleeping for" & Timeout'Img & " seconds!");
+         Logging.Warn ("Nothing to spin on [executor]: sleeping for" & Timeout'Img & " seconds!");
          delay Timeout;
          return False;
       end if;
@@ -115,11 +118,46 @@ package body RCL.Executors is
    -------------
 
    procedure Trigger (This : in out Executor'Class;
-                      Set  : in out Callbacks.Set;
+                      Set  : in out Dispatchers.Set;
                       T    :        Wait.Trigger) is
    begin
       This.Dispatch (Set.Get (T.Ptr).Node,
                      T.Ptr);
    end Trigger;
+
+   --------------
+   -- Node_Set --
+   --------------
+
+   protected body Node_Set is
+
+      ------------
+      -- Delete --
+      ------------
+
+      procedure Delete (Node  : Node_Access) is
+      begin
+         Nodes.Delete (Node);
+      end Delete;
+
+      ------------
+      -- Insert --
+      ------------
+
+      procedure Insert (Node  : Node_Access) is
+      begin
+         Nodes.Insert (Node);
+      end Insert;
+
+      ---------
+      -- Get --
+      ---------
+
+      procedure Get    (Nodes : out Node_Sets.Set) is
+      begin
+         Nodes := Node_Set.Nodes;
+      end Get;
+
+   end Node_Set;
 
 end RCL.Executors;

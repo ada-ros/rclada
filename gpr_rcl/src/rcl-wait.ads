@@ -2,7 +2,7 @@ with Ada.Finalization;
 with Ada.Iterator_Interfaces;
 
 with RCL.Clients.Impl;
-with RCL.Callbacks;
+with RCL.Dispatchers;
 with RCL.Services.Impl;
 limited with RCL.Subscriptions;
 with RCL.Timers;
@@ -43,7 +43,7 @@ package RCL.Wait is
                   Num_Timers        : Natural := 0) return Set;
    --  At least one of these must be nonzero
    
-   function Init (Callbacks : RCL.Callbacks.Set) return Set;
+   function Init (Callbacks : RCL.Dispatchers.Set) return Set;
    --  Initializes and fills using the given set
 
    procedure Add (This : aliased in out Set; 

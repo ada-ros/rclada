@@ -37,6 +37,8 @@ package RCL.Timers is
    
    function Id (This : Timer) return Timer_Id;
    
+   function Time_Since_Last_Call (This : Timer) return Duration;
+   
    -----------------------------------
    --  Not intended for client use  --
    
@@ -51,7 +53,7 @@ package RCL.Timers is
    --  Note: the timer won't work by itself; it must be created through
    --  Node facilities
    
-   function Is_Canceled (This : Timer_Id) return Boolean;
+   function Is_Canceled (This : Timer_Id) return Boolean;  
    
    function To_C (This : Timer_Id) return access Rcl_Timer_T;
       

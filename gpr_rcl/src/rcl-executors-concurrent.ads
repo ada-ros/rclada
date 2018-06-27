@@ -18,13 +18,13 @@ package RCL.Executors.Concurrent is
    overriding 
    procedure Dispatch (This   : in out Executor;
                        Node   : access Nodes.Node'Class;
-                       Handle :        Callbacks.Handle);
+                       Handle :        Dispatchers.Handle);
    
 private    
    
    type Callable is record
       Node   : access Nodes.Node'Class;
-      Handle :        Callbacks.Handle;
+      Handle :        Dispatchers.Handle;
    end record;
    
    package Queue_Elements is new Synchronized_Queue_Interfaces (Callable);
@@ -43,8 +43,7 @@ private
    type Controller (Parent : access Executor) is
      new Ada.Finalization.Limited_Controlled with null record;
    
-   overriding procedure Initialize (This : in out Controller);
-   overriding procedure Finalize   (This : in out Controller);
+   overriding procedure Finalize (This : in out Controller);
    
    type Executor (Queue_Size : Count_Type := Count_Type (System.Multiprocessors.Number_Of_CPUs) * 32;
                   Threads    : Positive   := Positive (System.Multiprocessors.Number_Of_CPUs);
@@ -56,6 +55,7 @@ private
          Queue : Queues.Queue (Capacity => Queue_Size, 
                                Ceiling  => Priority);
          Control : Controller (Executor'Access);
+         Started : Boolean := False;
       end record;
    
 end RCL.Executors.Concurrent;

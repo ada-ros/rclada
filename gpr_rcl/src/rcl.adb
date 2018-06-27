@@ -4,6 +4,8 @@ with Ada.Finalization;
 with Rcl_Allocator_H; use Rcl_Allocator_H;
 with Rcl_Rcl_H; use Rcl_Rcl_H;
 
+with Rcutils_Error_Handling_H; use Rcutils_Error_Handling_H;
+
 with Rmw_Types_H; use Rmw_Types_H;
 
 with Rcutils_Allocator_H; use Rcutils_Allocator_H;
@@ -68,6 +70,8 @@ package body RCL is
              (Argc      => Gnat_Argc,
               Argv      => Gnat_Argv,
               Allocator => Rcl_Allocator_T (Allocator)));
+
+      Rcutils_Reset_Error;
    exception
       when E : others =>
          Put_Line ("Exception while initializing rcl:");

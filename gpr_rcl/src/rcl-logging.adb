@@ -132,4 +132,5 @@ begin
    if not Initialized then
       Check (Rcutils_Logging_Initialize);
    end if;
+   Set_Name (Utils.Command_Name);
 end RCL.Logging;

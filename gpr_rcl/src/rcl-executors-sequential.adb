@@ -6,7 +6,7 @@ package body RCL.Executors.Sequential is
 
    procedure Dispatch (This   : in out Executor;
                        Node   : access Nodes.Node'Class;
-                       Handle :        Callbacks.Handle) is
+                       Handle :        Dispatchers.Handle) is
       pragma Unreferenced (This);
    begin
       Common_Dispatch (Node, Handle);

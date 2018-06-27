@@ -57,16 +57,15 @@ package body RCL.Nodes is
             C_Strings.To_C (Name).To_Ptr,
             Opts'Access));
 
-      This.Callbacks.Insert (Callbacks.Client_Dispatcher'
+      This.Dispatchers.Insert (Dispatchers.Client_Dispatcher'
                                (Node     => This.Self,
                                 Client   => Clients.Impl.To_C_Client (Client),
                                 Callback => Callback,
                                 Blocking => Blocking,
                                 Response => ROSIDL.Impl.Message_Holders.To_Holder
                                   (ROSIDL.Dynamic.Init_Shared (Support.Response_Support)),
-                                Success  => False));
-
-      This.Client := Clients.Impl.To_C_Client (Client).To_Unique_Addr;
+                                Success  => False),
+                             Is_Blocking_Client => True);
 
       declare
          use Ada.Calendar;
@@ -122,16 +121,21 @@ package body RCL.Nodes is
       loop
          This.Spin (Once   => True,
                     During => Timeout - (Clock - Start));
-         if This.Current_Client.Success then
-            return Resp : constant ROSIDL.Dynamic.Shared_Message :=
-              This.Current_Client.Response.Element
-            do
-               This.Client_Free (This.Client);
-            end return;
-         elsif Clock - Start >= Timeout then
-            This.Client_Free (This.Client);
-            raise RCL_Timeout;
-         end if;
+         declare
+            Current_Client : constant Dispatchers.Client_Dispatcher'Class :=
+                               This.Dispatchers.Current_Client;
+         begin
+            if Current_Client.Success then
+               return Resp : constant ROSIDL.Dynamic.Shared_Message :=
+                 Current_Client.Response.Element
+               do
+                  This.Client_Free (Current_Client.To_Ptr);
+               end return;
+            elsif Clock - Start >= Timeout then
+               This.Client_Free (Current_Client.To_Ptr);
+               raise RCL_Timeout;
+            end if;
+         end;
       end loop;
    end Client_Call;
 
@@ -172,7 +176,8 @@ package body RCL.Nodes is
    procedure Client_Free (This : in out Node;
                           Ptr  :        System.Address)
    is
-      CB : Callbacks.Client_Dispatcher'Class := This.Callbacks.Get_Client (Ptr);
+      CB : Dispatchers.Client_Dispatcher'Class :=
+             Dispatchers.Client_Dispatcher'Class (This.Dispatchers.Get (Ptr));
    begin
       Check (Rcl_Client_Fini (CB.Client.To_Var_C, This.Impl.Impl'Access));
 
@@ -180,8 +185,17 @@ package body RCL.Nodes is
       --  This should happen automatically on deletion from the container,
       --    but it doesn't. The Indefinite_Holders where buggy in 2017
 
-      This.Callbacks.Delete (Ptr);
+      This.Dispatchers.Delete (Ptr);
    end Client_Free;
+
+   --------------------
+   -- Client_Success --
+   --------------------
+
+   procedure Client_Success (This : in out Node; Client : Dispatchers.Handle) is
+   begin
+      This.Dispatchers.Client_Success (Client);
+   end Client_Success;
 
    ----------
    -- Init --
@@ -255,9 +269,9 @@ package body RCL.Nodes is
    -- Get_Callbacks --
    -------------------
 
-   procedure Get_Callbacks (This : in out Node; Set : in out Callbacks.Set) is
+   procedure Get_Callbacks (This : in out Node; Set : in out Dispatchers.Set) is
    begin
-      Set.Union (This.Callbacks);
+      This.Dispatchers.Union (Set);
    end Get_Callbacks;
 
    ----------------------------
@@ -393,7 +407,7 @@ package body RCL.Nodes is
             C_Strings.To_C (Name).To_Ptr,
             Opts'Access));
 
-      This.Callbacks.Insert (Callbacks.Service_Dispatcher'
+      This.Dispatchers.Insert (Dispatchers.Service_Dispatcher'
                                (Node     => This.Self,
                                 Service  => Services.Impl.To_C_Service (Srv),
                                 Callback => Callback,
@@ -412,7 +426,8 @@ package body RCL.Nodes is
       Start : constant Time := Clock;
    begin
       loop
-         if This.Callbacks.Is_Empty then
+         if This.Dispatchers.Is_Empty then
+            Logging.Warn ("Nothing to spin on [node]: sleeping for" & During'Img & " seconds!");
             delay During - (Clock - Start);
          else
             if This.Current_Executor.Spin_Once (During, This.Self) and then Once then
@@ -441,7 +456,7 @@ package body RCL.Nodes is
       Sub : Subscriptions.Subscription :=
               Subscriptions.Init (This, Msg_Type, Topic);
    begin
-      This.Callbacks.Insert
+      This.Dispatchers.Insert
         (Subscription_Dispatcher'(This.Self, Sub.To_C, Callback, Msg_Type));
       Sub.Detach;
    end Subscribe;
@@ -457,12 +472,11 @@ package body RCL.Nodes is
    is
       Timer : constant Timers.Timer := Timers.Init (Period);
    begin
-      This.Callbacks.Insert
+      This.Dispatchers.Insert
         (Timer_Dispatcher'
            (This.Self,
             Timer.Id,
-            Callback,
-            Last_Call => <>));
+            Callback));
 
       return Timer.Id;
    end Timer_Add;
@@ -518,7 +532,7 @@ package body RCL.Nodes is
       Check (Rcl_Timer_Fini (Timers.To_C (Timer)));
 
       if This.Timer_Exists (Timer) then
-         This.Callbacks.Delete (Timers.To_Unique_Addr (Timer));
+         This.Dispatchers.Delete (Timers.To_Unique_Addr (Timer));
          Timers.Free (Tmp);
       end if;
    end Timer_Delete;
@@ -541,7 +555,82 @@ package body RCL.Nodes is
 
    procedure Trigger (This : in out Node; CB : System.Address) is
    begin
-      This.Callbacks (CB).Dispatch;
+      This.Dispatchers.Get (CB).Dispatch;
    end Trigger;
+
+   --------------------
+   -- Safe_Callbacks --
+   --------------------
+
+   protected body Safe_Dispatchers is
+
+      --------------
+      -- Contains --
+      --------------
+
+      function  Contains (CB : Dispatchers.Handle) return Boolean is
+         (CBs.Contains (CB));
+
+      ------------
+      -- Delete --
+      ------------
+
+      procedure Delete   (CB : Dispatchers.Handle) is
+      begin
+         CBs.Delete (CB);
+      end Delete;
+
+      ---------
+      -- Get --
+      ---------
+
+      function  Get      (CB : Dispatchers.Handle) return Dispatcher'Class is
+         (CBs.Get (CB));
+
+      ------------
+      -- Insert --
+      ------------
+
+      procedure Insert (CB                 : Dispatcher'Class;
+                        Is_Blocking_Client : Boolean := False) is
+      begin
+         CBs.Insert (CB);
+         if Is_Blocking_Client then
+            Client := CB.To_Ptr;
+         end if;
+      end Insert;
+
+      --------------
+      -- Is_Empty --
+      --------------
+
+      function  Is_Empty return Boolean is
+         (CBs.Is_Empty);
+
+      -----------
+      -- Union --
+      -----------
+
+      procedure Union    (Dst : in out Dispatchers.Set) is
+      begin
+         Dst.Union (CBs);
+      end Union;
+
+      function  Current_Client return Dispatchers.Client_Dispatcher'Class is
+         (Dispatchers.Client_Dispatcher'Class (CBs.Get (Client)));
+
+      --------------------
+      -- Client_Success --
+      --------------------
+
+      procedure Client_Success (Client : Dispatchers.Handle) is
+         Disp : Dispatchers.Client_Dispatcher'Class :=
+                  Dispatchers.Client_Dispatcher'Class (Get (Client));
+      begin
+         Disp.Success := True;
+         CBs.Include (Disp);
+      end Client_Success;
+
+   end Safe_Dispatchers;
 
 end RCL.Nodes;

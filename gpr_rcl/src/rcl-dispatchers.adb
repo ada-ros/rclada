@@ -1,3 +1,5 @@
+with Ada.Exceptions; use Ada.Exceptions;
+
 with Rcl_Client_H;  use Rcl_Client_H;
 with Rcl_Service_H; use Rcl_Service_H;
 with Rcl_Timer_H;   use Rcl_Timer_H;
@@ -10,7 +12,7 @@ with RCL.Nodes; pragma Unreferenced (RCL.Nodes);
 
 with ROSIDL.Dynamic;
 
-package body RCL.Callbacks is
+package body RCL.Dispatchers is
 
    ---------
    -- "<" --
@@ -28,11 +30,11 @@ package body RCL.Callbacks is
    -- Dispatch --
    --------------
 
-   procedure Dispatch (This : in out Client_Dispatcher) is
+   procedure Dispatch (This : Client_Dispatcher) is
       use all type Clients.Callback;
       Header : aliased Rmw_Request_Id_T;
    begin
-      This.Success := True;
+      This.Node.Client_Success (This.To_Ptr);
 
       Check
         (Rcl_Take_Response
@@ -41,7 +43,12 @@ package body RCL.Callbacks is
             This.Response.Element.Msg.To_Ptr));
 
       if not This.Blocking and then This.Callback /= null then
-         This.Callback (This.Node.all, This.Response.Element);
+         begin
+            This.Callback (This.Node.all, This.Response.Element);
+         exception
+            when E : others =>
+               Logging.Error ("Client callback raised: " & Exception_Information (E));
+         end;
       end if;
 
       if not This.Blocking then -- The client is not needed any longer
@@ -53,7 +60,7 @@ package body RCL.Callbacks is
    -- Dispatch --
    --------------
 
-   procedure Dispatch (This : in out Service_Dispatcher) is
+   procedure Dispatch (This : Service_Dispatcher) is
       Request  : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (This.Support.Request_Support);
       Response : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (This.Support.Response_Support);
 
@@ -65,7 +72,12 @@ package body RCL.Callbacks is
             Header'Access,
             Request.To_Ptr));
 
-      This.Callback (This.Node.all, Request, Response);
+      begin
+         This.Callback (This.Node.all, Request, Response);
+      exception
+         when E : others =>
+            Logging.Error ("Service callback raised: " & Exception_Information (E));
+      end;
 
       Check
         (Rcl_Send_Response
@@ -78,16 +90,22 @@ package body RCL.Callbacks is
    -- Dispatch --
    --------------
 
-   procedure Dispatch (This : in out Subscription_Dispatcher) is
+   procedure Dispatch (This : Subscription_Dispatcher) is
       Msg  : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (This.Support);
         -- (This.Support.Message_Class.Package_Name, This.Support.Message_Class.Message_Name);
       Info : ROSIDL.Message_Info;
+      Sub  : Subscriptions.C_Subscription := This.Subscription;
    begin
-      if Subscriptions.Take_Raw (This.Subscription,
+      if Subscriptions.Take_Raw (Sub,
                                  Msg.To_Ptr,
                                  Info)
       then
-         This.Callback (This.Node.all, Msg, Info);
+         begin
+            This.Callback (This.Node.all, Msg, Info);
+         exception
+            when E : others =>
+               Logging.Error ("Subscription callback raised: " & Exception_Information (E));
+         end;
       else
          raise Program_Error with "Subscription dispatcher: Take_Raw failed when message was expected";
       end if;
@@ -97,30 +115,35 @@ package body RCL.Callbacks is
    -- Dispatch --
    --------------
 
-   procedure Dispatch (This : in out Timer_Dispatcher) is
-      use Ada.Real_Time;
-      Temp : Timers.Timer  := Timers.Bind (This.Timer, This.Node.all);
-      Now  : constant Time := Clock;
-      Ret  : Rcl_Error_Code;
+   procedure Dispatch (This : Timer_Dispatcher) is
+      Temp    : Timers.Timer  := Timers.Bind (This.Timer, This.Node.all);
+      Ret     : Rcl_Error_Code;
+      Elapsed : constant Duration := Temp.Time_Since_Last_Call;
    begin
       Ret := Rcl_Timer_Call (Timers.To_C (This.Timer));
-      --  This "snoozes" the C timer
-
-      This.Callback (This.Node.all,
-                     Temp, -- temporary timer for the callee
-                     To_Duration (Now - This.Last_Call));
-      This.Last_Call := Now;
+      --  This "snoozes" the C timer and resets time since last call
 
       case Ret is
          when RCL_RET_TIMER_CANCELED =>
-            Logging.Debug ("Attempt to call canceled timer");
+            Logging.Warn ("Attempt to call canceled timer");
             -- Happens once after canceling, not important
          when Rmw_Ret_OK =>
-            null;
+            begin
+               This.Callback (This.Node.all,
+                              Temp, -- temporary timer for the callee
+                              Elapsed);
+            exception
+               when E : others =>
+                  Logging.Error ("Timer callback raised: " & Exception_Information (E));
+            end;
          when others =>
             Check (Ret);
       end case;
    end Dispatch;
+
+   ----------------
+   -- Force_Addr --
+   ----------------
 
    function Force_Addr (This : Dispatcher'Class) return System.Address is
       Ptr : constant access Dispatcher'Class := This'Unrestricted_Access;
@@ -151,8 +174,8 @@ package body RCL.Callbacks is
    -- Get --
    ---------
 
-   function Get (This : in out Set; Addr : System.Address) return Reference is
-     (Element => Keys.Reference_Preserving_Key (Callback_Sets.Set (This), Addr).Element);
+   function Get (This : Set; Addr : System.Address) return Dispatcher'Class is
+     (Keys.Element (Callback_Sets.Set (This), Addr));
 
    -----------------
    -- Num_Clients --
@@ -214,4 +237,4 @@ package body RCL.Callbacks is
       return Num;
    end Num_Timers;
 
-end RCL.Callbacks ;
+end RCL.Dispatchers ;

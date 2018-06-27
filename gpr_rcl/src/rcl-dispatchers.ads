@@ -1,5 +1,4 @@
 with Ada.Containers.Indefinite_Ordered_Sets;
-with Ada.Real_Time;
 
 limited with RCL.Nodes;
 
@@ -13,7 +12,7 @@ with ROSIDL.Typesupport;
 
 with System;
 
-package RCL.Callbacks is
+package RCL.Dispatchers is
 
    --  Helper types to couple an element with its callback, and dispatch calls
    --  Used only privately by the Node implementation
@@ -24,10 +23,13 @@ package RCL.Callbacks is
    
    type Dispatcher (Node : not null access Nodes.Node'Class) is abstract tagged null record;
    
-   procedure Dispatch (This : in out Dispatcher) is abstract;
+   procedure Dispatch (This : Dispatcher) is abstract;
    --  Does whatever applies: fetch a message and call the back, etc
+   --  The dispatcher can't be modified, since it comes from a protected
+   --    structure in the node. One must directly call node functions to
+   --    indicate changes or replace with an updated callback
    
-   function To_Ptr (This : in out Dispatcher) return System.Address is abstract;
+   function To_Ptr (This : Dispatcher) return System.Address is abstract;
    --  This is the pointer to the C object that is expected by the
    --    rcl_wait_add_* functions. It also serves to locate the dispatcher
    --    once it has been triggered on the C side.
@@ -39,8 +41,7 @@ package RCL.Callbacks is
    package Callback_Sets is new Ada.Containers.Indefinite_Ordered_Sets
      (Dispatcher'Class);
    
-   type Set is new Callback_Sets.Set with null record with  
-     Variable_Indexing => Get;
+   type Set is new Callback_Sets.Set with null record;
    
    function Num_Clients       (This : Set) return Natural;
    function Num_Services      (This : Set) return Natural;
@@ -49,11 +50,7 @@ package RCL.Callbacks is
    
    function Contains (This : Set; Addr : System.Address) return Boolean;
    
-   type Reference (Element : not null access Dispatcher'Class) is null record with
-     Implicit_Dereference => Element;
-   
-   function Get (This : in out Set; Addr : System.Address) 
-                 return Reference;
+   function Get (This : Set; Addr : System.Address) return Dispatcher'Class;
    
    procedure Delete (This : in out Set; Addr : System.Address);
 
@@ -71,14 +68,9 @@ package RCL.Callbacks is
       Success  : Boolean;
    end record;
    
-   procedure Dispatch (This : in out Client_Dispatcher);
+   procedure Dispatch (This : Client_Dispatcher);
    
-   function To_Ptr (This : in out Client_Dispatcher) return System.Address;
-   
-   type Client_Reference (Element : not null access Client_Dispatcher'Class) is null record with
-     Implicit_Dereference => Element;
-   
-   function Get_Client (This : in out Set; Addr : System.Address) return Client_Reference;
+   function To_Ptr (This : Client_Dispatcher) return System.Address;
    
    --------------
    -- Services --
@@ -90,9 +82,9 @@ package RCL.Callbacks is
       Support  : ROSIDL.Typesupport.Service_Support;
    end record;
    
-   procedure Dispatch (This : in out Service_Dispatcher);
+   procedure Dispatch (This : Service_Dispatcher);
    
-   function To_Ptr (This : in out Service_Dispatcher) return System.Address;   
+   function To_Ptr (This : Service_Dispatcher) return System.Address;   
    
    -------------------
    -- Subscriptions --
@@ -104,9 +96,9 @@ package RCL.Callbacks is
       Support      :         ROSIDL.Typesupport.Message_Support;
    end record;
    
-   procedure Dispatch (This : in out Subscription_Dispatcher);
+   procedure Dispatch (This : Subscription_Dispatcher);
    
-   function To_Ptr (This : in out Subscription_Dispatcher) return System.Address;
+   function To_Ptr (This : Subscription_Dispatcher) return System.Address;
    
    ------------
    -- Timers --
@@ -115,35 +107,31 @@ package RCL.Callbacks is
    type Timer_Dispatcher is new Dispatcher with record
       Timer     : aliased Timers.Timer_Id;
       Callback  :         Timers.Callback;
-      Last_Call :         Ada.Real_Time.Time := Ada.Real_Time.Clock;
    end record;
    
    function "=" (L, R : Timer_Dispatcher) return Boolean;
    
-   procedure Dispatch (This : in out Timer_Dispatcher);
+   procedure Dispatch (This : Timer_Dispatcher);
    
-   function To_Ptr (This : in out Timer_Dispatcher) return System.Address;
+   function To_Ptr (This : Timer_Dispatcher) return System.Address;
    
 private
    
    use all type Timers.Timer_Id;
    
-   function Get_Client (This : in out Set; Addr : System.Address) return Client_Reference is
-      (Client_Reference'(Element => Client_Dispatcher'Class (This.Get (Addr).Element.all)'Access));
-   
    function "=" (L, R : Timer_Dispatcher) return Boolean is
      (L.Timer = R.Timer);
    
-   function To_Ptr (This : in out Client_Dispatcher) return System.Address is
+   function To_Ptr (This : Client_Dispatcher) return System.Address is
      (This.Client.To_Unique_Addr);
 
-   function To_Ptr (This : in out Service_Dispatcher) return System.Address is
+   function To_Ptr (This : Service_Dispatcher) return System.Address is
      (This.Service.To_Unique_Addr);
    
-   function To_Ptr (This : in out Subscription_Dispatcher) return System.Address is
+   function To_Ptr (This : Subscription_Dispatcher) return System.Address is
      (This.Subscription.To_Unique_Addr);
    
-   function To_Ptr (This : in out Timer_Dispatcher) return System.Address is
+   function To_Ptr (This : Timer_Dispatcher) return System.Address is
      (Timers.To_Unique_Addr (This.Timer));
    
-end RCL.Callbacks;
+end RCL.Dispatchers;

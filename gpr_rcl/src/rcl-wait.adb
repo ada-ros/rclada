@@ -212,7 +212,7 @@ package body RCL.Wait is
    -- Init --
    ----------
 
-   function Init (Callbacks : RCL.Callbacks.Set) return Set is
+   function Init (Callbacks : RCL.Dispatchers.Set) return Set is
    begin
       return S : Set := Init (Num_Clients       => Callbacks.Num_Clients,
                               Num_Services      => Callbacks.Num_Services,
@@ -220,18 +220,18 @@ package body RCL.Wait is
                               Num_Timers        => Callbacks.Num_Timers)
       do
          for CB of Callbacks loop
-            if CB in RCL.Callbacks.Client_Dispatcher'Class then
-               S.Add (RCL.Callbacks.Client_Dispatcher'Class (CB).Client);
+            if CB in RCL.Dispatchers.Client_Dispatcher'Class then
+               S.Add (RCL.Dispatchers.Client_Dispatcher'Class (CB).Client);
 
-            elsif CB in RCL.Callbacks.Service_Dispatcher'Class then
-               S.Add (RCL.Callbacks.Service_Dispatcher'Class (CB).Service);
+            elsif CB in RCL.Dispatchers.Service_Dispatcher'Class then
+               S.Add (RCL.Dispatchers.Service_Dispatcher'Class (CB).Service);
 
-            elsif CB in RCL.Callbacks.Subscription_Dispatcher'Class then
-               S.Add (RCL.Callbacks.Subscription_Dispatcher'Class (CB).Subscription);
+            elsif CB in RCL.Dispatchers.Subscription_Dispatcher'Class then
+               S.Add (RCL.Dispatchers.Subscription_Dispatcher'Class (CB).Subscription);
 
-            elsif CB in RCL.Callbacks.Timer_Dispatcher'Class then
-               if not Timers.Is_Canceled (RCL.Callbacks.Timer_Dispatcher'Class (CB).Timer) then
-                  S.Add (RCL.Callbacks.Timer_Dispatcher'Class (CB).Timer);
+            elsif CB in RCL.Dispatchers.Timer_Dispatcher'Class then
+               if not Timers.Is_Canceled (RCL.Dispatchers.Timer_Dispatcher'Class (CB).Timer) then
+                  S.Add (RCL.Dispatchers.Timer_Dispatcher'Class (CB).Timer);
                end if;
 
             else

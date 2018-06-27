@@ -1,7 +1,7 @@
 with Ada.Containers.Ordered_Sets;
 with Ada.Unchecked_Conversion;
 
-with RCL.Callbacks;
+with RCL.Dispatchers;
 limited with RCL.Nodes;
 with RCL.Wait;
 
@@ -25,7 +25,7 @@ package RCL.Executors is
    
    procedure Dispatch (This   : in out Executor;
                        Node   : access Nodes.Node'Class;
-                       Handle :        Callbacks.Handle) is abstract;
+                       Handle :        Dispatchers.Handle) is abstract;
    --  This is the only procedure that derived Executors must override
    
       
@@ -57,17 +57,25 @@ private
    
    package Node_Sets is new Ada.Containers.Ordered_Sets (Node_Access);
    
-   type Executor is abstract tagged limited record
+   protected type Node_Set (Parent : access Executor'Class) is
+      procedure Delete (Node  : Node_Access);
+      procedure Insert (Node  : Node_Access);
+      procedure Get    (Nodes : out Node_Sets.Set);
+   private
       Nodes : Node_Sets.Set;
+   end Node_Set;
+   
+   type Executor is abstract tagged limited record
+      Nodes : Node_Set (Executor'Access);
    end record;
    
    procedure Common_Dispatch (Node   : access Nodes.Node'Class;
-                              Handle :        Callbacks.Handle);
+                              Handle :        Dispatchers.Handle);
    --  The actual logic of the dispatch that derived dispatchers may use
    --    if they do not do anything special
    
    procedure Trigger (This : in out Executor'Class;
-                      Set  : in out Callbacks.Set;
+                      Set  : in out Dispatchers.Set;
                       T    :        RCL.Wait.Trigger);
 
 end RCL.Executors;

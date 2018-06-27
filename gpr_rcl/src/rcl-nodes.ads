@@ -2,7 +2,7 @@ with Ada.Finalization;
 
 private with RCL.Impl;
 
-with RCL.Callbacks;
+with RCL.Dispatchers;
 with RCL.Clients;
 with RCL.Executors;
 with RCL.Executors.Sequential;
@@ -193,26 +193,42 @@ package RCL.Nodes is
    ---------------------------------------------------------------
    --  Extras for executor interaction, also not needed by clients 
    
-   procedure Get_Callbacks (This : in out Node; Set : in out Callbacks.Set);      
+   procedure Client_Success (This : in out Node; Client : Dispatchers.Handle);   
+   
+   procedure Get_Callbacks (This : in out Node; Set : in out Dispatchers.Set);      
    
    procedure Trigger (This : in out Node; CB : System.Address);
    
 private   
    
-   use Callbacks;
+   use Dispatchers;
+   
+   protected type Safe_Dispatchers (Parent : access Node'Class) is
+      
+      function  Contains (CB : Dispatchers.Handle) return Boolean;
+      procedure Delete   (CB : Dispatchers.Handle);
+      function  Get      (CB : Dispatchers.Handle) return Dispatcher'Class;
+      procedure Insert (CB                 : Dispatcher'Class; 
+                        Is_Blocking_Client : Boolean := False);
+      function  Is_Empty return Boolean;
+      procedure Union    (Dst : in out Dispatchers.Set);      
+      
+      function  Current_Client return Dispatchers.Client_Dispatcher'Class;
+      procedure Client_Success (Client : Dispatchers.Handle);
+      
+   private
+      CBs       : RCL.Dispatchers.Set;
+      Client    : System.Address; -- Client that's blocking and waiting
+   end Safe_Dispatchers;
    
    type Node (Executor : access Executors.Executor'Class)  is new Ada.Finalization.Limited_Controlled with record 
-      Impl          : aliased C_Node := (Impl => Rcl_Get_Zero_Initialized_Node);
-      Self          : access Node    := Node'Unchecked_Access;
+      Impl      : aliased C_Node := (Impl => Rcl_Get_Zero_Initialized_Node);
+      Self      : access Node    := Node'Unchecked_Access;
       
-      Options       : aliased Rcl_Node_Options_T := Rcl_Node_Get_Default_Options; 
+      Options   : aliased Rcl_Node_Options_T := Rcl_Node_Get_Default_Options; 
       
-      Callbacks     :         RCL.Callbacks.Set;
-      Client        :         System.Address; -- The client that's blocking and waiting
+      Dispatchers : Safe_Dispatchers (Node'Access);
    end record;   
-   
-   function Current_Client (This : in out Node'Class) return Callbacks.Client_Dispatcher'Class is
-      (This.Callbacks.Get_Client (This.Client));
    
    function Current_Executor (This : in out Node'Class) return access Executors.Executor'Class is
      (if This.Executor /= null 
@@ -226,7 +242,7 @@ private
    
    function Timer_Exists (This  : Node; 
                           Timer : Timers.Timer_Id) return Boolean is
-      (This.Callbacks.Contains (Timers.To_Unique_Addr (Timer)));
+      (This.Dispatchers.Contains (Timers.To_Unique_Addr (Timer)));
    
    function To_C (This : aliased in out Node) return Reference is
      (Ptr => This.Impl'Access);

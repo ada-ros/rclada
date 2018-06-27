@@ -5,6 +5,12 @@ with RCL.Nodes;
 
 package body RCL.Timers is
 
+   function To_Duration (Nanoseconds : C.Long) return Duration is
+     (Duration (Nanoseconds) / 1_000_000_000.0);
+
+   function To_Nanoseconds (Dur : Duration) return C.Long is
+      (C.Long (Dur * 1_000_000_000.0));
+
    ----------
    -- Bind --
    ----------
@@ -35,7 +41,7 @@ package body RCL.Timers is
       Check
         (Rcl_Timer_Exchange_Period
            (This.Impl,
-            C.long (New_Period * 1_000_000_000.0),
+            To_Nanoseconds (New_Period),
             Old'Access));
    end Change_Period;
 
@@ -66,7 +72,7 @@ package body RCL.Timers is
       Period : aliased C.long;
    begin
       Check (Rcl_Timer_Get_Period (This.Impl, Period'Access));
-      return Duration (Period) / 1_000_000_000.0;
+      return To_Duration (Period);
    end Get_Period;
 
    --------
@@ -88,8 +94,8 @@ package body RCL.Timers is
          Check
            (Rcl_Timer_Init
               (This.Impl,
-               C.long (Period * 1_000_000_000.0),
-               Null,
+               To_Nanoseconds (Period),
+               null,
                Allocators.Get_Default_Allocator));
       end return;
    end Init;
@@ -104,5 +110,16 @@ package body RCL.Timers is
       Check (Rcl_Timer_Is_Canceled (This, Canceled'Access));
       return To_Boolean (Canceled);
    end Is_Canceled;
+
+   --------------------------
+   -- Time_Since_Last_Call --
+   --------------------------
+
+   function Time_Since_Last_Call (This : Timer) return Duration is
+      Time : aliased C.long;
+   begin
+      Check (Rcl_Timer_Get_Time_Since_Last_Call (This.Impl, Time'Access));
+      return To_Duration (Time);
+   end Time_Since_Last_Call;
 
 end RCL.Timers;
