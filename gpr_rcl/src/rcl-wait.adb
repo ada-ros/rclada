@@ -199,7 +199,7 @@ package body RCL.Wait is
          Check
            (Rcl_Wait_Set_Init
               (S.Impl'Access,
-               Allocator                  => Allocators.Get_Default_Allocator,
+               Allocator                  => Allocators.Global_Allocator.To_C,
                Number_Of_Clients          => C.Size_T (Num_Clients),
                Number_Of_Guard_Conditions => 0,
                Number_Of_Services         => C.Size_T (Num_Services),

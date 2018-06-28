@@ -17,7 +17,8 @@ package body RCL.Calendar is
                 when Steady => RCL_STEADY_TIME,
                 when System => RCL_SYSTEM_TIME),
              This.Impl'Access,
-             Allocators.Default_Allocator'Access));
+             Allocators.Default_C_Allocator));
+      --  This unrestricted access will go away once we have allocators in place
       
       This.Inited := True;
       This.Mark   := This.Now;

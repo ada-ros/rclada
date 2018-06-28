@@ -316,7 +316,7 @@ package body RCL.Nodes is
       Check
         (Rcl_Get_Node_Names
            (This.Impl.Impl'Access,
-            Allocators.Get_Default_Allocator,
+            Allocators.Global_Allocator.To_C,
             Arr.To_C));
 
       return V : Utils.Node_Name_Vector do
@@ -332,12 +332,11 @@ package body RCL.Nodes is
 
    function Graph_Services (This : Node) return Utils.Services_And_Types is
       Arr   : aliased Utils.Names_And_Types.Vector;
-      Alloc : aliased Allocators.Allocator := Allocators.Get_Default_Allocator;
    begin
       Check
         (rcl_get_service_names_and_types
            (This.Impl.Impl'Access,
-            Alloc'Access,
+            Allocators.Default_C_Allocator,
             Arr.To_C));
 
       return V : Utils.Services_And_Types do
@@ -353,12 +352,11 @@ package body RCL.Nodes is
 
    function Graph_Topics (This : Node; Demangle : Boolean := True) return Utils.Topics_And_Types is
       Arr   : aliased Utils.Names_And_Types.Vector;
-      Alloc : aliased Allocators.Allocator := Allocators.Get_Default_Allocator;
    begin
       Check
         (rcl_get_topic_names_and_types
            (This.Impl.Impl'Access,
-            Alloc'Access,
+            Allocators.Default_C_Allocator,
             (if Demangle then Bool_False else Bool_True), -- Note: in C side is No_Demangle (bool)
             Arr.To_C));
 

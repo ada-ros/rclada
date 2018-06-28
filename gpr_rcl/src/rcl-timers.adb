@@ -96,7 +96,7 @@ package body RCL.Timers is
               (This.Impl,
                To_Nanoseconds (Period),
                null,
-               Allocators.Get_Default_Allocator));
+               Allocators.Global_Allocator.To_C));
       end return;
    end Init;
 
