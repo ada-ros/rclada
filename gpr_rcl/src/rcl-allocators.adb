@@ -60,9 +60,13 @@ package body RCL.Allocators is
         Address => Ptr - Header_Size,
         Import;
    begin
-      Pool.Deallocate (Storage_Address          => Ptr - Header_Size,
-                       Size_In_Storage_Elements => Header.Size,
-                       Alignment                => 1);
+      if Ptr /= Null_Address then
+         Pool.Deallocate (Storage_Address          => Ptr - Header_Size,
+                          Size_In_Storage_Elements => Header.Size,
+                          Alignment                => 1);
+      else
+         raise Program_Error with "Asked to deallocate a null pointer";
+      end if;
    end Deallocate;
 
    ----------------
@@ -78,7 +82,9 @@ package body RCL.Allocators is
       Size      : Stddef_H.Size_T;
       Pool_Addr : System.Address) return System.Address is
    begin
-      Deallocate (Ptr, Pool_Addr);
+      if Ptr /= Null_Address then
+         Deallocate (Ptr, Pool_Addr);
+      end if;
       return Allocate (Size, Pool_Addr);
    end Reallocate;
 

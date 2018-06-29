@@ -42,13 +42,16 @@ package body RCL.Executors is
    -- Spin --
    ----------
 
-   procedure Spin (This   : in out Executor;
-                   Once   :        Boolean       := False;
-                   During :        ROS2_Duration := 0.1)
+   procedure Spin (This      : in out Executor;
+                   Once      :        Boolean       := False;
+                   During    :        ROS2_Duration := 0.1;
+                   Allocator :        Allocators.Allocator := Allocators.Global_Allocator)
    is
       use Ada.Calendar;
       Start : constant Time := Clock;
    begin
+      This.Allocator := Allocator;
+
       loop
          if This.Spin_Once (During - (Clock - Start)) and then Once then
             exit;
@@ -94,7 +97,7 @@ package body RCL.Executors is
       end if;
 
       declare
-         Set : Wait.Set := Wait.Init (CBs);
+         Set : Wait.Set := Wait.Init (This.Allocator, CBs);
       begin
          Logging.Debug ("Waiting on" & CBs.Length'Img & " callbacks");
          case Set.Wait (Timeout) is

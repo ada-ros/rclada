@@ -1,5 +1,7 @@
 limited with RCL.Nodes;
 
+with RCL.Allocators;
+
 with Rcl_Timer_H; use Rcl_Timer_H;
 
 with System;
@@ -49,7 +51,8 @@ package RCL.Timers is
    
    procedure Free (This : in out Timer_Id);
    
-   function Init (Period : Duration) return Timer;
+   function Init (Period    : Duration;
+                  Allocator : Allocators.Allocator) return Timer;
    --  Note: the timer won't work by itself; it must be created through
    --  Node facilities
    

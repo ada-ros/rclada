@@ -1,7 +1,6 @@
 with Ada.Calendar;
 with Ada.Exceptions;
 
-with RCL.Allocators;
 with RCL.Clients.Impl;
 with RCL.Logging;
 with RCL.Publishers.Impl;
@@ -26,8 +25,8 @@ package body RCL.Nodes is
 
    procedure Base_Init (This : in out Node'Class) is
    begin
-      if This.Executor /= null then
-         This.Executor.Add (This);
+      if This.Options.Executor /= null then
+         This.Options.Executor.Add (This);
       else
          Default_Executor.Add (This);
       end if;
@@ -203,21 +202,11 @@ package body RCL.Nodes is
 
    function Init (Name      : String;
                   Namespace : String  := "/";
-                  Opt       : Options := Default_Options;
-                  Executor  : access Executors.Executor'Class := null) return Node
+                  Options   : Node_Options := Default_Options) return Node
    is
-      pragma Unreferenced (Opt);
-
-      Cname : C_String := To_C (Name);
-      Cnms  : C_String := To_C (Namespace);
    begin
-      return This : Node (Executor) do
-         Check (Rcl_Node_Init
-                  (This.Impl.Impl'Access,
-                   Cname.To_Ptr,
-                   Cnms.To_Ptr,
-                   This.Options'Access));
-         This.Base_Init;
+      return This : Node do
+         This.Init (Name, Namespace, Options);
       end return;
    end Init;
 
@@ -228,16 +217,18 @@ package body RCL.Nodes is
    procedure Init (This      : in out Node;
                    Name      : String;
                    Namespace : String  := "/";
-                   Opt       : Options := Default_Options) is
-      pragma Unreferenced (Opt);
-      Cname : C_String := To_C (Name);
-      Cnms  : C_String := To_C (Namespace);
+                   Options   : Node_Options := Default_Options) is
    begin
+      This.Options     := Options;
+      This.C_Options   := To_C (Options);
+      This.C_Allocator := Options.Allocator.To_C;
+
       Check (Rcl_Node_Init
              (This.Impl.Impl'Access,
-                Cname.To_Ptr,
-                Cnms.To_Ptr,
-                This.Options'Access));
+                To_C (Name).To_Ptr,
+                To_C (Namespace).To_Ptr,
+                This.C_Options'Access));
+
       This.Base_Init;
    end Init;
 
@@ -250,8 +241,8 @@ package body RCL.Nodes is
       --  TODO: fini clients, services, etc
 
       if To_Boolean (Rcl_Node_Is_Valid (This.Impl.Impl'Access, null)) then
-         if This.Executor /= null then
-            This.Executor.Remove (This);
+         if This.Options.Executor /= null then
+            This.Options.Executor.Remove (This);
          else
             Default_Executor.Remove (This);
          end if;
@@ -316,7 +307,7 @@ package body RCL.Nodes is
       Check
         (Rcl_Get_Node_Names
            (This.Impl.Impl'Access,
-            Allocators.Global_Allocator.To_C,
+            This.Options.Allocator.To_C,
             Arr.To_C));
 
       return V : Utils.Node_Name_Vector do
@@ -330,13 +321,13 @@ package body RCL.Nodes is
    -- Graph_Services --
    --------------------
 
-   function Graph_Services (This : Node) return Utils.Services_And_Types is
+   function Graph_Services (This : in out Node) return Utils.Services_And_Types is
       Arr   : aliased Utils.Names_And_Types.Vector;
    begin
       Check
         (rcl_get_service_names_and_types
            (This.Impl.Impl'Access,
-            Allocators.Default_C_Allocator,
+            This.C_Allocator'Access,
             Arr.To_C));
 
       return V : Utils.Services_And_Types do
@@ -350,13 +341,13 @@ package body RCL.Nodes is
    -- Graph_Topics --
    ------------------
 
-   function Graph_Topics (This : Node; Demangle : Boolean := True) return Utils.Topics_And_Types is
+   function Graph_Topics (This : in out Node; Demangle : Boolean := True) return Utils.Topics_And_Types is
       Arr   : aliased Utils.Names_And_Types.Vector;
    begin
       Check
         (rcl_get_topic_names_and_types
            (This.Impl.Impl'Access,
-            Allocators.Default_C_Allocator,
+            This.C_Allocator'Access,
             (if Demangle then Bool_False else Bool_True), -- Note: in C side is No_Demangle (bool)
             Arr.To_C));
 
@@ -468,7 +459,7 @@ package body RCL.Nodes is
                        Callback :        Timers.Callback)
                        return            Timers.Timer_Id
    is
-      Timer : constant Timers.Timer := Timers.Init (Period);
+      Timer : constant Timers.Timer := Timers.Init (Period, This.Options.Allocator);
    begin
       This.Dispatchers.Insert
         (Timer_Dispatcher'
@@ -546,6 +537,19 @@ package body RCL.Nodes is
       This.Timer_Assert (Timer);
       Check (Rcl_Timer_Reset (Timers.To_C (Timer)));
    end Timer_Reset;
+
+   ----------
+   -- To_C --
+   ----------
+
+   function To_C (Options : Node_Options) return Rcl_Node_Options_T is
+      Defaults : constant Rcl_Node_Options_T := Rcl_Node_Get_Default_Options;
+   begin
+      return Rcl_Node_Options_T'(Domain_Id            => Defaults.Domain_Id,
+                                 allocator            => Options.Allocator.To_C,
+                                 use_global_arguments => Defaults.use_global_arguments,
+                                 Arguments            => Defaults.Arguments);
+   end To_C;
 
    -------------
    -- Trigger --

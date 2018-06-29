@@ -1,5 +1,6 @@
 with Ada.Finalization;
 
+with RCL.Allocators;
 with RCL.Dispatchers;
 with RCL.Clients;
 with RCL.Executors;
@@ -21,29 +22,32 @@ package RCL.Nodes is
 
    Default_Executor : aliased Executors.Sequential.Executor;
    
-   type Node (Executor : access Executors.Executor'Class) is 
-     new Ada.Finalization.Limited_Controlled with private;
+   type Node is new Ada.Finalization.Limited_Controlled with private;
+   --  Use of Node prior to an Init call is erroneous.
+   --  Recommended approach is to use Init function to initialize on the spot.
    
-   type Options is null record;
-   --  TBD, nothing really critical in there right now
+   type Node_Options is record
+      Allocator : Allocators.Allocator;
+      Executor  : Executors.Executor_Access;
+   end record;
+   --  TBD, not complete
    
-   Default_Options : constant Options;
+   Default_Options : constant Node_Options;
    
    ----------
    -- Init --
    ----------
-   --  Classes overriding these should call the parent implementation
+   --  Classes overriding init MUST call the parent implementation
 
    function Init (Name      : String; 
                   Namespace : String  := "/";
-                  Opt       : Options := Default_Options;
-                  Executor  : access Executors.Executor'Class := null) return Node
+                  Options   : Node_Options := Default_Options) return Node
      with Pre'Class => Name'Length > 0 and then Namespace'Length >= 0;
    
    procedure Init (This      : in out Node;
                    Name      : String; 
                    Namespace : String  := "/";
-                   Opt       : Options := Default_Options) with
+                   Options   : Node_Options := Default_Options) with
      Pre'Class => Name'Length > 0 and then Namespace'Length >= 0;
    
    --------------
@@ -168,9 +172,9 @@ package RCL.Nodes is
    
    function Graph_Node_Names (This : Node) return Utils.Node_Name_Vector;
    
-   function Graph_Services (This : Node) return Utils.Services_And_Types;
+   function Graph_Services (This : in out Node) return Utils.Services_And_Types;
    
-   function Graph_Topics (This : Node; Demangle : Boolean := True) return Utils.Topics_And_Types;   
+   function Graph_Topics (This : in out Node; Demangle : Boolean := True) return Utils.Topics_And_Types;   
    
    -------------------------------------------------
    --  Low level access not intended for clients  --
@@ -201,6 +205,8 @@ package RCL.Nodes is
    
 private   
    
+   function To_C (Options : Node_Options) return Rcl_Node_Options_T;
+   
    use Dispatchers;
    
    protected type Safe_Dispatchers (Parent : access Node'Class) is
@@ -221,13 +227,17 @@ private
       Client    : System.Address; -- Client that's blocking and waiting
    end Safe_Dispatchers;
    
-   type Node (Executor : access Executors.Executor'Class)  is new Ada.Finalization.Limited_Controlled with record 
-      Impl      : aliased C_Node := (Impl => Rcl_Get_Zero_Initialized_Node);
-      Self      : access Node    := Node'Unchecked_Access;
-      
-      Options   : aliased Rcl_Node_Options_T := Rcl_Node_Get_Default_Options; 
-      
+   type Node is new Ada.Finalization.Limited_Controlled with record 
+      Impl        : aliased C_Node := (Impl => Rcl_Get_Zero_Initialized_Node);
+      Self        : access Node    := Node'Unchecked_Access;
       Dispatchers : Safe_Dispatchers (Node'Access);
+       
+      -- Must be initialized
+      Options     : Node_Options;                  
+      
+      -- Are derived from Options, no need to initialize
+      C_Allocator : aliased Allocators.C_Allocator;
+      C_Options   : aliased Rcl_Node_Options_T;
    end record;   
    
    procedure Base_Init (This : in out Node'Class);      
@@ -242,11 +252,13 @@ private
    function To_C (This : aliased in out Node) return Reference is
      (Ptr => This.Impl'Access);
    
-   Default_Options  : constant Options := (null record);
+   Default_Options  : constant Node_Options := (others => <>);
          
+   use all type Executors.Executor_Access;   
+   
    function Current_Executor (This : in out Node'Class) return access Executors.Executor'Class is
-     (if This.Executor /= null 
-      then This.Executor
+     (if This.Options.Executor /= null 
+      then This.Options.Executor
       else Default_Executor'Access);
 
 end RCL.Nodes;

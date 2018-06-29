@@ -1,5 +1,7 @@
 with Ada.Finalization;
 
+with RCL.Allocators;
+
 with Rcl_Time_H; use Rcl_Time_H;
 
 package RCL.Calendar is
@@ -21,7 +23,9 @@ package RCL.Calendar is
    
    type Clock is new Ada.Finalization.Limited_Controlled with private;   
    
-   procedure Init (This : in out Clock; Kind : Kinds := ROS);
+   procedure Init (This  : in out Clock; 
+                   Kind  : Kinds := ROS;
+                   Alloc : Allocators.Allocator := Allocators.Global_Allocator);
    
    overriding
    procedure Finalize (This : in out Clock);   

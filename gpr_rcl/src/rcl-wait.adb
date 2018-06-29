@@ -1,4 +1,3 @@
-with RCL.Allocators;
 with RCL.Logging;
 with RCL.Subscriptions;
 
@@ -186,7 +185,8 @@ package body RCL.Wait is
    -- Init --
    ----------
 
-   function Init (Num_Clients       : Natural := 0;
+   function Init (Allocator         : Allocators.Allocator;
+                  Num_Clients       : Natural := 0;
                   Num_Services      : Natural := 0;
                   Num_Subscriptions : Natural := 0;
                   Num_Timers        : Natural := 0) return Set is
@@ -199,7 +199,7 @@ package body RCL.Wait is
          Check
            (Rcl_Wait_Set_Init
               (S.Impl'Access,
-               Allocator                  => Allocators.Global_Allocator.To_C,
+               Allocator                  => Allocator.To_C,
                Number_Of_Clients          => C.Size_T (Num_Clients),
                Number_Of_Guard_Conditions => 0,
                Number_Of_Services         => C.Size_T (Num_Services),
@@ -212,9 +212,11 @@ package body RCL.Wait is
    -- Init --
    ----------
 
-   function Init (Callbacks : RCL.Dispatchers.Set) return Set is
+   function Init (Allocator : Allocators.Allocator;
+                  Callbacks : RCL.Dispatchers.Set) return Set is
    begin
-      return S : Set := Init (Num_Clients       => Callbacks.Num_Clients,
+      return S : Set := Init (Allocator         => Allocator,
+                              Num_Clients       => Callbacks.Num_Clients,
                               Num_Services      => Callbacks.Num_Services,
                               Num_Subscriptions => Callbacks.Num_Subscriptions,
                               Num_Timers        => Callbacks.Num_Timers)

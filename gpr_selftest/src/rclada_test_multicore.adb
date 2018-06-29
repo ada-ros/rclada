@@ -26,12 +26,12 @@ begin
    end if;
    
    declare
-      Pool     : aliased Executors.Concurrent.Executor;   
-      Executor : constant access Executors.Executor'Class := Pool'Access;
-      
+      Executor : aliased Executors.Concurrent.Executor;         
       Node     :         Nodes.Node := Nodes.Init (Name      => Utils.Command_Name,
                                                    Namespace => "/",
-                                                   Executor  => Executor);
+                                                   Options   => 
+                                                     (Executor => Executor'Unchecked_Access,
+                                                      others   => <>));
       
       Support  : constant ROSIDl.Typesupport.Message_Support :=
                    ROSIDL.Typesupport.Get_Message_Support ("std_msgs", "String");  

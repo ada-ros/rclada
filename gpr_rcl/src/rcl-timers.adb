@@ -1,6 +1,5 @@
 with Ada.Unchecked_Deallocation;
 
-with RCL.Allocators;
 with RCL.Nodes;
 
 package body RCL.Timers is
@@ -85,7 +84,8 @@ package body RCL.Timers is
    -- Init --
    ----------
 
-   function Init (Period   : Duration) return Timer
+   function Init (Period    : Duration;
+                  Allocator : Allocators.Allocator) return Timer
    is
    begin
       return This : aliased Timer do
@@ -96,7 +96,7 @@ package body RCL.Timers is
               (This.Impl,
                To_Nanoseconds (Period),
                null,
-               Allocators.Global_Allocator.To_C));
+               Allocator.To_C));
       end return;
    end Init;
 

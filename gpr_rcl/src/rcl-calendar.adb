@@ -1,6 +1,5 @@
 with Ada.Exceptions; use Ada.Exceptions;
 
-with RCL.Allocators;
 with RCL.Logging;
 
 package body RCL.Calendar is
@@ -9,7 +8,11 @@ package body RCL.Calendar is
    -- Init --
    ----------
 
-   procedure Init (This : in out Clock; Kind : Kinds := ROS) is
+   procedure Init (This  : in out Clock; 
+                   Kind  : Kinds := ROS;
+                   Alloc : Allocators.Allocator := Allocators.Global_Allocator) 
+   is
+      Local_Alloc : aliased Allocators.C_Allocator := Alloc.To_C;
    begin
       Check (Rcl_Clock_Init (
              (case Kind is
@@ -17,7 +20,7 @@ package body RCL.Calendar is
                 when Steady => RCL_STEADY_TIME,
                 when System => RCL_SYSTEM_TIME),
              This.Impl'Access,
-             Allocators.Default_C_Allocator));
+             Local_Alloc'Access));
       --  This unrestricted access will go away once we have allocators in place
       
       This.Inited := True;

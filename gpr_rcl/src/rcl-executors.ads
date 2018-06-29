@@ -1,6 +1,7 @@
 with Ada.Containers.Ordered_Sets;
 with Ada.Unchecked_Conversion;
 
+with RCL.Allocators;
 with RCL.Dispatchers;
 with RCL.Impl.Callbacks;
 limited with RCL.Nodes;
@@ -22,6 +23,9 @@ package RCL.Executors is
    --  Nodes self-manage their registration-unregistration
    
    type Executor is abstract tagged limited private;   
+   
+   type Executor_Access is access all Executor'Class with
+     Storage_Size => 0;
       
    procedure Call (This : in out Executor; 
                    CB   :        Impl.Callbacks.Callback'Class) is abstract;
@@ -33,9 +37,10 @@ package RCL.Executors is
    procedure Remove (This :         in out Executor; 
                      Node : aliased in out Nodes.Node'Class);
    
-   procedure Spin (This   : in out Executor; 
-                   Once   :        Boolean       := False;
-                   During :        ROS2_Duration := 0.1);
+   procedure Spin (This      : in out Executor; 
+                   Once      :        Boolean       := False;
+                   During    :        ROS2_Duration := 0.1;
+                   Allocator :        Allocators.Allocator := Allocators.Global_Allocator);
    
    function Spin_Once (This    : in out Executor;
                        Timeout :        ROS2_Duration;
@@ -64,7 +69,8 @@ private
    end Node_Set;
    
    type Executor is abstract tagged limited record
-      Nodes : Node_Set (Executor'Access);
+      Nodes     : Node_Set (Executor'Access);      
+      Allocator : Allocators.Allocator; --  Updated in every Spin
    end record;
    
    procedure Common_Dispatch (Node   : access Nodes.Node'Class;

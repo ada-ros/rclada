@@ -1,6 +1,7 @@
 with Ada.Finalization;
 with Ada.Iterator_Interfaces;
 
+with RCL.Allocators;
 with RCL.Clients.Impl;
 with RCL.Dispatchers;
 with RCL.Services.Impl;
@@ -37,13 +38,15 @@ package RCL.Wait is
    
    package Set_Iterators is new Ada.Iterator_Interfaces (Cursor, Has_Element);
    
-   function Init (Num_Clients       : Natural := 0;
+   function Init (Allocator         : Allocators.Allocator;
+                  Num_Clients       : Natural := 0;
                   Num_Services      : Natural := 0;
                   Num_Subscriptions : Natural := 0;
                   Num_Timers        : Natural := 0) return Set;
    --  At least one of these must be nonzero
    
-   function Init (Callbacks : RCL.Dispatchers.Set) return Set;
+   function Init (Allocator         : Allocators.Allocator;
+                  Callbacks         : RCL.Dispatchers.Set) return Set;
    --  Initializes and fills using the given set
 
    procedure Add (This : aliased in out Set; 

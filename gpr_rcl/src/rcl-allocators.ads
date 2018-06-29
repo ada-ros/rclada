@@ -4,7 +4,9 @@ with System.Storage_Pools; use System.Storage_Pools;
 
 package RCL.Allocators is
 
-   type Allocator (<>) is tagged private;
+   type Allocator is tagged private;
+   --  An uninitialized allocator uses the globally-set allocator,
+   --  which by default is plain malloc/free
 
    type Pool_Access is access all Root_Storage_Pool'Class with
      Storage_Size => 0;
@@ -48,7 +50,9 @@ package RCL.Allocators is
 
 private
 
-   type Allocator (Pool : Pool_Access) is tagged null record;
+   type Allocator is tagged record
+      Pool : Pool_Access;
+   end record;
 
    ------------------
    -- To_Allocator --

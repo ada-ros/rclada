@@ -1,5 +1,8 @@
 with Ada.Command_Line; use Ada.Command_Line;
 
+with GNAT.Debug_Pools; use GNAT.Debug_Pools;
+
+with RCL.Allocators;
 with RCL.Executors.Concurrent;
 with RCL.Logging;
 with RCL.Nodes;
@@ -12,22 +15,36 @@ with ROSIDL.Typesupport;
 procedure Rclada_Test_Allocators Is
    
    --  This is the multicore test but using GNAT debug pool as allocator
+   --  Sample output for 4 cores:
+   --     Total allocated bytes :  8095
+   --     Total logically deallocated bytes :  8095
+   --     Total physically deallocated bytes :  0
+   --     Current Water Mark:  0
+   --     High Water Mark:  415
    
    use RCL;      
    
+   Pool      : aliased Debug_Pool;
+   Allocator : aliased constant Allocators.Allocator := 
+                 Allocators.To_Allocator (Pool'Unchecked_Access);
 begin  
    if Argument_Count < 1 then 
       Logging.Error ("First argument must be amount of jobs per second");
       return;
    end if;
    
-   declare
-      Pool     : aliased Executors.Concurrent.Executor;   
-      Executor : constant access Executors.Executor'Class := Pool'Access;
+   Allocators.Set_Global_Allocator (Allocator);
+   --  This shouldn't be necessary since we are explicitly passing it to
+   --  both node and executor. But to err on the safe side...
+   
+   declare      
+      Executor : aliased Executors.Concurrent.Executor;
       
       Node     :         Nodes.Node := Nodes.Init (Name      => Utils.Command_Name,
                                                    Namespace => "/",
-                                                   Executor  => Executor);
+                                                   Options   => 
+                                                     (Executor  => Executor'Unchecked_Access,
+                                                      Allocator => Allocator));
       
       Support  : constant ROSIDl.Typesupport.Message_Support :=
                    ROSIDL.Typesupport.Get_Message_Support ("std_msgs", "String");  
@@ -88,7 +105,16 @@ begin
    begin
       Node.Subscribe (Support, Topic, Process_Work'Unrestricted_Access);
       Boss.Start;
-      Executor.Spin (During => Test_Period);
-      Logging.Info ("Test period ended");
-   end;
+      Executor.Spin (During    => Test_Period,
+                     Allocator => Allocator);
+      
+      Logging.Info ("Test period ended, will dump pool info in 3 seconds...");
+      delay 3.0;      
+   end;   
+   
+   Pool.Print_Info_Stdout;
+   
+   if Pool.Current_Water_Mark /= 0 then 
+      raise Constraint_Error with "There is leaked memory";
+   end if;
 end Rclada_Test_Allocators;
