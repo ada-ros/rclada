@@ -13,7 +13,7 @@ package RCL.Allocators is
    function To_Allocator (Pool  : Pool_Access) return Allocator;
    --  An allocator in practice encapsulates an Ada Storage_Pool
    --  The pool will govern when the data in the Allocator is freed.
-   --  A local pool shouldn't ever be set as the default allocator.
+   --  A local pool shouldn't ever be set as the global allocator.
    --  (Accessibility levels should prevent you anyway).
 
    --  There is NO ALIGNMENT information coming from the C side.
@@ -23,8 +23,8 @@ package RCL.Allocators is
 
    --  IMPORTANT IMPLEMENTATION NOTE  --
    --  Since the C side does not provide the size of the bytes to deallocate,
-   --  the pool will receive a 0 size in all Deallocate calls. Bear this in mind
-   --  when implementing your pool, or using others'.
+   --  this has to be stored in the allocated blocks. This introduces a small
+   --  memory overhead (one size_t).
    --  END OF IMPLEMENTATION NOTE --
 
    function To_C (This : Allocator) return Rcl_Allocator_T;

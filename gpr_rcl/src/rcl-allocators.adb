@@ -11,15 +11,23 @@ package body RCL.Allocators is
    function To_Address  is new Ada.Unchecked_Conversion (Pool_Access, Address);
 
    --   Common functions for the C side
+   subtype Size_T is Stddef_H.Size_T;
+
+   type Ada_Header is record
+      Size : Storage_Count;
+   end record;
+   pragma Convention (C, Ada_Header);
+
+   Header_Size : constant Storage_Count := Ada_Header'Size / Storage_Unit;
 
    --------------
    -- Allocate --
    --------------
 
-   function Allocate (Size      : stddef_h.size_t;
+   function Allocate (Size      : Size_T;
                       Pool_Addr : System.Address)
                       return System.Address with Convention => C;
-   function Allocate (Size      : stddef_h.size_t;
+   function Allocate (Size      : Size_T;
                       Pool_Addr : System.Address)
                       return System.Address
    is
@@ -27,10 +35,18 @@ package body RCL.Allocators is
       Ptr  : Address;
    begin
       Pool.Allocate (Storage_Address          => Ptr,
-                     Size_In_Storage_Elements => Storage_Count (Size),
+                     Size_In_Storage_Elements => Storage_Count (Size) + Header_Size,
                      Alignment                => 1);
+      --  Store the Ada stuff
+      declare
+         Header : Ada_Header with
+           Address => Ptr,
+           Import;
+      begin
+         Header := (Size => Storage_Count (Size) + Header_Size);
+      end;
 
-      return Ptr;
+      return Ptr + Header_size;
    end Allocate;
 
    ----------------
@@ -39,10 +55,13 @@ package body RCL.Allocators is
 
    procedure Deallocate (Ptr : System.Address; Pool_Addr : System.Address) with Convention => C;
    procedure Deallocate (Ptr : System.Address; Pool_Addr : System.Address) is
-      Pool : constant Pool_Access := To_Pool_Ptr (Pool_Addr);
+      Pool   : constant Pool_Access := To_Pool_Ptr (Pool_Addr);
+      Header : Ada_Header with
+        Address => Ptr - Header_Size,
+        Import;
    begin
-      Pool.Deallocate (Storage_Address          => Ptr,
-                       Size_In_Storage_Elements => 0,
+      Pool.Deallocate (Storage_Address          => Ptr - Header_Size,
+                       Size_In_Storage_Elements => Header.Size,
                        Alignment                => 1);
    end Deallocate;
 
@@ -78,8 +97,9 @@ package body RCL.Allocators is
    is
       Size : constant Stddef_H.Size_T := Element_Count * Element_Size;
       Data : constant Address := Allocate (Size, Pool_Addr);
-      Mem  : constant Storage_Array (1 .. Storage_Offset (Size)) := (others => 0)
-        with Address => Data;
+      Mem  : constant Storage_Array (1 .. Storage_Offset (Size)) := (others => 0) With
+        Address    => Data,
+        Convention => C;
    begin
       return Data;
    end Zero_Allocate;

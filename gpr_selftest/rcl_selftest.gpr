@@ -9,6 +9,7 @@ project Rcl_Selftest is
    for Main use (
                  "rclada_double_node.adb",
                  "rclada_selftest.adb",
+                 "rclada_test_allocators.adb",
                  "rclada_test_multicore.adb"
                 );
 
