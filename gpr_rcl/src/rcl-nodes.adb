@@ -128,10 +128,10 @@ package body RCL.Nodes is
                return Resp : constant ROSIDL.Dynamic.Shared_Message :=
                  Current_Client.Response.Element
                do
-                  This.Client_Free (Current_Client.To_Ptr);
+                  This.Client_Free (Current_Client.To_Handle);
                end return;
             elsif Clock - Start >= Timeout then
-               This.Client_Free (Current_Client.To_Ptr);
+               This.Client_Free (Current_Client.To_Handle);
                raise RCL_Timeout;
             end if;
          end;
@@ -173,7 +173,7 @@ package body RCL.Nodes is
    -----------------
 
    procedure Client_Free (This : in out Node;
-                          Ptr  :        System.Address)
+                          Ptr  :        Handle)
    is
       CB : Dispatchers.Client_Dispatcher'Class :=
              Dispatchers.Client_Dispatcher'Class (This.Dispatchers.Get (Ptr));
@@ -521,7 +521,7 @@ package body RCL.Nodes is
       Check (Rcl_Timer_Fini (Timers.To_C (Timer)));
 
       if This.Timer_Exists (Timer) then
-         This.Dispatchers.Delete (Timers.To_Unique_Addr (Timer));
+         This.Dispatchers.Delete (+Timers.To_Unique_Addr (Timer));
          Timers.Free (Tmp);
       end if;
    end Timer_Delete;
@@ -555,9 +555,9 @@ package body RCL.Nodes is
    -- Trigger --
    -------------
 
-   procedure Trigger (This : in out Node; CB : System.Address) is
+   procedure Trigger (This : in out Node; Dispatcher : Dispatchers.Handle) is
    begin
-      This.Dispatchers.Get (CB).Dispatch;
+      This.Dispatchers.Get (Dispatcher).Dispatch;
    end Trigger;
 
    --------------------
@@ -598,7 +598,7 @@ package body RCL.Nodes is
       begin
          CBs.Insert (CB);
          if Is_Blocking_Client then
-            Client := CB.To_Ptr;
+            Client := CB.To_Handle;
          end if;
       end Insert;
 

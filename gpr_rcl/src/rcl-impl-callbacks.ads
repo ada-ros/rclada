@@ -18,6 +18,8 @@ package RCL.Impl.Callbacks is
 
    procedure Call (This : Callback) is abstract;
 
+   ---------------------------------------------
+   --  Storable callbacks for multicore dispatch
 
    type Client_Callback is new Callback with record
       User_Callback : Clients.Callback;

@@ -21,7 +21,7 @@ package body RCL.Dispatchers is
       R2 : constant access Dispatcher'Class := R'Unrestricted_Access;
       --  Should be safe as those are by ref (but yikes)
    begin
-      return L2.To_Ptr < R2.To_Ptr;
+      return L2.To_Handle < R2.To_Handle;
    end "<";
 
    --------------
@@ -32,7 +32,7 @@ package body RCL.Dispatchers is
       use all type Clients.Callback;
       Header : aliased Rmw_Request_Id_T;
    begin
-      This.Node.Client_Success (This.To_Ptr);
+      This.Node.Client_Success (This.To_Handle);
 
       Check
         (Rcl_Take_Response
@@ -48,7 +48,7 @@ package body RCL.Dispatchers is
       end if;
 
       if not This.Blocking then -- The client is not needed any longer
-         This.Node.Client_Free (This.To_Ptr);
+         This.Node.Client_Free (This.To_Handle);
       end if;
    end Dispatch;
 
@@ -117,37 +117,37 @@ package body RCL.Dispatchers is
    -- Force_Addr --
    ----------------
 
-   function Force_Addr (This : Dispatcher'Class) return System.Address is
+   function Force_Addr (This : Dispatcher'Class) return Handle is
       Ptr : constant access Dispatcher'Class := This'Unrestricted_Access;
    begin
-      return Ptr.To_Ptr;
+      return Ptr.To_Handle;
    end Force_Addr;
 
-   package Keys is new Callback_Sets.Generic_Keys (System.Address,
-                                                   Force_Addr);
+   package Keys is new Dispatcher_Sets.Generic_Keys (Handle,
+                                                     Force_Addr);
 
    --------------
    -- Contains --
    --------------
 
-   function Contains (This : Set; Addr : System.Address) return Boolean is
-      (Keys.Contains (Callback_Sets.Set (This), Addr));
+   function Contains (This : Set; Addr : Handle) return Boolean is
+      (Keys.Contains (Dispatcher_Sets.Set (This), Addr));
 
    ------------
    -- Delete --
    ------------
 
-   procedure Delete (This : in out Set; Addr : System.Address) is
+   procedure Delete (This : in out Set; Addr : Handle) is
    begin
-      Keys.Delete (Callback_Sets.Set (This), Addr);
+      Keys.Delete (Dispatcher_Sets.Set (This), Addr);
    end Delete;
 
    ---------
    -- Get --
    ---------
 
-   function Get (This : Set; Addr : System.Address) return Dispatcher'Class is
-     (Keys.Element (Callback_Sets.Set (This), Addr));
+   function Get (This : Set; Addr : Handle) return Dispatcher'Class is
+     (Keys.Element (Dispatcher_Sets.Set (This), Addr));
 
    -----------------
    -- Num_Clients --

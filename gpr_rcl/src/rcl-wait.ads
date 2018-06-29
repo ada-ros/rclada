@@ -26,7 +26,7 @@ package RCL.Wait is
    
    type Trigger is tagged private;
    
-   function Ptr (This : Trigger) return System.Address;
+   function Handle (This : Trigger) return Dispatchers.Handle;
    
    type Set (<>) is new Ada.Finalization.Limited_Controlled with private with 
      Default_Iterator  => Iterate,
@@ -91,7 +91,8 @@ private
       Ptr   : System.Address; -- This address is of the C type, and allows finding the callback in a set
    end record;
    
-   function Ptr (This : Trigger) return System.Address is (This.Ptr);
+   function Handle (This : Trigger) return Dispatchers.Handle is 
+     (Dispatchers.Handle (This.Ptr));
    
    type Set is new Ada.Finalization.Limited_Controlled with record
       Impl : aliased Rcl_Wait_Set_T := Rcl_Get_Zero_Initialized_Wait_Set;

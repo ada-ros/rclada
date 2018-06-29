@@ -16,8 +16,6 @@ with Rcl_Node_H;         use Rcl_Node_H;
 with ROSIDL.Dynamic;
 with ROSIDL.Typesupport;
 
-with System;
-
 package RCL.Nodes is
 
    Default_Executor : aliased Executors.Sequential.Executor;
@@ -190,7 +188,7 @@ package RCL.Nodes is
    function To_C (This : aliased in out Node) return Reference;
    
    procedure Client_Free (This : in out Node;
-                          Ptr  :        System.Address);
+                          Ptr  :        Dispatchers.Handle);
    
    ---------------------------------------------------------------
    --  Extras for executor interaction, also not needed by clients 
@@ -201,9 +199,11 @@ package RCL.Nodes is
    
    procedure Get_Callbacks (This : in out Node; Set : in out Dispatchers.Set);      
    
-   procedure Trigger (This : in out Node; CB : System.Address);
+   procedure Trigger (This : in out Node; Dispatcher : Dispatchers.Handle);
    
 private   
+   
+   use all type Dispatchers.Handle;
    
    function To_C (Options : Node_Options) return Rcl_Node_Options_T;
    
@@ -224,7 +224,7 @@ private
       
    private
       CBs       : RCL.Dispatchers.Set;
-      Client    : System.Address; -- Client that's blocking and waiting
+      Client    : Handle; -- Client that's blocking and waiting
    end Safe_Dispatchers;
    
    type Node is new Ada.Finalization.Limited_Controlled with record 
@@ -247,7 +247,7 @@ private
    
    function Timer_Exists (This  : Node; 
                           Timer : Timers.Timer_Id) return Boolean is
-      (This.Dispatchers.Contains (Timers.To_Unique_Addr (Timer)));
+      (This.Dispatchers.Contains (+Timers.To_Unique_Addr (Timer)));
    
    function To_C (This : aliased in out Node) return Reference is
      (Ptr => This.Impl'Access);

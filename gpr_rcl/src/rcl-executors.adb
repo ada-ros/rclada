@@ -109,7 +109,7 @@ package body RCL.Executors is
 
             when Triggered =>
                for Triggered of Set loop
-                  CBs.Get (Triggered.Ptr).Dispatch;
+                  CBs.Get (Triggered.Handle).Dispatch;
                end loop;
                return True;
 

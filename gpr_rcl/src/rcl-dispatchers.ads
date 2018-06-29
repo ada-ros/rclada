@@ -17,9 +17,10 @@ package RCL.Dispatchers is
    --  Helper types to couple an element with its dispatcher, and dispatch calls
    --  Used only privately by the Node implementation
    
-   subtype Handle is System.Address;
+   type Handle is new System.Address;
    --  This address uniquely designates a callback, by the implementation pointer
    --    of the C client data type. This will be hidden in the near future.
+   function "+" (Addr : System.Address) return Handle;
    
    type Dispatcher (Node : not null access Nodes.Node'Class) is abstract tagged null record;
    
@@ -29,7 +30,7 @@ package RCL.Dispatchers is
    --    structure in the node. One must directly call node functions to
    --    indicate changes or replace with an updated callback
    
-   function To_Ptr (This : Dispatcher) return System.Address is abstract;
+   function To_Handle (This : Dispatcher) return Handle is abstract;
    --  This is the pointer to the C object that is expected by the
    --    rcl_wait_add_* functions. It also serves to locate the dispatcher
    --    once it has been triggered on the C side.
@@ -38,21 +39,21 @@ package RCL.Dispatchers is
    
    use all type System.Address;
    
-   package Callback_Sets is new Ada.Containers.Indefinite_Ordered_Sets
+   package Dispatcher_Sets is new Ada.Containers.Indefinite_Ordered_Sets
      (Dispatcher'Class);
    
-   type Set is new Callback_Sets.Set with null record;
+   type Set is new Dispatcher_Sets.Set with null record;
    
    function Num_Clients       (This : Set) return Natural;
    function Num_Services      (This : Set) return Natural;
    function Num_Subscriptions (This : Set) return Natural;
    function Num_Timers        (This : Set) return Natural;
    
-   function Contains (This : Set; Addr : System.Address) return Boolean;
+   function Contains (This : Set; Addr : Handle) return Boolean;
    
-   function Get (This : Set; Addr : System.Address) return Dispatcher'Class;
+   function Get (This : Set; Addr : Handle) return Dispatcher'Class;
    
-   procedure Delete (This : in out Set; Addr : System.Address);
+   procedure Delete (This : in out Set; Addr : Handle);
 
    -------------
    -- Clients --
@@ -70,7 +71,7 @@ package RCL.Dispatchers is
    
    procedure Dispatch (This : Client_Dispatcher);
    
-   function To_Ptr (This : Client_Dispatcher) return System.Address;
+   function To_Handle (This : Client_Dispatcher) return Handle;
    
    --------------
    -- Services --
@@ -84,7 +85,7 @@ package RCL.Dispatchers is
    
    procedure Dispatch (This : Service_Dispatcher);
    
-   function To_Ptr (This : Service_Dispatcher) return System.Address;   
+   function To_Handle (This : Service_Dispatcher) return Handle;   
    
    -------------------
    -- Subscriptions --
@@ -98,7 +99,7 @@ package RCL.Dispatchers is
    
    procedure Dispatch (This : Subscription_Dispatcher);
    
-   function To_Ptr (This : Subscription_Dispatcher) return System.Address;
+   function To_Handle (This : Subscription_Dispatcher) return Handle;
    
    ------------
    -- Timers --
@@ -113,25 +114,27 @@ package RCL.Dispatchers is
    
    procedure Dispatch (This : Timer_Dispatcher);
    
-   function To_Ptr (This : Timer_Dispatcher) return System.Address;
+   function To_Handle (This : Timer_Dispatcher) return Handle;
    
 private
    
    use all type Timers.Timer_Id;
    
+   function "+" (Addr : System.Address) return Handle is (Handle (Addr));
+   
    function "=" (L, R : Timer_Dispatcher) return Boolean is
      (L.Timer = R.Timer);
    
-   function To_Ptr (This : Client_Dispatcher) return System.Address is
-     (This.Client.To_Unique_Addr);
+   function To_Handle (This : Client_Dispatcher) return Handle is
+     (+This.Client.To_Unique_Addr);
 
-   function To_Ptr (This : Service_Dispatcher) return System.Address is
-     (This.Service.To_Unique_Addr);
+   function To_Handle (This : Service_Dispatcher) return Handle is
+     (+This.Service.To_Unique_Addr);
    
-   function To_Ptr (This : Subscription_Dispatcher) return System.Address is
-     (This.Subscription.To_Unique_Addr);
+   function To_Handle (This : Subscription_Dispatcher) return Handle is
+     (+This.Subscription.To_Unique_Addr);
    
-   function To_Ptr (This : Timer_Dispatcher) return System.Address is
-     (Timers.To_Unique_Addr (This.Timer));
+   function To_Handle (This : Timer_Dispatcher) return Handle is
+     (+Timers.To_Unique_Addr (This.Timer));
    
 end RCL.Dispatchers;
