@@ -6,26 +6,15 @@ with "rosidl";
 
 library project Rcl is
 
-   type Yes_No is ("Yes", "No");
-
-   Ros_Build  : Yes_No := external ("ROS_BUILD", "No");
-
    for Languages use ("ada", "c");
 
    for Library_Name use "rclada";
    for Library_Kind use "static";
 
-   Gen_Prefix := "";
-   case Ros_Build is
-      when "Yes" => Gen_Prefix := ".";
-      when "No"  => Gen_Prefix := "../../../build/rclada/gpr_rcl";
-   end case;
-
-   for Source_Dirs use ("src/overrides", -- must go in front of gen
+   for Source_Dirs use ("src/overrides", -- must go before gen
                         "src",
-                        "src/experimental",
                         "src/support",
-                        Gen_Prefix & "/gen");
+                        "gen");
 
    for Object_Dir  use "obj";
    for Library_Dir use "lib";

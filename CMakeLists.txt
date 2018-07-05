@@ -1,40 +1,34 @@
 cmake_minimum_required(VERSION 3.5)
-project(rclada)
-
-set(${PROJECT_NAME}_MAJOR_VERSION 0)
-set(${PROJECT_NAME}_MINOR_VERSION 1)
-set(${PROJECT_NAME}_PATCH_VERSION 0)
-set(${PROJECT_NAME}_VERSION
-        ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})
-set(PROJECT_VERSION ${${PROJECT_NAME}_VERSION})
-
-message(" ")
-message("${PROJECT_NAME} version ${PROJECT_VERSION}")
+project(rclada VERSION 0.1.0)
 
 if(BUILD_TESTING)
   # Silence a warning (?)
 endif()
 
+find_package(rclada_common REQUIRED)
+ada_begin_package()
+
 # ROS2 imports
 find_package(rcl REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rmw REQUIRED)
+find_package(rosidl_generator_c REQUIRED)
+find_package(rosidl_typesupport_interface REQUIRED)
 find_package(std_msgs REQUIRED)
 
 # Ada imports
-find_package(rclada_common REQUIRED)
 find_package(rosidl_generator_ada REQUIRED)
 
 # C imports for the Ada side
-
 ada_import_c_libraries(${rcutils_LIBRARIES})
 ada_import_c_libraries(${rcl_LIBRARIES})
 
 # Find all headers in rcl and generate automatic ada headers
-
 ada_find_package_include_dir(_rcl_include ${rcl_DIR})
 ada_find_package_include_dir(_rcutils_include ${rcutils_DIR})
 ada_find_package_include_dir(_rmw_include ${rmw_DIR})
+ada_find_package_include_dir(_rosidl_gen_c_include ${rosidl_generator_c_DIR})
+ada_find_package_include_dir(_rosidl_typesupport_interface_include ${rosidl_typesupport_interface_DIR})
 
 file(GLOB
         _headers
@@ -43,7 +37,13 @@ file(GLOB
         "${_rcutils_include}/rcutils/types/*.h"
         "${_rmw_include}/rmw/*.h")
 
-set(_includes "${_rcutils_include};${_rmw_include};${_rcl_include}")
+list(APPEND _includes
+        ${_rcutils_include}
+        ${_rmw_include}
+        ${_rcl_include}
+        ${_rosidl_gen_c_include}
+        ${_rosidl_typesupport_interface_include}
+        )
 
 # Extra headers that we need
 set(_extra_headers
@@ -56,6 +56,8 @@ set(_extra_headers
         ${_rmw_include}/rmw/names_and_types.h
         ${_rmw_include}/rmw/types.h)
 
+message(STATUS "HEADERS ${_includes}")
+
 ada_generate_binding(
         ada_binding_rcl
         gpr_rcl
@@ -67,16 +69,20 @@ ada_generate_binding(
 
 ada_add_executables(
         gpr_selftest
-        ${PROJECT_SOURCE_DIR}/gpr_selftest
+        gpr_selftest
         bin
+        # binaries
+        rclada_double_node
         rclada_selftest
+        rclada_test_allocators
+        rclada_test_multicore
 )
 
 add_dependencies(
         gpr_selftest
         ada_binding_rcl)
 
-ada_export_package()
+ada_end_package()
 
 #get_cmake_property(_variableNames VARIABLES)
 #list (SORT _variableNames)
