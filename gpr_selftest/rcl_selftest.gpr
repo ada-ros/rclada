@@ -3,6 +3,8 @@ with "ros2_typesupport_rosidl_generator_ada";
 
 project Rcl_Selftest is
 
+   for Languages use ("Ada", "C");
+
    for Source_Dirs use ("src");
    for Object_Dir use "obj";
    for Exec_Dir use "bin";
@@ -10,7 +12,8 @@ project Rcl_Selftest is
                  "rclada_double_node.adb",
                  "rclada_selftest.adb",
                  "rclada_test_allocators.adb",
-                 "rclada_test_multicore.adb"
+                 "rclada_test_multicore.adb",
+                 "rcl_tests.c"
                 );
 
    package Builder is
@@ -19,14 +22,11 @@ project Rcl_Selftest is
 
    package Compiler is
       for Switches ("ada") use ("-gnatVa", "-gnatwa", "-g", "-O2", "-gnato", "-fstack-check", "-gnata", "-gnat12");
+      for Switches ("C") use ("-Wall", "-Wextra", "-pedantic", "-O2", "-g");
    end Compiler;
 
    package Binder is
       for Switches ("ada") use ("-Es", "-static");
    end Binder;
-
---     package Linker is
---        for Switches ("ada") use ("-g", "-rdynamic", "-Wl,--no-as-needed");
---     end Linker;
 
 end Rcl_Selftest;

@@ -33,7 +33,7 @@ package body RCL.Calendar is
 
    procedure Finalize (This : in out Clock) is
    begin
-      if This.Inited then 
+      if False and then This.Inited then 
          Check (Rcl_Clock_Fini (This.Impl'Access));
          This.Inited := False;
       end if;
@@ -57,7 +57,11 @@ package body RCL.Calendar is
    function Now (This : in out Clock) return Time is
       C_Time : aliased Rcl_Time_Point_T;
    begin
-      Check (Rcl_Clock_Get_Now (This.Impl'Access, C_Time'Access));
+      if This.Inited then 
+         Check (Rcl_Clock_Get_Now (This.Impl'Access, C_Time'Access));
+      else
+         raise Constraint_Error with "Using uninitialized clock";
+      end if;
       
       return Time (To_Duration (C_Time.Nanoseconds));
    end Now;

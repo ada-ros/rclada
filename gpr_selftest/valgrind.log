@@ -1,0 +1,1572 @@
+==10831== Memcheck, a memory error detector
+==10831== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==10831== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==10831== Command: bin/rclada_selftest
+==10831== 
+[INFO] [rclada_selftest]: Got request, serving 2 + 3
+[INFO] [rclada_selftest]: Service testing done
+[INFO] [rclada_selftest]: Chatting
+[INFO] [rclada_selftest]: Filling as array
+[INFO] [rclada_selftest]: Filling as matrix
+[INFO] [rclada_selftest]: Publishing message
+[INFO] [rclada_selftest]: Got reply, sum is 5
+==10831== Thread 6:
+==10831== Syscall param sendmsg(msg.msg_iov[0]) points to uninitialised byte(s)
+==10831==    at 0x6ECC607: sendmsg (sendmsg.c:28)
+==10831==    by 0x8C2028D: eprosima::fastrtps::rtps::UDPv4Transport::SendThroughSocket(unsigned char const*, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, asio::basic_datagram_socket<asio::ip::udp, asio::datagram_socket_service<asio::ip::udp> >&) (in /home/jano/local/ros2/ros2_bouncy/install/fastrtps/lib/libfastrtps.so.1.6.0)
+==10831==    by 0x8C230F3: eprosima::fastrtps::rtps::UDPv4Transport::Send(unsigned char const*, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, eprosima::fastrtps::rtps::Locator_t const&) (in /home/jano/local/ros2/ros2_bouncy/install/fastrtps/lib/libfastrtps.so.1.6.0)
+==10831==    by 0x8BDE5A7: eprosima::fastrtps::rtps::SenderResource::Send(unsigned char const*, unsigned int, eprosima::fastrtps::rtps::Locator_t const&) (in /home/jano/local/ros2/ros2_bouncy/install/fastrtps/lib/libfastrtps.so.1.6.0)
+==10831==    by 0x8BE1AFE: eprosima::fastrtps::rtps::RTPSParticipantImpl::sendSync(eprosima::fastrtps::rtps::CDRMessage_t*, eprosima::fastrtps::rtps::Endpoint*, eprosima::fastrtps::rtps::Locator_t const&) (in /home/jano/local/ros2/ros2_bouncy/install/fastrtps/lib/libfastrtps.so.1.6.0)
+==10831==    by 0x8BC66F7: eprosima::fastrtps::rtps::RTPSMessageGroup::send() (in /home/jano/local/ros2/ros2_bouncy/install/fastrtps/lib/libfastrtps.so.1.6.0)
+==10831==    by 0x8BC6748: eprosima::fastrtps::rtps::RTPSMessageGroup::~RTPSMessageGroup() (in /home/jano/local/ros2/ros2_bouncy/install/fastrtps/lib/libfastrtps.so.1.6.0)
+==10831==    by 0x8B84B68: eprosima::fastrtps::rtps::StatefulWriter::send_any_unsent_changes() (in /home/jano/local/ros2/ros2_bouncy/install/fastrtps/lib/libfastrtps.so.1.6.0)
+==10831==    by 0x8B77D03: eprosima::fastrtps::rtps::AsyncWriterThread::run() (in /home/jano/local/ros2/ros2_bouncy/install/fastrtps/lib/libfastrtps.so.1.6.0)
+==10831==    by 0x7B39732: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25)
+==10831==    by 0x6EC16DA: start_thread (pthread_create.c:463)
+==10831==    by 0x740288E: clone (clone.S:95)
+==10831==  Address 0xc3ebca2 is 210 bytes inside a block of size 65,500 alloc'd
+==10831==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==10831==    by 0x8B79ACF: eprosima::fastrtps::rtps::RTPSWriter::RTPSWriter(eprosima::fastrtps::rtps::RTPSParticipantImpl*, eprosima::fastrtps::rtps::GUID_t&, eprosima::fastrtps::rtps::WriterAttributes&, eprosima::fastrtps::rtps::WriterHistory*, eprosima::fastrtps::rtps::WriterListener*) (in /home/jano/local/ros2/ros2_bouncy/install/fastrtps/lib/libfastrtps.so.1.6.0)
+==10831==    by 0x8B7B65C: eprosima::fastrtps::rtps::StatefulWriter::StatefulWriter(eprosima::fastrtps::rtps::RTPSParticipantImpl*, eprosima::fastrtps::rtps::GUID_t&, eprosima::fastrtps::rtps::WriterAttributes&, eprosima::fastrtps::rtps::WriterHistory*, eprosima::fastrtps::rtps::WriterListener*) (in /home/jano/local/ros2/ros2_bouncy/install/fastrtps/lib/libfastrtps.so.1.6.0)
+==10831==    by 0x8BE8445: eprosima::fastrtps::rtps::RTPSParticipantImpl::createWriter(eprosima::fastrtps::rtps::RTPSWriter**, eprosima::fastrtps::rtps::WriterAttributes&, eprosima::fastrtps::rtps::WriterHistory*, eprosima::fastrtps::rtps::WriterListener*, eprosima::fastrtps::rtps::EntityId_t const&, bool) (in /home/jano/local/ros2/ros2_bouncy/install/fastrtps/lib/libfastrtps.so.1.6.0)
+==10831==    by 0x8BED17A: eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(eprosima::fastrtps::rtps::RTPSParticipant*, eprosima::fastrtps::rtps::WriterAttributes&, eprosima::fastrtps::rtps::WriterHistory*, eprosima::fastrtps::rtps::WriterListener*) (in /home/jano/local/ros2/ros2_bouncy/install/fastrtps/lib/libfastrtps.so.1.6.0)
+==10831==    by 0x8BFB8E3: eprosima::fastrtps::ParticipantImpl::createPublisher(eprosima::fastrtps::PublisherAttributes&, eprosima::fastrtps::PublisherListener*) (in /home/jano/local/ros2/ros2_bouncy/install/fastrtps/lib/libfastrtps.so.1.6.0)
+==10831==    by 0x80707B3: rmw_create_publisher (in /home/jano/local/ros2/ros2_bouncy/install/rmw_fastrtps_cpp/lib/librmw_fastrtps_cpp.so)
+==10831==    by 0x6890107: rcl_publisher_init (in /home/jano/local/ros2/ros2_bouncy/install/rcl/lib/librcl.so)
+==10831==    by 0x4A1FFC: rcl__publishers__impl__init (rcl-publishers-impl.adb:17)
+==10831==    by 0x49C26F: rcl__nodes__publish (rcl-nodes.adb:376)
+==10831==    by 0x475B87: rclada_selftest__test (rclada_selftest.adb:50)
+==10831==    by 0x475B87: _ada_rclada_selftest (rclada_selftest.adb:322)
+==10831==    by 0x46E0E9: main (b__rclada_selftest.adb:630)
+==10831== 
+[INFO] [rclada_selftest]: Client testing done
+[INFO] [rclada_selftest]: Chatting
+[INFO] [rclada_selftest]: Filling as array
+[INFO] [rclada_selftest]: Filling as matrix
+[INFO] [rclada_selftest]: Publishing message
+************************************************************
+    Message: rosidl_generator_ada/Test
+       Size: 248 bytes
+Field count: 11
+=== number ===
+              Type id: 12 (Int64)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:FALSE
+     Has bounded size:FALSE
+               Offset: 0
+        Default value: (void*)
+             Data ptr: (void*) 000000000C627340
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== text ===
+              Type id: 14 (String)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:FALSE
+     Has bounded size:FALSE
+               Offset: 8
+        Default value: (void*)
+             Data ptr: (void*) 000000000C627348
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== bounded_string ===
+              Type id: 14 (String)
+   String upper bound: 8
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:FALSE
+     Has bounded size:FALSE
+               Offset: 32
+        Default value: (void*)
+             Data ptr: (void*) 000000000C627360
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== real ===
+              Type id: 5 (Float64)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:FALSE
+     Has bounded size:FALSE
+               Offset: 56
+        Default value: (void*)
+             Data ptr: (void*) 000000000C627378
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== time ===
+              Type id: 15 (Message)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 000000000606C1E0
+             Is array:FALSE
+     Has bounded size:FALSE
+               Offset: 64
+        Default value: (void*)
+             Data ptr: (void*) 000000000C627380
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+--| ************************************************************
+--|     Message: builtin_interfaces/Time
+--|        Size: 8 bytes
+--| Field count: 2
+--| === sec ===
+--|               Type id: 10 (Int32)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 0
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C627380
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+--| === nanosec ===
+--|               Type id: 11 (UInt32)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 4
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C627384
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+=== dynamic_array ===
+              Type id: 4 (Float32)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:TRUE
+           Array kind: DYNAMIC
+Array size (declared): 0
+  Array size (actual): 6
+       Array capacity: 6
+     Has bounded size:FALSE
+               Offset: 72
+        Default value: (void*)
+             Data ptr: (void*) 000000000C627388
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== static_array ===
+              Type id: 10 (Int32)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:TRUE
+           Array kind: STATIC
+Array size (declared): 8
+  Array size (actual): 8
+       Array capacity: 8
+     Has bounded size:FALSE
+               Offset: 96
+        Default value: (void*)
+             Data ptr: (void*) 000000000C6273A0
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== bounded_array ===
+              Type id: 6 (Int8)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:TRUE
+           Array kind: BOUNDED
+Array size (declared): 8
+  Array size (actual): 6
+       Array capacity: 6
+     Has bounded size:TRUE
+               Offset: 128
+        Default value: (void*)
+             Data ptr: (void*) 000000000C6273C0
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== fix_msg_arr ===
+              Type id: 15 (Message)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 000000000606C1E0
+             Is array:TRUE
+           Array kind: STATIC
+Array size (declared): 2
+  Array size (actual): 2
+       Array capacity: 2
+     Has bounded size:FALSE
+               Offset: 152
+        Default value: (void*)
+             Data ptr: (void*) 000000000C6273D8
+        size_function: 000000000504152A
+         get_function: 0000000005041561
+   get_const_function: 0000000005041539
+      resize_function: 0000000000000000
+--| ************************************************************
+--|     Message: builtin_interfaces/Time
+--|        Size: 8 bytes
+--| Field count: 2
+--| === sec ===
+--|               Type id: 10 (Int32)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 0
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C6273D8
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+--| === nanosec ===
+--|               Type id: 11 (UInt32)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 4
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C6273DC
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+=== dyn_msg_arr ===
+              Type id: 15 (Message)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 000000000606C1E0
+             Is array:TRUE
+           Array kind: DYNAMIC
+Array size (declared): 0
+  Array size (actual): 6
+       Array capacity: 6
+     Has bounded size:FALSE
+               Offset: 168
+        Default value: (void*)
+             Data ptr: (void*) 000000000C6273E8
+        size_function: 0000000005041589
+         get_function: 00000000050415CB
+   get_const_function: 00000000050415A3
+      resize_function: 00000000050415F3
+--| ************************************************************
+--|     Message: builtin_interfaces/Time
+--|        Size: 8 bytes
+--| Field count: 2
+--| === sec ===
+--|               Type id: 10 (Int32)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 0
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C6273E8
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+--| === nanosec ===
+--|               Type id: 11 (UInt32)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 4
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C6273EC
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+=== matrix ===
+              Type id: 15 (Message)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000006678440
+             Is array:FALSE
+     Has bounded size:FALSE
+               Offset: 192
+        Default value: (void*)
+             Data ptr: (void*) 000000000C627400
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+--| ************************************************************
+--|     Message: std_msgs/UInt64MultiArray
+--|        Size: 56 bytes
+--| Field count: 2
+--| === layout ===
+--|               Type id: 15 (Message)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000006677FA0
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 0
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C627400
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+--| --| ************************************************************
+--| --|     Message: std_msgs/MultiArrayLayout
+--| --|        Size: 32 bytes
+--| --| Field count: 2
+--| --| === dim ===
+--| --|               Type id: 15 (Message)
+--| --|    String upper bound: 0
+--| --|               members: (rosidl_message_type_support_t *) 0000000006677EC0
+--| --|              Is array:TRUE
+--| --|            Array kind: DYNAMIC
+--| --| Array size (declared): 0
+--| --|   Array size (actual): 3
+--| --|        Array capacity: 3
+--| --|      Has bounded size:FALSE
+--| --|                Offset: 0
+--| --|         Default value: (void*)
+--| --|              Data ptr: (void*) 000000000C627400
+--| --|         size_function: 00000000064751DA
+--| --|          get_function: 000000000647521C
+--| --|    get_const_function: 00000000064751F4
+--| --|       resize_function: 0000000006475244
+--| --| --| ************************************************************
+--| --| --|     Message: std_msgs/MultiArrayDimension
+--| --| --|        Size: 32 bytes
+--| --| --| Field count: 3
+--| --| --| === label ===
+--| --| --|               Type id: 14 (String)
+--| --| --|    String upper bound: 0
+--| --| --|               members: (rosidl_message_type_support_t *) 0000000000000000
+--| --| --|              Is array:FALSE
+--| --| --|      Has bounded size:FALSE
+--| --| --|                Offset: 0
+--| --| --|         Default value: (void*)
+--| --| --|              Data ptr: (void*) 000000000C627400
+--| --| --|         size_function: 0000000000000000
+--| --| --|          get_function: 0000000000000000
+--| --| --|    get_const_function: 0000000000000000
+--| --| --|       resize_function: 0000000000000000
+--| --| --| === size ===
+--| --| --|               Type id: 11 (UInt32)
+--| --| --|    String upper bound: 0
+--| --| --|               members: (rosidl_message_type_support_t *) 0000000000000000
+--| --| --|              Is array:FALSE
+--| --| --|      Has bounded size:FALSE
+--| --| --|                Offset: 24
+--| --| --|         Default value: (void*)
+--| --| --|              Data ptr: (void*) 000000000C627418
+--| --| --|         size_function: 0000000000000000
+--| --| --|          get_function: 0000000000000000
+--| --| --|    get_const_function: 0000000000000000
+--| --| --|       resize_function: 0000000000000000
+--| --| --| === stride ===
+--| --| --|               Type id: 11 (UInt32)
+--| --| --|    String upper bound: 0
+--| --| --|               members: (rosidl_message_type_support_t *) 0000000000000000
+--| --| --|              Is array:FALSE
+--| --| --|      Has bounded size:FALSE
+--| --| --|                Offset: 28
+--| --| --|         Default value: (void*)
+--| --| --|              Data ptr: (void*) 000000000C62741C
+--| --| --|         size_function: 0000000000000000
+--| --| --|          get_function: 0000000000000000
+--| --| --|    get_const_function: 0000000000000000
+--| --| --|       resize_function: 0000000000000000
+--| --| === data_offset ===
+--| --|               Type id: 11 (UInt32)
+--| --|    String upper bound: 0
+--| --|               members: (rosidl_message_type_support_t *) 0000000000000000
+--| --|              Is array:FALSE
+--| --|      Has bounded size:FALSE
+--| --|                Offset: 24
+--| --|         Default value: (void*)
+--| --|              Data ptr: (void*) 000000000C627418
+--| --|         size_function: 0000000000000000
+--| --|          get_function: 0000000000000000
+--| --|    get_const_function: 0000000000000000
+--| --|       resize_function: 0000000000000000
+--| === data ===
+--|               Type id: 13 (UInt64)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:TRUE
+--|            Array kind: DYNAMIC
+--| Array size (declared): 0
+--|   Array size (actual): 24
+--|        Array capacity: 24
+--|      Has bounded size:FALSE
+--|                Offset: 32
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C627420
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+[INFO] [rclada_selftest]: Got chatter
+[INFO] [rclada_selftest]: Topic testing done
+************************************************************
+    Message: rosidl_generator_ada/Test
+       Size: 248 bytes
+Field count: 11
+=== number ===
+              Type id: 12 (Int64)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:FALSE
+     Has bounded size:FALSE
+               Offset: 0
+        Default value: (void*)
+             Data ptr: (void*) 000000000C718090
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== text ===
+              Type id: 14 (String)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:FALSE
+     Has bounded size:FALSE
+               Offset: 8
+        Default value: (void*)
+             Data ptr: (void*) 000000000C718098
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== bounded_string ===
+              Type id: 14 (String)
+   String upper bound: 8
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:FALSE
+     Has bounded size:FALSE
+               Offset: 32
+        Default value: (void*)
+             Data ptr: (void*) 000000000C7180B0
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== real ===
+              Type id: 5 (Float64)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:FALSE
+     Has bounded size:FALSE
+               Offset: 56
+        Default value: (void*)
+             Data ptr: (void*) 000000000C7180C8
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== time ===
+              Type id: 15 (Message)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 000000000606C1E0
+             Is array:FALSE
+     Has bounded size:FALSE
+               Offset: 64
+        Default value: (void*)
+             Data ptr: (void*) 000000000C7180D0
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+--| ************************************************************
+--|     Message: builtin_interfaces/Time
+--|        Size: 8 bytes
+--| Field count: 2
+--| === sec ===
+--|               Type id: 10 (Int32)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 0
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C7180D0
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+--| === nanosec ===
+--|               Type id: 11 (UInt32)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 4
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C7180D4
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+=== dynamic_array ===
+              Type id: 4 (Float32)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:TRUE
+           Array kind: DYNAMIC
+Array size (declared): 0
+  Array size (actual): 6
+       Array capacity: 6
+     Has bounded size:FALSE
+               Offset: 72
+        Default value: (void*)
+             Data ptr: (void*) 000000000C7180D8
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== static_array ===
+              Type id: 10 (Int32)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:TRUE
+           Array kind: STATIC
+Array size (declared): 8
+  Array size (actual): 8
+       Array capacity: 8
+     Has bounded size:FALSE
+               Offset: 96
+        Default value: (void*)
+             Data ptr: (void*) 000000000C7180F0
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== bounded_array ===
+              Type id: 6 (Int8)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000000000000
+             Is array:TRUE
+           Array kind: BOUNDED
+Array size (declared): 8
+  Array size (actual): 6
+       Array capacity: 6
+     Has bounded size:TRUE
+               Offset: 128
+        Default value: (void*)
+             Data ptr: (void*) 000000000C718110
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+=== fix_msg_arr ===
+              Type id: 15 (Message)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 000000000606C1E0
+             Is array:TRUE
+           Array kind: STATIC
+Array size (declared): 2
+  Array size (actual): 2
+       Array capacity: 2
+     Has bounded size:FALSE
+               Offset: 152
+        Default value: (void*)
+             Data ptr: (void*) 000000000C718128
+        size_function: 000000000504152A
+         get_function: 0000000005041561
+   get_const_function: 0000000005041539
+      resize_function: 0000000000000000
+--| ************************************************************
+--|     Message: builtin_interfaces/Time
+--|        Size: 8 bytes
+--| Field count: 2
+--| === sec ===
+--|               Type id: 10 (Int32)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 0
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C718128
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+--| === nanosec ===
+--|               Type id: 11 (UInt32)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 4
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C71812C
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+=== dyn_msg_arr ===
+              Type id: 15 (Message)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 000000000606C1E0
+             Is array:TRUE
+           Array kind: DYNAMIC
+Array size (declared): 0
+  Array size (actual): 6
+       Array capacity: 6
+     Has bounded size:FALSE
+               Offset: 168
+        Default value: (void*)
+             Data ptr: (void*) 000000000C718138
+        size_function: 0000000005041589
+         get_function: 00000000050415CB
+   get_const_function: 00000000050415A3
+      resize_function: 00000000050415F3
+--| ************************************************************
+--|     Message: builtin_interfaces/Time
+--|        Size: 8 bytes
+--| Field count: 2
+--| === sec ===
+--|               Type id: 10 (Int32)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 0
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C718138
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+--| === nanosec ===
+--|               Type id: 11 (UInt32)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 4
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C71813C
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+=== matrix ===
+              Type id: 15 (Message)
+   String upper bound: 0
+              members: (rosidl_message_type_support_t *) 0000000006678440
+             Is array:FALSE
+     Has bounded size:FALSE
+               Offset: 192
+        Default value: (void*)
+             Data ptr: (void*) 000000000C718150
+        size_function: 0000000000000000
+         get_function: 0000000000000000
+   get_const_function: 0000000000000000
+      resize_function: 0000000000000000
+--| ************************************************************
+--|     Message: std_msgs/UInt64MultiArray
+--|        Size: 56 bytes
+--| Field count: 2
+--| === layout ===
+--|               Type id: 15 (Message)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000006677FA0
+--|              Is array:FALSE
+--|      Has bounded size:FALSE
+--|                Offset: 0
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C718150
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+--| --| ************************************************************
+--| --|     Message: std_msgs/MultiArrayLayout
+--| --|        Size: 32 bytes
+--| --| Field count: 2
+--| --| === dim ===
+--| --|               Type id: 15 (Message)
+--| --|    String upper bound: 0
+--| --|               members: (rosidl_message_type_support_t *) 0000000006677EC0
+--| --|              Is array:TRUE
+--| --|            Array kind: DYNAMIC
+--| --| Array size (declared): 0
+--| --|   Array size (actual): 3
+--| --|        Array capacity: 3
+--| --|      Has bounded size:FALSE
+--| --|                Offset: 0
+--| --|         Default value: (void*)
+--| --|              Data ptr: (void*) 000000000C718150
+--| --|         size_function: 00000000064751DA
+--| --|          get_function: 000000000647521C
+--| --|    get_const_function: 00000000064751F4
+--| --|       resize_function: 0000000006475244
+--| --| --| ************************************************************
+--| --| --|     Message: std_msgs/MultiArrayDimension
+--| --| --|        Size: 32 bytes
+--| --| --| Field count: 3
+--| --| --| === label ===
+--| --| --|               Type id: 14 (String)
+--| --| --|    String upper bound: 0
+--| --| --|               members: (rosidl_message_type_support_t *) 0000000000000000
+--| --| --|              Is array:FALSE
+--| --| --|      Has bounded size:FALSE
+--| --| --|                Offset: 0
+--| --| --|         Default value: (void*)
+--| --| --|              Data ptr: (void*) 000000000C718150
+--| --| --|         size_function: 0000000000000000
+--| --| --|          get_function: 0000000000000000
+--| --| --|    get_const_function: 0000000000000000
+--| --| --|       resize_function: 0000000000000000
+--| --| --| === size ===
+--| --| --|               Type id: 11 (UInt32)
+--| --| --|    String upper bound: 0
+--| --| --|               members: (rosidl_message_type_support_t *) 0000000000000000
+--| --| --|              Is array:FALSE
+--| --| --|      Has bounded size:FALSE
+--| --| --|                Offset: 24
+--| --| --|         Default value: (void*)
+--| --| --|              Data ptr: (void*) 000000000C718168
+--| --| --|         size_function: 0000000000000000
+--| --| --|          get_function: 0000000000000000
+--| --| --|    get_const_function: 0000000000000000
+--| --| --|       resize_function: 0000000000000000
+--| --| --| === stride ===
+--| --| --|               Type id: 11 (UInt32)
+--| --| --|    String upper bound: 0
+--| --| --|               members: (rosidl_message_type_support_t *) 0000000000000000
+--| --| --|              Is array:FALSE
+--| --| --|      Has bounded size:FALSE
+--| --| --|                Offset: 28
+--| --| --|         Default value: (void*)
+--| --| --|              Data ptr: (void*) 000000000C71816C
+--| --| --|         size_function: 0000000000000000
+--| --| --|          get_function: 0000000000000000
+--| --| --|    get_const_function: 0000000000000000
+--| --| --|       resize_function: 0000000000000000
+--| --| === data_offset ===
+--| --|               Type id: 11 (UInt32)
+--| --|    String upper bound: 0
+--| --|               members: (rosidl_message_type_support_t *) 0000000000000000
+--| --|              Is array:FALSE
+--| --|      Has bounded size:FALSE
+--| --|                Offset: 24
+--| --|         Default value: (void*)
+--| --|              Data ptr: (void*) 000000000C718168
+--| --|         size_function: 0000000000000000
+--| --|          get_function: 0000000000000000
+--| --|    get_const_function: 0000000000000000
+--| --|       resize_function: 0000000000000000
+--| === data ===
+--|               Type id: 13 (UInt64)
+--|    String upper bound: 0
+--|               members: (rosidl_message_type_support_t *) 0000000000000000
+--|              Is array:TRUE
+--|            Array kind: DYNAMIC
+--| Array size (declared): 0
+--|   Array size (actual): 24
+--|        Array capacity: 24
+--|      Has bounded size:FALSE
+--|                Offset: 32
+--|         Default value: (void*)
+--|              Data ptr: (void*) 000000000C718170
+--|         size_function: 0000000000000000
+--|          get_function: 0000000000000000
+--|    get_const_function: 0000000000000000
+--|       resize_function: 0000000000000000
+[INFO] [rclada_selftest]: Got chatter
+[INFO] [rclada_selftest]: Topic testing done
+[INFO] [rclada_selftest]: Got request, serving 2 + 3
+[INFO] [rclada_selftest]: Service testing done
+[INFO] [rclada_selftest]: Got reply, sum is 5
+[INFO] [rclada_selftest]: Client blocking (procedure) testing done
+[INFO] [rclada_selftest]: Got request, serving 2 + 3
+[INFO] [rclada_selftest]: Service testing done
+[INFO] [rclada_selftest]: Got reply, sum is 5
+[INFO] [rclada_selftest]: Client blocking (function) testing done
+[INFO] [rclada_selftest]: Test successful
+[INFO] [rclada_selftest]: Elapsed seconds (computed):   2.466931968
+[INFO] [rclada_selftest]: Elapsed seconds (from clock): 2.472113664
+Total allocated bytes :  0
+Total logically deallocated bytes :  0
+Total physically deallocated bytes :  0
+Current Water Mark:  0
+High Water Mark:  0
+
+==10831== Thread 1:
+==10831== Use of uninitialised value of size 8
+==10831==    at 0x68968CA: rcl_ros_clock_fini (in /home/jano/local/ros2/ros2_bouncy/install/rcl/lib/librcl.so)
+==10831==    by 0x6896695: rcl_clock_fini (in /home/jano/local/ros2/ros2_bouncy/install/rcl/lib/librcl.so)
+==10831==    by 0x4785CB: rcl__calendar__finalize (rcl-calendar.adb:37)
+==10831==    by 0x4768C2: _ada_rclada_selftest (rclada_selftest.adb:333)
+==10831==    by 0x46E0E9: main (b__rclada_selftest.adb:630)
+==10831== 
+==10831== Jump to the invalid address stated on the next line
+==10831==    at 0x0: ???
+==10831==    by 0x6896695: rcl_clock_fini (in /home/jano/local/ros2/ros2_bouncy/install/rcl/lib/librcl.so)
+==10831==    by 0x4785CB: rcl__calendar__finalize (rcl-calendar.adb:37)
+==10831==    by 0x4768C2: _ada_rclada_selftest (rclada_selftest.adb:333)
+==10831==    by 0x46E0E9: main (b__rclada_selftest.adb:630)
+==10831==  Address 0x0 is not stack'd, malloc'd or (recently) free'd
+==10831== 
+
+==10831== Invalid read of size 1
+==10831==    at 0x510BBB: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f470 is 16 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x510C93: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f488 is 40 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x510CA7: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f488 is 40 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x510CAB: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f478 is 24 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x510CAF: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f480 is 32 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x510CBA: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f488 is 40 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x510CE8: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f488 is 40 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x510D2A: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f488 is 40 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x510D66: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f488 is 40 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x510E80: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f488 is 40 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x510EA3: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f488 is 40 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x510EAA: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f4b0 is 80 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x510EAE: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f4c0 is 96 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x510EC9: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f488 is 40 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x510ED0: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f4f8 is 152 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x510ED7: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f508 is 168 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x510EF5: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f488 is 40 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x510EFC: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f4e0 is 128 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x510F00: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f4f0 is 144 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 1
+==10831==    at 0x510F16: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f498 is 56 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x510F1A: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f4c8 is 104 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x510F1E: system__dwarf_lines__open (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F512C: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f4d8 is 120 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x511040: system__dwarf_lines__set_load_address (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F515B: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f490 is 48 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x4F51B3: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==  Address 0x77f460 is 0 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x4F51B7: system__traceback__symbolic__init_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5403: system__traceback__symbolic__init_exec_module (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5A95: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==  Address 0x77f468 is 8 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x4F5738: system__traceback__symbolic__multi_module_symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5AA6: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==  Address 0x77f490 is 48 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x4F573F: system__traceback__symbolic__multi_module_symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5AA6: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==  Address 0x77f478 is 24 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x4F5752: system__traceback__symbolic__multi_module_symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5AA6: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==  Address 0x77f480 is 32 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x4F5922: system__traceback__symbolic__multi_module_symbolic_traceback__2 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F58C6: system__traceback__symbolic__multi_module_symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5AA6: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==  Address 0x77f490 is 48 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x4F5926: system__traceback__symbolic__multi_module_symbolic_traceback__2 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F58C6: system__traceback__symbolic__multi_module_symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5AA6: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==  Address 0x77f478 is 24 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x4F5941: system__traceback__symbolic__multi_module_symbolic_traceback__2 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F58C6: system__traceback__symbolic__multi_module_symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5AA6: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==  Address 0x77f480 is 32 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x4F59A1: system__traceback__symbolic__multi_module_symbolic_traceback__2 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F58C6: system__traceback__symbolic__multi_module_symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5AA6: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==  Address 0x77f460 is 0 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x4F59A5: system__traceback__symbolic__multi_module_symbolic_traceback__2 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F58C6: system__traceback__symbolic__multi_module_symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5AA6: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==  Address 0x77f468 is 8 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x51143F: system__dwarf_lines__symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F59DD: system__traceback__symbolic__multi_module_symbolic_traceback__2 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F58C6: system__traceback__symbolic__multi_module_symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5AA6: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x77f470 is 16 bytes inside data symbol "system__traceback__symbolic__exec_module"
+==10831== 
+==10831== Invalid read of size 4
+==10831==    at 0x5115AF: system__dwarf_lines__symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F59DD: system__traceback__symbolic__multi_module_symbolic_traceback__2 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F58C6: system__traceback__symbolic__multi_module_symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5AA6: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x517B41: system__exception_traces__decorator_wrapper (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4DDF3E: ada__exceptions__exception_data__tailored_exception_tracebackXn (a-exexda.adb:725)
+==10831==    by 0x4DDB14: ada__exceptions__exception_data__exception_informationXn (a-exexda.adb:514)
+==10831==    by 0x4DE850: ada__exceptions__exception_information (a-except.adb:758)
+==10831==    by 0x4DE19C: ada__exceptions__exception_traces__notify_exceptionXn (a-exextr.adb:109)
+==10831==    by 0x4DE26A: __gnat_notify_unhandled_exception (a-exextr.adb:150)
+==10831==    by 0x4DE044: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:330)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==  Address 0x4881448 is on thread 1's stack
+==10831== 
+==10831== Invalid read of size 4
+==10831==    at 0x4DE7C2: ada__exceptions__call_chain (a-excach.adb:50)
+==10831==    by 0x4DEB2E: ada__exceptions__complete_occurrence (a-except.adb:928)
+==10831==    by 0x4DEB5E: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:942)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==    by 0x4DEF1A: __gnat_raise_storage_error_msg (a-except.adb:1145)
+==10831==    by 0x4DF1FD: __gnat_rcheck_SE_Explicit_Raise (a-except.adb:1446)
+==10831==    by 0x4D5AF0: system__interrupt_management__notify_exception (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x6ECC88F: ??? (in /lib/x86_64-linux-gnu/libpthread-2.27.so)
+==10831==    by 0x5115AE: system__dwarf_lines__symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F59DD: system__traceback__symbolic__multi_module_symbolic_traceback__2 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F58C6: system__traceback__symbolic__multi_module_symbolic_traceback (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x4F5AA6: system__traceback__symbolic__symbolic_traceback__3 (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==  Address 0x780178 is 0 bytes inside data symbol "__gl_exception_tracebacks"
+==10831== 
+==10831== Invalid read of size 4
+==10831==    at 0x51E684: _Unwind_Find_registered_FDE (unwind-dw2-fde.c:1040)
+==10831==    by 0x51E684: _Unwind_Find_FDE (unwind-dw2-fde-dip.c:477)
+==10831==    by 0x51A922: uw_frame_state_for (unwind-dw2.c:1250)
+==10831==    by 0x51BB3F: uw_init_context_1 (unwind-dw2.c:1579)
+==10831==    by 0x51CAF7: _Unwind_Backtrace (unwind.inc:283)
+==10831==    by 0x515490: __gnat_backtrace (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x50B70C: system__traceback__call_chain__2 (s-traceb.adb:93)
+==10831==    by 0x50B754: system__traceback__call_chain (s-traceb.adb:109)
+==10831==    by 0x4DE813: ada__exceptions__call_chain (a-excach.adb:65)
+==10831==    by 0x4DEB2E: ada__exceptions__complete_occurrence (a-except.adb:928)
+==10831==    by 0x4DEB5E: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:942)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==    by 0x4DEF1A: __gnat_raise_storage_error_msg (a-except.adb:1145)
+==10831==  Address 0x7803a8 is 0 bytes inside data symbol "any_objects_registered"
+==10831== 
+==10831== Invalid read of size 4
+==10831==    at 0x6EC3FA0: pthread_mutex_lock (pthread_mutex_lock.c:65)
+==10831==    by 0x51E727: __gthread_mutex_lock (gthr-default.h:748)
+==10831==    by 0x51E727: _Unwind_Find_registered_FDE (unwind-dw2-fde.c:1046)
+==10831==    by 0x51E727: _Unwind_Find_FDE (unwind-dw2-fde-dip.c:477)
+==10831==    by 0x51A922: uw_frame_state_for (unwind-dw2.c:1250)
+==10831==    by 0x51BB3F: uw_init_context_1 (unwind-dw2.c:1579)
+==10831==    by 0x51CAF7: _Unwind_Backtrace (unwind.inc:283)
+==10831==    by 0x515490: __gnat_backtrace (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x50B70C: system__traceback__call_chain__2 (s-traceb.adb:93)
+==10831==    by 0x50B754: system__traceback__call_chain (s-traceb.adb:109)
+==10831==    by 0x4DE813: ada__exceptions__call_chain (a-excach.adb:65)
+==10831==    by 0x4DEB2E: ada__exceptions__complete_occurrence (a-except.adb:928)
+==10831==    by 0x4DEB5E: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:942)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==  Address 0x780390 is 16 bytes inside data symbol "object_mutex"
+==10831== 
+==10831== Invalid read of size 4
+==10831==    at 0x6EC3971: __pthread_mutex_lock_full (pthread_mutex_lock.c:173)
+==10831==    by 0x51E727: __gthread_mutex_lock (gthr-default.h:748)
+==10831==    by 0x51E727: _Unwind_Find_registered_FDE (unwind-dw2-fde.c:1046)
+==10831==    by 0x51E727: _Unwind_Find_FDE (unwind-dw2-fde-dip.c:477)
+==10831==    by 0x51A922: uw_frame_state_for (unwind-dw2.c:1250)
+==10831==    by 0x51BB3F: uw_init_context_1 (unwind-dw2.c:1579)
+==10831==    by 0x51CAF7: _Unwind_Backtrace (unwind.inc:283)
+==10831==    by 0x515490: __gnat_backtrace (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x50B70C: system__traceback__call_chain__2 (s-traceb.adb:93)
+==10831==    by 0x50B754: system__traceback__call_chain (s-traceb.adb:109)
+==10831==    by 0x4DE813: ada__exceptions__call_chain (a-excach.adb:65)
+==10831==    by 0x4DEB2E: ada__exceptions__complete_occurrence (a-except.adb:928)
+==10831==    by 0x4DEB5E: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:942)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==  Address 0x780390 is 16 bytes inside data symbol "object_mutex"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x51E728: _Unwind_Find_registered_FDE (unwind-dw2-fde.c:1051)
+==10831==    by 0x51E728: _Unwind_Find_FDE (unwind-dw2-fde-dip.c:477)
+==10831==    by 0x51A922: uw_frame_state_for (unwind-dw2.c:1250)
+==10831==    by 0x51BB3F: uw_init_context_1 (unwind-dw2.c:1579)
+==10831==    by 0x51CAF7: _Unwind_Backtrace (unwind.inc:283)
+==10831==    by 0x515490: __gnat_backtrace (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x50B70C: system__traceback__call_chain__2 (s-traceb.adb:93)
+==10831==    by 0x50B754: system__traceback__call_chain (s-traceb.adb:109)
+==10831==    by 0x4DE813: ada__exceptions__call_chain (a-excach.adb:65)
+==10831==    by 0x4DEB2E: ada__exceptions__complete_occurrence (a-except.adb:928)
+==10831==    by 0x4DEB5E: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:942)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==    by 0x4DEF1A: __gnat_raise_storage_error_msg (a-except.adb:1145)
+==10831==  Address 0x7803b0 is 0 bytes inside data symbol "seen_objects"
+==10831== 
+==10831== Invalid read of size 8
+==10831==    at 0x51E74D: _Unwind_Find_registered_FDE (unwind-dw2-fde.c:1052)
+==10831==    by 0x51E74D: _Unwind_Find_FDE (unwind-dw2-fde-dip.c:477)
+==10831==    by 0x51A922: uw_frame_state_for (unwind-dw2.c:1250)
+==10831==    by 0x51BB3F: uw_init_context_1 (unwind-dw2.c:1579)
+==10831==    by 0x51CAF7: _Unwind_Backtrace (unwind.inc:283)
+==10831==    by 0x515490: __gnat_backtrace (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x50B70C: system__traceback__call_chain__2 (s-traceb.adb:93)
+==10831==    by 0x50B754: system__traceback__call_chain (s-traceb.adb:109)
+==10831==    by 0x4DE813: ada__exceptions__call_chain (a-excach.adb:65)
+==10831==    by 0x4DEB2E: ada__exceptions__complete_occurrence (a-except.adb:928)
+==10831==    by 0x4DEB5E: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:942)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==    by 0x4DEF1A: __gnat_raise_storage_error_msg (a-except.adb:1145)
+==10831==  Address 0x735f796d6d75642f is not stack'd, malloc'd or (recently) free'd
+==10831== 
+==10831== Conditional jump or move depends on uninitialised value(s)
+==10831==    at 0x4DE7D9: ada__exceptions__call_chain (a-excach.adb:50)
+==10831==    by 0x4DEB2E: ada__exceptions__complete_occurrence (a-except.adb:928)
+==10831==    by 0x4DEB5E: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:942)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==    by 0x4DEF1A: __gnat_raise_storage_error_msg (a-except.adb:1145)
+==10831==    by 0x4DF1FD: __gnat_rcheck_SE_Explicit_Raise (a-except.adb:1446)
+==10831==    by 0x4D5AF0: system__interrupt_management__notify_exception (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x6ECC88F: ??? (in /lib/x86_64-linux-gnu/libpthread-2.27.so)
+==10831==    by 0x51E74C: _Unwind_Find_registered_FDE (unwind-dw2-fde.c:1051)
+==10831==    by 0x51E74C: _Unwind_Find_FDE (unwind-dw2-fde-dip.c:477)
+==10831==    by 0x51A922: uw_frame_state_for (unwind-dw2.c:1250)
+==10831==    by 0x51BB3F: uw_init_context_1 (unwind-dw2.c:1579)
+==10831==    by 0x51CAF7: _Unwind_Backtrace (unwind.inc:283)
+==10831== 
+==10831== Conditional jump or move depends on uninitialised value(s)
+==10831==    at 0x51E68C: _Unwind_Find_registered_FDE (unwind-dw2-fde.c:1040)
+==10831==    by 0x51E68C: _Unwind_Find_FDE (unwind-dw2-fde-dip.c:477)
+==10831==    by 0x51A922: uw_frame_state_for (unwind-dw2.c:1250)
+==10831==    by 0x51BB3F: uw_init_context_1 (unwind-dw2.c:1579)
+==10831==    by 0x51C2ED: _Unwind_RaiseException (unwind.inc:88)
+==10831==    by 0x4DE034: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:322)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==    by 0x4DEF1A: __gnat_raise_storage_error_msg (a-except.adb:1145)
+==10831==    by 0x4DF1FD: __gnat_rcheck_SE_Explicit_Raise (a-except.adb:1446)
+==10831==    by 0x4D5AF0: system__interrupt_management__notify_exception (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x6ECC88F: ??? (in /lib/x86_64-linux-gnu/libpthread-2.27.so)
+==10831== 
+==10831== Conditional jump or move depends on uninitialised value(s)
+==10831==    at 0x51E077: _Unwind_IteratePhdrCallback (unwind-dw2-fde-dip.c:228)
+==10831==    by 0x7446F20: dl_iterate_phdr (dl-iteratephdr.c:75)
+==10831==    by 0x51E6D0: _Unwind_Find_FDE (unwind-dw2-fde-dip.c:488)
+==10831==    by 0x51A922: uw_frame_state_for (unwind-dw2.c:1250)
+==10831==    by 0x51BB3F: uw_init_context_1 (unwind-dw2.c:1579)
+==10831==    by 0x51C2ED: _Unwind_RaiseException (unwind.inc:88)
+==10831==    by 0x4DE034: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:322)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==    by 0x4DEF1A: __gnat_raise_storage_error_msg (a-except.adb:1145)
+==10831==    by 0x4DF1FD: __gnat_rcheck_SE_Explicit_Raise (a-except.adb:1446)
+==10831== 
+==10831== Conditional jump or move depends on uninitialised value(s)
+==10831==    at 0x51E083: _Unwind_IteratePhdrCallback (unwind-dw2-fde-dip.c:238)
+==10831==    by 0x7446F20: dl_iterate_phdr (dl-iteratephdr.c:75)
+==10831==    by 0x51E6D0: _Unwind_Find_FDE (unwind-dw2-fde-dip.c:488)
+==10831==    by 0x51A922: uw_frame_state_for (unwind-dw2.c:1250)
+==10831==    by 0x51BB3F: uw_init_context_1 (unwind-dw2.c:1579)
+==10831==    by 0x51C2ED: _Unwind_RaiseException (unwind.inc:88)
+==10831==    by 0x4DE034: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:322)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==    by 0x4DEF1A: __gnat_raise_storage_error_msg (a-except.adb:1145)
+==10831==    by 0x4DF1FD: __gnat_rcheck_SE_Explicit_Raise (a-except.adb:1446)
+==10831== 
+==10831== Use of uninitialised value of size 8
+==10831==    at 0x51DF93: _Unwind_IteratePhdrCallback (unwind-dw2-fde-dip.c:332)
+==10831==    by 0x7446F20: dl_iterate_phdr (dl-iteratephdr.c:75)
+==10831==    by 0x51E6D0: _Unwind_Find_FDE (unwind-dw2-fde-dip.c:488)
+==10831==    by 0x51A922: uw_frame_state_for (unwind-dw2.c:1250)
+==10831==    by 0x51BB3F: uw_init_context_1 (unwind-dw2.c:1579)
+==10831==    by 0x51C2ED: _Unwind_RaiseException (unwind.inc:88)
+==10831==    by 0x4DE034: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:322)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==    by 0x4DEF1A: __gnat_raise_storage_error_msg (a-except.adb:1145)
+==10831==    by 0x4DF1FD: __gnat_rcheck_SE_Explicit_Raise (a-except.adb:1446)
+==10831== 
+==10831== Invalid write of size 8
+==10831==    at 0x51DF93: _Unwind_IteratePhdrCallback (unwind-dw2-fde-dip.c:332)
+==10831==    by 0x7446F20: dl_iterate_phdr (dl-iteratephdr.c:75)
+==10831==    by 0x51E6D0: _Unwind_Find_FDE (unwind-dw2-fde-dip.c:488)
+==10831==    by 0x51A922: uw_frame_state_for (unwind-dw2.c:1250)
+==10831==    by 0x51BB3F: uw_init_context_1 (unwind-dw2.c:1579)
+==10831==    by 0x51C2ED: _Unwind_RaiseException (unwind.inc:88)
+==10831==    by 0x4DE034: ada__exceptions__exception_propagation__propagate_gcc_exceptionXn (a-exexpr.adb:322)
+==10831==    by 0x4DE06C: ada__exceptions__exception_propagation__propagate_exceptionXn (a-exexpr.adb:354)
+==10831==    by 0x4DEB66: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:943)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==    by 0x4DEF1A: __gnat_raise_storage_error_msg (a-except.adb:1145)
+==10831==    by 0x4DF1FD: __gnat_rcheck_SE_Explicit_Raise (a-except.adb:1446)
+==10831==  Address 0x10 is not stack'd, malloc'd or (recently) free'd
+==10831== 
+==10831== Conditional jump or move depends on uninitialised value(s)
+==10831==    at 0x51E68C: _Unwind_Find_registered_FDE (unwind-dw2-fde.c:1040)
+==10831==    by 0x51E68C: _Unwind_Find_FDE (unwind-dw2-fde-dip.c:477)
+==10831==    by 0x51A922: uw_frame_state_for (unwind-dw2.c:1250)
+==10831==    by 0x51BB3F: uw_init_context_1 (unwind-dw2.c:1579)
+==10831==    by 0x51CAF7: _Unwind_Backtrace (unwind.inc:283)
+==10831==    by 0x515490: __gnat_backtrace (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x50B70C: system__traceback__call_chain__2 (s-traceb.adb:93)
+==10831==    by 0x50B754: system__traceback__call_chain (s-traceb.adb:109)
+==10831==    by 0x4DE813: ada__exceptions__call_chain (a-excach.adb:65)
+==10831==    by 0x4DEB2E: ada__exceptions__complete_occurrence (a-except.adb:928)
+==10831==    by 0x4DEB5E: ada__exceptions__complete_and_propagate_occurrence (a-except.adb:942)
+==10831==    by 0x4DEF5F: ada__exceptions__raise_with_location_and_msg (a-except.adb:1168)
+==10831==    by 0x4DEF1A: __gnat_raise_storage_error_msg (a-except.adb:1145)
+==10831== 
+==10831== 
+==10831== More than 10000000 total errors detected.  I'm not reporting any more.
+==10831== Final error counts will be inaccurate.  Go fix your program!
+==10831== Rerun with --error-limit=no to disable this cutoff.  Note
+==10831== that errors may occur in your program without prior warning from
+==10831== Valgrind, because errors are no longer being displayed.
+==10831== 
+==10831== 
+==10831== Process terminating with default action of signal 2 (SIGINT)
+==10831==    at 0x6EC91F6: pthread_sigmask (pthread_sigmask.c:50)
+==10831==    by 0x4D5A8B: system__interrupt_management__notify_exception (in /home/jano/local/ros2/ada4bouncy/src/rclada/gpr_selftest/bin/rclada_selftest)
+==10831==    by 0x6ECC88F: ??? (in /lib/x86_64-linux-gnu/libpthread-2.27.so)
+==10831== 
+==10831== HEAP SUMMARY:
+==10831==     in use at exit: 5,638,919,682 bytes in 8,008,424 blocks
+==10831==   total heap usage: 8,018,585 allocs, 10,161 frees, 5,647,619,177 bytes allocated
+==10831== 
+==10831== LEAK SUMMARY:
+==10831==    definitely lost: 5,637,628,532 bytes in 8,008,005 blocks
+==10831==    indirectly lost: 744 bytes in 15 blocks
+==10831==      possibly lost: 96,448 bytes in 137 blocks
+==10831==    still reachable: 1,193,958 bytes in 267 blocks
+==10831==         suppressed: 0 bytes in 0 blocks
+==10831== Rerun with --leak-check=full to see details of leaked memory
+==10831== 
+==10831== For counts of detected and suppressed errors, rerun with: -v
+==10831== Use --track-origins=yes to see where uninitialised values come from
+==10831== ERROR SUMMARY: 10000000 errors from 51 contexts (suppressed: 0 from 0)
