@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(rclada VERSION 0.1.0)
 
-if(BUILD_TESTING)
-  # Silence a warning (?)
-endif()
-
 find_package(rclada_common REQUIRED)
 ada_begin_package()
 
@@ -83,9 +79,3 @@ add_dependencies(
         ada_binding_rcl)
 
 ada_end_package()
-
-#get_cmake_property(_variableNames VARIABLES)
-#list (SORT _variableNames)
-#foreach (_variableName ${_variableNames})
-#  message(STATUS "${_variableName}=${${_variableName}}")
-#endforeach()
