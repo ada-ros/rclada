@@ -1,3 +1,5 @@
+with RCL.Nodes.Impl;
+
 package body RCL.Publishers.Impl is
 
    ----------
@@ -16,7 +18,7 @@ package body RCL.Publishers.Impl is
          Check
            (Rcl_Publisher_Init
               (This.Impl'Access,
-               Node.To_C.Ptr.Impl'Access,
+               Nodes.Impl.To_C (Node.all).Ptr,
                Msg_Type.To_C,
                C_Strings.To_C (Topic).To_Ptr,
                This.Opts'Access));

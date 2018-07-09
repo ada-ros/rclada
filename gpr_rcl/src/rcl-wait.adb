@@ -1,3 +1,4 @@
+with RCL.Allocators.Impl;
 with RCL.Logging;
 with RCL.Subscriptions;
 
@@ -199,7 +200,7 @@ package body RCL.Wait is
          Check
            (Rcl_Wait_Set_Init
               (S.Impl'Access,
-               Allocator                  => Allocator.To_C,
+               Allocator                  => Allocators.Impl.To_C (Allocator.all),
                Number_Of_Clients          => C.Size_T (Num_Clients),
                Number_Of_Guard_Conditions => 0,
                Number_Of_Services         => C.Size_T (Num_Services),
@@ -213,7 +214,7 @@ package body RCL.Wait is
    ----------
 
    function Init (Allocator : Allocators.Handle;
-                  Callbacks : RCL.Dispatchers.Set) return Set is
+                  Callbacks : RCL.Impl.Dispatchers.Set) return Set is
    begin
       return S : Set := Init (Allocator         => Allocator,
                               Num_Clients       => Callbacks.Num_Clients,
@@ -222,18 +223,18 @@ package body RCL.Wait is
                               Num_Timers        => Callbacks.Num_Timers)
       do
          for CB of Callbacks loop
-            if CB in RCL.Dispatchers.Client_Dispatcher'Class then
-               S.Add (RCL.Dispatchers.Client_Dispatcher'Class (CB).Client);
+            if CB in RCL.Impl.Dispatchers.Client_Dispatcher'Class then
+               S.Add (RCL.Impl.Dispatchers.Client_Dispatcher'Class (CB).Client);
 
-            elsif CB in RCL.Dispatchers.Service_Dispatcher'Class then
-               S.Add (RCL.Dispatchers.Service_Dispatcher'Class (CB).Service);
+            elsif CB in RCL.Impl.Dispatchers.Service_Dispatcher'Class then
+               S.Add (RCL.Impl.Dispatchers.Service_Dispatcher'Class (CB).Service);
 
-            elsif CB in RCL.Dispatchers.Subscription_Dispatcher'Class then
-               S.Add (RCL.Dispatchers.Subscription_Dispatcher'Class (CB).Subscription);
+            elsif CB in RCL.Impl.Dispatchers.Subscription_Dispatcher'Class then
+               S.Add (RCL.Impl.Dispatchers.Subscription_Dispatcher'Class (CB).Subscription);
 
-            elsif CB in RCL.Dispatchers.Timer_Dispatcher'Class then
-               if not Timers.Is_Canceled (RCL.Dispatchers.Timer_Dispatcher'Class (CB).Timer) then
-                  S.Add (RCL.Dispatchers.Timer_Dispatcher'Class (CB).Timer);
+            elsif CB in RCL.Impl.Dispatchers.Timer_Dispatcher'Class then
+               if not Timers.Is_Canceled (RCL.Impl.Dispatchers.Timer_Dispatcher'Class (CB).Timer) then
+                  S.Add (RCL.Impl.Dispatchers.Timer_Dispatcher'Class (CB).Timer);
                end if;
 
             else

@@ -1,5 +1,6 @@
 limited with RCL.Nodes;
 
+with Rcl_Node_H;         use Rcl_Node_H;
 with Rcl_Subscription_H; use Rcl_Subscription_H; 
 
 with ROSIDL.Dynamic;
@@ -27,7 +28,7 @@ package RCL.Subscriptions is
                   Topic    :        String) return Subscription;
    --  TODO: options
    
-   procedure Finalize (This : in out C_Subscription; Node : in out Nodes.C_Node);
+   procedure Finalize (This : in out C_Subscription; Node : access Rcl_Node_T);
    
    function Take_Raw (This   : aliased in out C_Subscription;
                       Buffer :                System.Address;
@@ -49,9 +50,11 @@ package RCL.Subscriptions is
    
 private 
    
+   type Node_Access is access all Rcl_Node_T with Storage_Size => 0;
+   
    type Subscription is tagged limited record
       Impl : aliased C_subscription := (C => Rcl_Get_Zero_Initialized_Subscription);
-      Node :  access Nodes.C_Node;
+      Node :         Node_Access;
    end record;
       
    function To_C (This : Subscription'Class) return C_Subscription is

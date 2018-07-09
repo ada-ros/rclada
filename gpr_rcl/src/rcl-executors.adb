@@ -2,6 +2,7 @@ with Ada.Calendar;
 with Ada.Exceptions;
 
 with RCL.Nodes;
+with RCL.Nodes.Impl;
 with RCL.Logging;
 with RCL.Wait;
 
@@ -23,9 +24,9 @@ package body RCL.Executors is
    ---------------------
 
    procedure Common_Dispatch (Node   : access Nodes.Node'Class;
-                              Handle :        Dispatchers.Handle) is
+                              Handle :        Impl.Dispatchers.Handle) is
    begin
-      Node.Trigger (Handle);
+      Nodes.Impl.Trigger (Node.all, Handle);
    end Common_Dispatch;
 
    ------------
@@ -86,14 +87,14 @@ package body RCL.Executors is
 
       use all type Wait.Wait_Outcomes;
 
-      CBs   : Dispatchers.Set;
+      CBs   : Impl.Dispatchers.Set;
       Nodes : Node_Sets.Set;
    begin
       This.Nodes.Get (Nodes);
 
       for N of Nodes loop
          if Node = null or else N = Node then
-            N.Get_Callbacks (CBs);
+            RCL.Nodes.Impl.Get_Callbacks (N.all, CBs);
          end if;
       end loop;
 

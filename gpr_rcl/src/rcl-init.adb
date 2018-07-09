@@ -1,5 +1,6 @@
 with Ada.Exceptions; use Ada.Exceptions;
 
+with RCL.Allocators.Impl;
 with RCL.Logging;
 
 with Rcl_Rcl_H;                use Rcl_Rcl_H;
@@ -32,7 +33,7 @@ package body RCL.Init is
          Check (Rcl_Init
                 (Argc      => Gnat_Argc,
                  Argv      => Gnat_Argv,
-                 Allocator => Allocator.To_C));
+                 Allocator => Allocators.Impl.To_C (Allocator.all)));
       elsif Assurance = Ensure_First then
          raise Program_Error with "Initialization happened too late";
       end if;

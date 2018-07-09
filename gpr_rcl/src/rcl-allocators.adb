@@ -157,11 +157,4 @@ package body RCL.Allocators is
       This.Initialize;
    end Set_Pool;
 
-   ----------
-   -- To_C --
-   ----------
-
-   function To_C (This : aliased in out Allocator) return Allocator_Reference is
-     (Impl => This.Impl'Access);
-
 end RCL.Allocators;

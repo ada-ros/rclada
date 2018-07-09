@@ -3,7 +3,7 @@ with Ada.Iterator_Interfaces;
 
 with RCL.Allocators;
 with RCL.Clients.Impl;
-with RCL.Dispatchers;
+with RCL.Impl.Dispatchers;
 with RCL.Services.Impl;
 limited with RCL.Subscriptions;
 with RCL.Timers;
@@ -14,8 +14,7 @@ with System;
 
 package RCL.Wait is
 
-   --  Not really intended for clients, but the C structs are of so poor
-   --    quality that even for internal use a manual binding is needed.
+   --  Not really intended for clients
    
    type Kinds is (Client,
                   Service, 
@@ -26,7 +25,7 @@ package RCL.Wait is
    
    type Trigger is tagged private;
    
-   function Handle (This : Trigger) return Dispatchers.Handle;
+   function Handle (This : Trigger) return Impl.Dispatchers.Handle;
    
    type Set (<>) is new Ada.Finalization.Limited_Controlled with private with 
      Default_Iterator  => Iterate,
@@ -46,7 +45,7 @@ package RCL.Wait is
    --  At least one of these must be nonzero
    
    function Init (Allocator         : Allocators.Handle;
-                  Callbacks         : RCL.Dispatchers.Set) return Set;
+                  Callbacks         : RCL.Impl.Dispatchers.Set) return Set;
    --  Initializes and fills using the given set
 
    procedure Add (This : aliased in out Set; 
@@ -91,8 +90,8 @@ private
       Ptr   : System.Address; -- This address is of the C type, and allows finding the callback in a set
    end record;
    
-   function Handle (This : Trigger) return Dispatchers.Handle is 
-     (Dispatchers.Handle (This.Ptr));
+   function Handle (This : Trigger) return Impl.Dispatchers.Handle is 
+     (Impl.Dispatchers.Handle (This.Ptr));
    
    type Set is new Ada.Finalization.Limited_Controlled with record
       Impl : aliased Rcl_Wait_Set_T := Rcl_Get_Zero_Initialized_Wait_Set;

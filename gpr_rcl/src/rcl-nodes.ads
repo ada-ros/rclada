@@ -1,7 +1,7 @@
 with Ada.Finalization;
 
 with RCL.Allocators;
-with RCL.Dispatchers;
+with RCL.Impl.Dispatchers;
 with RCL.Clients;
 with RCL.Executors;
 with RCL.Executors.Sequential;
@@ -15,6 +15,8 @@ with Rcl_Node_H;         use Rcl_Node_H;
 
 with ROSIDL.Dynamic;
 with ROSIDL.Typesupport;
+
+private with RCL.Allocators.Impl;
 
 package RCL.Nodes is
 
@@ -176,65 +178,40 @@ package RCL.Nodes is
    
    -------------------
    --  Misc access  --
-   function Allocator (This : Node) return Allocators.Handle;
-   
-   -------------------------------------------------
-   --  Low level access not intended for clients  --
-   
-   type C_Node is record 
-      Impl : aliased Rcl_Node_T;
-   end record;
-   --  Not directly the access because of the subtypes-blind bug
-   
-   type Reference (Ptr : access C_Node) is null record
-     with Implicit_Dereference => Ptr;
-   
-   function To_C (This : aliased in out Node) return Reference;
-   
-   procedure Client_Free (This : in out Node;
-                          Ptr  :        Dispatchers.Handle);
-   
-   ---------------------------------------------------------------
-   --  Extras for executor interaction, also not needed by clients 
-   
-   procedure Client_Success (This : in out Node; Client : Dispatchers.Handle);   
-   
-   function Current_Executor (This : in out Node'Class) return access Executors.Executor'Class;
-   
-   procedure Get_Callbacks (This : in out Node; Set : in out Dispatchers.Set);      
-   
-   procedure Trigger (This : in out Node; Dispatcher : Dispatchers.Handle);
+   function Allocator (This : Node) return Allocators.Handle;      
    
 private   
+
+   use RCL.Impl;
    
-   use all type Dispatchers.Handle;
+   use all type Impl.Dispatchers.Handle;
    
    function To_C (Options : Node_Options) return Rcl_Node_Options_T;
    
-   use Dispatchers;
+   use Impl.Dispatchers;
    
    protected type Safe_Dispatchers (Parent : access Node'Class) is
       
-      function  Contains (CB : Dispatchers.Handle) return Boolean;
-      procedure Delete   (CB : Dispatchers.Handle);
-      function  Get      (CB : Dispatchers.Handle) return Dispatcher'Class;
+      function  Contains (CB : Impl.Dispatchers.Handle) return Boolean;
+      procedure Delete   (CB : Impl.Dispatchers.Handle);
+      function  Get      (CB : Impl.Dispatchers.Handle) return Dispatcher'Class;
       procedure Insert (CB                 : Dispatcher'Class; 
                         Is_Blocking_Client : Boolean := False);
       function  Is_Empty return Boolean;
-      procedure Union    (Dst : in out Dispatchers.Set);      
+      procedure Union    (Dst : in out Impl.Dispatchers.Set);      
       
-      function  Current_Client return Dispatchers.Client_Dispatcher'Class;
-      procedure Client_Success (Client : Dispatchers.Handle);
+      function  Current_Client return Impl.Dispatchers.Client_Dispatcher'Class;
+      procedure Client_Success (Client : Impl.Dispatchers.Handle);
       
       procedure Finalize;
       
    private
-      CBs       : RCL.Dispatchers.Set;
+      CBs       : RCL.Impl.Dispatchers.Set;
       Client    : Handle; -- Client that's blocking and waiting
    end Safe_Dispatchers;
    
    type Node is new Ada.Finalization.Limited_Controlled with record 
-      Impl        : aliased C_Node := (Impl => Rcl_Get_Zero_Initialized_Node);
+      Impl        : aliased Rcl_Node_T := Rcl_Get_Zero_Initialized_Node;
       Self        : access Node    := Node'Unchecked_Access;
       Dispatchers : Safe_Dispatchers (Node'Access);
        
@@ -244,28 +221,31 @@ private
       -- Are derived from Options, no need to initialize
       Allocator   : Allocators.Handle := Allocators.Global_Allocator;
       C_Options   : aliased Rcl_Node_Options_T;
-   end record;   
+   end record;      
    
    procedure Base_Init (This : in out Node'Class);      
+   
+   function C_Allocator (This : Node) return Allocators.Impl.Allocator_Reference is
+     (Allocators.Impl.To_C (This.Allocator.all));
+   
+   procedure Client_Free (This : in out Node;
+                          Ptr  :        Dispatchers.Handle);
    
    procedure Timer_Assert (This  : Node; 
                            Timer : Timers.Timer_Id);
    
    function Timer_Exists (This  : Node; 
                           Timer : Timers.Timer_Id) return Boolean is
-      (This.Dispatchers.Contains (+Timers.To_Unique_Addr (Timer)));
-   
-   function To_C (This : aliased in out Node) return Reference is
-     (Ptr => This.Impl'Access);
+      (This.Dispatchers.Contains (+Timers.To_Unique_Addr (Timer)));   
    
    function Allocator (This : Node) return Allocators.Handle is
-      (This.Allocator);
+     (This.Allocator);   
    
    Default_Options  : constant Node_Options := (others => <>);
-         
+   
    use all type Executors.Handle;   
    
-   function Current_Executor (This : in out Node'Class) return access Executors.Executor'Class is
+   function Current_Executor (This : in out Node'Class) return Executors.Handle is
      (if This.Options.Executor /= null 
       then This.Options.Executor
       else Default_Executor'Access);

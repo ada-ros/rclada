@@ -42,17 +42,6 @@ package RCL.Allocators is
 
    procedure Set_Global_Allocator (Alloc : Handle);
 
-   --------------------------------
-   --  C stuff to be isolated later
-
-   type Allocator_Reference (Impl : access Rcl_Allocator_T) is limited null record
-     with Implicit_Dereference => Impl;
-
-   function To_C (This : aliased in out Allocator) return Allocator_Reference;
-   --  The resulting allocator will be valid as long as the Ada allocator lives.
-   --  This is kind of ugly but there's an inconsistent use of allocators
-   --    through C RCL right now
-
 private
 
    function Get_Default_C_Allocator return Rcl_Allocator_T with

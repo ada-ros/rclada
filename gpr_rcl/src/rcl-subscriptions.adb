@@ -2,7 +2,7 @@ with Ada.Unchecked_Conversion;
 
 with C_Strings; use C_Strings;
 
-with RCL.Nodes;
+with RCL.Nodes.Impl;
 
 with Rcl_Types_H; use Rcl_Types_H;
 with Rmw_Types_H; use Rmw_Types_H;
@@ -27,11 +27,11 @@ package body RCL.Subscriptions is
                                   Ptr);
    begin
       return Sub : Subscription do
-         Sub.Node := Node.To_C.Ptr;
+         Sub.Node := Nodes.Impl.To_C (Node).Ptr;
 
          Check (Rcl_Subscription_Init
                   (Sub.Impl.C'Access,
-                   Sub.Node.Impl'Access,
+                   Sub.Node,
                    To_Ptr (Msg_Type.To_C),
                    To_C (Topic).To_Ptr,
                    Opts'Access));
@@ -42,9 +42,9 @@ package body RCL.Subscriptions is
    -- Finalize --
    --------------
 
-   procedure Finalize (This : in out C_Subscription; Node : in out Nodes.C_Node) is
+   procedure Finalize (This : in out C_Subscription; Node : access Rcl_Node_T) is
    begin
-      Check (Rcl_Subscription_Fini (This.C'Access, Node.Impl'Access));
+      Check (Rcl_Subscription_Fini (This.C'Access, Node));
    end Finalize;
 
    --------------

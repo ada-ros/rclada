@@ -1,6 +1,9 @@
 with Ada.Containers.Indefinite_Ordered_Sets;
 
+limited with RCL.Executors;
 limited with RCL.Nodes;
+
+private with Rcl_Node_H;
 
 with RCL.Clients.Impl;
 with RCL.Services.Impl;
@@ -12,7 +15,7 @@ with ROSIDL.Typesupport;
 
 with System;
 
-package RCL.Dispatchers is
+package RCL.Impl.Dispatchers is
 
    --  Helper types to couple an element with its dispatcher, and dispatch calls
    --  Used only privately by the Node implementation
@@ -131,12 +134,18 @@ package RCL.Dispatchers is
    
 private
    
+   use Rcl_Node_H;
+   
    use all type Timers.Timer_Id;
    
    function "+" (Addr : System.Address) return Handle is (Handle (Addr));
    
    function "=" (L, R : Timer_Dispatcher) return Boolean is
      (L.Timer = R.Timer);
+   
+   function C_Node (This : Dispatcher'Class) return access Rcl_Node_T;
+   
+   function Current_Executor (This : Dispatcher'Class) return Executors.Handle;
    
    function To_Handle (This : Client_Dispatcher) return Handle is
      (+This.Client.To_Unique_Addr);
@@ -150,4 +159,4 @@ private
    function To_Handle (This : Timer_Dispatcher) return Handle is
      (+Timers.To_Unique_Addr (This.Timer));
    
-end RCL.Dispatchers;
+end RCL.Impl.Dispatchers;

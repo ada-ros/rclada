@@ -1,3 +1,4 @@
+with Rcl_Node_H;   use Rcl_Node_H;
 with Rcl_Client_H; use Rcl_Client_H;
 
 with System;
@@ -6,7 +7,7 @@ package RCL.Clients.Impl is
   
    type C_Client is tagged private;
    
-   procedure Finalize (This : in out C_Client; Node : in out Nodes.C_Node);
+   procedure Finalize (This : in out C_Client; Node : access Rcl_Node_T);
    
    function To_C_Client (C : Rcl_Client_T) return C_Client;
    

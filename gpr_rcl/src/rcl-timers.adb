@@ -1,5 +1,6 @@
 with Ada.Unchecked_Deallocation;
 
+with RCL.Allocators.Impl;
 with RCL.Init;
 with RCL.Nodes;
 
@@ -100,7 +101,7 @@ package body RCL.Timers is
               (This.Impl,
                To_Nanoseconds (Period),
                null,
-               Allocator.To_C));
+               Allocators.Impl.To_C (Allocator.all)));
       end return;
    end Init;
 

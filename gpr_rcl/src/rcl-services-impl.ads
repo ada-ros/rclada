@@ -1,3 +1,4 @@
+with Rcl_Node_H;    use Rcl_Node_H;
 with Rcl_Service_H; use Rcl_Service_H;
 
 with System;
@@ -6,7 +7,7 @@ package RCL.Services.Impl is
   
    type C_Service is tagged private;
    
-   procedure Finalize (This : in out C_Service; Node : in out Nodes.C_Node);
+   procedure Finalize (This : in out C_Service; Node : access Rcl_Node_T);
    
    function To_C_Service (C : Rcl_Service_T) return C_Service;
    

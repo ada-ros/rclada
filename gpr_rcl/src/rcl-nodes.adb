@@ -48,12 +48,12 @@ package body RCL.Nodes is
       Check
         (Rcl_Client_Init
            (Client'Access,
-            This.Impl.Impl'Access,
+            This.Impl'Access,
             Support.To_C,
             C_Strings.To_C (Name).To_Ptr,
             Opts'Access));
 
-      This.Dispatchers.Insert (Dispatchers.Client_Dispatcher'
+      This.Dispatchers.Insert (Impl.Dispatchers.Client_Dispatcher'
                                (Node     => This.Self,
                                 Client   => Clients.Impl.To_C_Client (Client),
                                 Callback => Callback,
@@ -72,7 +72,7 @@ package body RCL.Nodes is
          while Clock - Start < Timeout loop
             delay 0.01; -- Really...
             Check (Rcl_Service_Server_Is_Available
-                     (This.Impl.Impl'Access,
+                     (This.Impl'Access,
                       Client'Access,
                       Available'Access));
 
@@ -118,7 +118,7 @@ package body RCL.Nodes is
          This.Spin (Once   => True,
                     During => Timeout - (Clock - Start));
          declare
-            Current_Client : constant Dispatchers.Client_Dispatcher'Class :=
+            Current_Client : constant Impl.Dispatchers.Client_Dispatcher'Class :=
                                This.Dispatchers.Current_Client;
          begin
             if Current_Client.Success then
@@ -175,7 +175,7 @@ package body RCL.Nodes is
       CB : Dispatchers.Client_Dispatcher'Class :=
              Dispatchers.Client_Dispatcher'Class (This.Dispatchers.Get (Ptr));
    begin
-      Check (Rcl_Client_Fini (CB.Client.To_Var_C, This.Impl.Impl'Access));
+      Check (Rcl_Client_Fini (CB.Client.To_Var_C, This.Impl'Access));
 
       CB.Response.Clear;
       --  This should happen automatically on deletion from the container,
@@ -183,15 +183,6 @@ package body RCL.Nodes is
 
       This.Dispatchers.Delete (Ptr);
    end Client_Free;
-
-   --------------------
-   -- Client_Success --
-   --------------------
-
-   procedure Client_Success (This : in out Node; Client : Dispatchers.Handle) is
-   begin
-      This.Dispatchers.Client_Success (Client);
-   end Client_Success;
 
    ----------
    -- Init --
@@ -224,7 +215,7 @@ package body RCL.Nodes is
       This.Allocator   := Options.Allocator;
 
       Check (Rcl_Node_Init
-             (This.Impl.Impl'Access,
+             (This.Impl'Access,
                 To_C (Name).To_Ptr,
                 To_C (Namespace).To_Ptr,
                 This.C_Options'Access));
@@ -240,9 +231,9 @@ package body RCL.Nodes is
    begin
       This.Dispatchers.Finalize;
 
-      if To_Boolean (Rcl_Node_Is_Valid (This.Impl.Impl'Access, null)) then
+      if To_Boolean (Rcl_Node_Is_Valid (This.Impl'Access, null)) then
          This.Current_Executor.Remove (This);
-         Check (Rcl_Node_Fini (This.Impl.Impl'Access));
+         Check (Rcl_Node_Fini (This.Impl'Access));
 
          RCL.Init.Finalize;
       else
@@ -254,15 +245,6 @@ package body RCL.Nodes is
          Put_Line (Ada.Exceptions.Exception_Information (E));
    end Finalize;
 
-   -------------------
-   -- Get_Callbacks --
-   -------------------
-
-   procedure Get_Callbacks (This : in out Node; Set : in out Dispatchers.Set) is
-   begin
-      This.Dispatchers.Union (Set);
-   end Get_Callbacks;
-
    ----------------------------
    -- Graph_Count_Publishers --
    ----------------------------
@@ -272,7 +254,7 @@ package body RCL.Nodes is
    begin
       Check
         (Rcl_Count_Publishers
-           (This.Impl.Impl'Access,
+           (This.Impl'Access,
             To_C (Topic).To_Ptr,
             Count'Access));
 
@@ -288,7 +270,7 @@ package body RCL.Nodes is
    begin
       Check
         (Rcl_Count_Subscribers
-           (This.Impl.Impl'Access,
+           (This.Impl'Access,
             To_C (Topic).To_Ptr,
             Count'Access));
 
@@ -304,8 +286,8 @@ package body RCL.Nodes is
    begin
       Check
         (Rcl_Get_Node_Names
-           (This.Impl.Impl'Access,
-            This.Options.Allocator.To_C,
+           (This.Impl'Access,
+            Allocators.Impl.To_C (This.Options.Allocator.all),
             Arr.To_C));
 
       return V : Utils.Node_Name_Vector do
@@ -324,8 +306,8 @@ package body RCL.Nodes is
    begin
       Check
         (rcl_get_service_names_and_types
-           (This.Impl.Impl'Access,
-            This.Allocator.To_C.Impl,
+           (This.Impl'Access,
+            This.C_Allocator.Impl,
             Arr.To_C));
 
       return V : Utils.Services_And_Types do
@@ -344,8 +326,8 @@ package body RCL.Nodes is
    begin
       Check
         (rcl_get_topic_names_and_types
-           (This.Impl.Impl'Access,
-            This.Allocator.To_C.Impl,
+           (This.Impl'Access,
+            This.C_Allocator.Impl,
             (if Demangle then Bool_False else Bool_True), -- Note: in C side is No_Demangle (bool)
             Arr.To_C));
 
@@ -361,7 +343,7 @@ package body RCL.Nodes is
    ----------
 
    function Name (This : in out Node) return String is
-      (C_Strings.Value (Rcl_Node_Get_Name (This.Impl.Impl'Access)));
+      (C_Strings.Value (Rcl_Node_Get_Name (This.Impl'Access)));
 
    -------------
    -- Publish --
@@ -389,12 +371,12 @@ package body RCL.Nodes is
       Check
         (Rcl_Service_Init
            (Srv'Access,
-            This.Impl.Impl'Access,
+            This.Impl'Access,
             Support.To_C,
             C_Strings.To_C (Name).To_Ptr,
             Opts'Access));
 
-      This.Dispatchers.Insert (Dispatchers.Service_Dispatcher'
+      This.Dispatchers.Insert (Impl.Dispatchers.Service_Dispatcher'
                                (Node     => This.Self,
                                 Service  => Services.Impl.To_C_Service (Srv),
                                 Callback => Callback,
@@ -543,19 +525,10 @@ package body RCL.Nodes is
       Defaults : constant Rcl_Node_Options_T := Rcl_Node_Get_Default_Options;
    begin
       return Rcl_Node_Options_T'(Domain_Id            => Defaults.Domain_Id,
-                                 allocator            => Options.Allocator.To_C,
+                                 allocator            => Allocators.Impl.To_C (Options.Allocator.all),
                                  use_global_arguments => Defaults.use_global_arguments,
                                  Arguments            => Defaults.Arguments);
    end To_C;
-
-   -------------
-   -- Trigger --
-   -------------
-
-   procedure Trigger (This : in out Node; Dispatcher : Dispatchers.Handle) is
-   begin
-      This.Dispatchers.Get (Dispatcher).Dispatch;
-   end Trigger;
 
    --------------------
    -- Safe_Callbacks --
@@ -567,14 +540,14 @@ package body RCL.Nodes is
       -- Contains --
       --------------
 
-      function  Contains (CB : Dispatchers.Handle) return Boolean is
+      function  Contains (CB : Impl.Dispatchers.Handle) return Boolean is
          (CBs.Contains (CB));
 
       ------------
       -- Delete --
       ------------
 
-      procedure Delete   (CB : Dispatchers.Handle) is
+      procedure Delete   (CB : Impl.Dispatchers.Handle) is
       begin
          CBs.Delete (CB);
       end Delete;
@@ -583,7 +556,7 @@ package body RCL.Nodes is
       -- Get --
       ---------
 
-      function  Get      (CB : Dispatchers.Handle) return Dispatcher'Class is
+      function  Get      (CB : Impl.Dispatchers.Handle) return Dispatcher'Class is
          (CBs.Get (CB));
 
       ------------
@@ -610,21 +583,21 @@ package body RCL.Nodes is
       -- Union --
       -----------
 
-      procedure Union    (Dst : in out Dispatchers.Set) is
+      procedure Union    (Dst : in out Impl.Dispatchers.Set) is
       begin
          Dst.Union (CBs);
       end Union;
 
-      function  Current_Client return Dispatchers.Client_Dispatcher'Class is
-         (Dispatchers.Client_Dispatcher'Class (CBs.Get (Client)));
+      function  Current_Client return Impl.Dispatchers.Client_Dispatcher'Class is
+         (Impl.Dispatchers.Client_Dispatcher'Class (CBs.Get (Client)));
 
       --------------------
       -- Client_Success --
       --------------------
 
-      procedure Client_Success (Client : Dispatchers.Handle) is
-         Disp : Dispatchers.Client_Dispatcher'Class :=
-                  Dispatchers.Client_Dispatcher'Class (Get (Client));
+      procedure Client_Success (Client : Impl.Dispatchers.Handle) is
+         Disp : Impl.Dispatchers.Client_Dispatcher'Class :=
+                  Impl.Dispatchers.Client_Dispatcher'Class (Get (Client));
       begin
          Disp.Success := True;
          CBs.Include (Disp);
@@ -638,7 +611,7 @@ package body RCL.Nodes is
       begin
          for I in CBs.Iterate loop
             declare
-               Disp : Dispatchers.Dispatcher'Class := CBs (I);
+               Disp : Impl.Dispatchers.Dispatcher'Class := CBs (I);
                --  Writable copy
             begin
                Disp.Finalize;

@@ -1,5 +1,6 @@
 with Ada.Exceptions; use Ada.Exceptions;
 
+with RCL.Allocators.Impl;
 with RCL.Init;
 with RCL.Logging;
 
@@ -23,7 +24,7 @@ package body RCL.Calendar is
                 when Steady => RCL_STEADY_TIME,
                 when System => RCL_SYSTEM_TIME),
              This.Impl'Access,
-             Alloc.To_C.Impl));
+             Allocators.Impl.To_C (Alloc.all).Impl));
       
       This.Inited := True;
       This.Mark   := This.Now;

@@ -3,14 +3,13 @@ with Rcl_Service_H; use Rcl_Service_H;
 
 with Rmw_Types_H; use Rmw_Types_H;
 
+with RCL.Executors;
 with RCL.Impl.Callbacks;
-with RCL.Nodes; pragma Unreferenced (RCL.Nodes);
+with Rcl.Nodes.Impl;
 
 with ROSIDL.Dynamic;
 
-package body RCL.Dispatchers is
-
-   use Impl;
+package body RCL.Impl.Dispatchers is
 
    ---------
    -- "<" --
@@ -24,6 +23,20 @@ package body RCL.Dispatchers is
       return L2.To_Handle < R2.To_Handle;
    end "<";
 
+   ------------
+   -- C_Node --
+   ------------
+
+   function C_Node (This : Dispatcher'Class) return access Rcl_Node_T is
+      (Nodes.Impl.To_C (This.Node.all).Ptr);
+
+   ----------------------
+   -- Current_Executor --
+   ----------------------
+
+   function Current_Executor (This : Dispatcher'Class) return Executors.Handle is
+      (Nodes.Impl.Current_Executor (This.Node.all));
+
    --------------
    -- Dispatch --
    --------------
@@ -32,7 +45,7 @@ package body RCL.Dispatchers is
       use all type Clients.Callback;
       Header : aliased Rmw_Request_Id_T;
    begin
-      This.Node.Client_Success (This.To_Handle);
+      Nodes.Impl.Client_Success (Nodes.Node (This.Node.all), This.To_Handle);
 
       Check
         (Rcl_Take_Response
@@ -41,14 +54,14 @@ package body RCL.Dispatchers is
             This.Response.Element.Msg.To_Ptr));
 
       if not This.Blocking and then This.Callback /= null then
-         This.Node.Current_Executor.Call
+         This.Current_Executor.Call
            (Callbacks.Client_Callback'(Node => This.Node,
                                        User_Callback => This.Callback,
                                        Response      => This.Response));
       end if;
 
       if not This.Blocking then -- The client is not needed any longer
-         This.Node.Client_Free (This.To_Handle);
+         Nodes.Impl.Client_Free (Nodes.Node (This.Node.all), This.To_Handle);
       end if;
    end Dispatch;
 
@@ -68,7 +81,7 @@ package body RCL.Dispatchers is
             Header'Access,
             Request.To_Ptr));
 
-      This.Node.Current_Executor.Call
+      This.Current_Executor.Call
         (Callbacks.Service_Callback'(Node          => This.Node,
                                      User_Callback => This.Callback,
                                      Request       => ROSIDL.Impl.To_Holder (Request),
@@ -91,7 +104,7 @@ package body RCL.Dispatchers is
                                  Msg.To_Ptr,
                                  Info)
       then
-         This.Node.Current_Executor.Call
+         This.Current_Executor.Call
            (Callbacks.Subscription_Callback'(Node          => This.Node,
                                              User_Callback => This.Callback,
                                              Message       => ROSIDL.Impl.To_Holder (Msg),
@@ -107,7 +120,7 @@ package body RCL.Dispatchers is
 
    procedure Dispatch (This : Timer_Dispatcher) is
    begin
-      This.Node.Current_Executor.Call
+      This.Current_Executor.Call
         (Callbacks.Timer_Callback'(Node          => This.Node,
                                    User_Callback => This.Callback,
                                    Timer         => This.Timer));
@@ -119,7 +132,7 @@ package body RCL.Dispatchers is
 
    procedure Finalize (This : in out Client_Dispatcher) is
    begin
-      Clients.Impl.Finalize (This.Client, This.Node.To_C);
+      Clients.Impl.Finalize (This.Client, This.C_Node);
    end Finalize;
 
    --------------
@@ -128,7 +141,7 @@ package body RCL.Dispatchers is
 
    procedure Finalize (This : in out Service_Dispatcher) is
    begin
-      Services.Impl.Finalize (This.Service, This.Node.To_C);
+      Services.Impl.Finalize (This.Service, This.C_Node);
    end Finalize;
 
    --------------
@@ -137,7 +150,7 @@ package body RCL.Dispatchers is
 
    procedure Finalize (This : in out Subscription_Dispatcher) is
    begin
-      Subscriptions.Finalize (This.Subscription, This.Node.To_C);
+      Subscriptions.Finalize (This.Subscription, This.C_Node);
    end Finalize;
 
    --------------
@@ -246,4 +259,4 @@ package body RCL.Dispatchers is
       return Num;
    end Num_Timers;
 
-end RCL.Dispatchers ;
+end RCL.Impl.Dispatchers;

@@ -1,7 +1,7 @@
 with Ada.Exceptions; use Ada.Exceptions;
 
 with RCL.Logging;
-with RCL.Nodes; pragma Unreferenced (RCL.Nodes);
+with RCL.Nodes.Impl;
 
 package body RCL.Publishers is
 
@@ -16,7 +16,7 @@ package body RCL.Publishers is
       Check
         (Rcl_Publisher_Init
            (This.Impl'Access,
-            This.Node.To_C.Ptr.Impl'Access,
+            Nodes.Impl.To_C (This.Node.all).Ptr,
             Msg_Type.To_C,
             C_Strings.To_C (Topic).To_Ptr,
             This.Opts'Access));
@@ -30,7 +30,7 @@ package body RCL.Publishers is
    begin
       if This.Is_Valid then
          Check (Rcl_Publisher_Fini (This.Impl'Access,
-                This.Node.To_C.Ptr.Impl'Access));
+                Nodes.Impl.To_C (This.Node.all).Ptr));
       end if;
    exception
       when E : others =>

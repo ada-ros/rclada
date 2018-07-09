@@ -2,8 +2,8 @@ with Ada.Containers.Ordered_Sets;
 with Ada.Unchecked_Conversion;
 
 with RCL.Allocators;
-with RCL.Dispatchers;
 with RCL.Impl.Callbacks;
+with RCL.Impl.Dispatchers;
 limited with RCL.Nodes;
 
 with System;
@@ -77,7 +77,7 @@ private
    end record;
    
    procedure Common_Dispatch (Node   : access Nodes.Node'Class;
-                              Handle :        Dispatchers.Handle);
+                              Handle :        Impl.Dispatchers.Handle);
    --  The actual logic of the dispatch that derived dispatchers may use
    --    if they do not do anything special   
 
