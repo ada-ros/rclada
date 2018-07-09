@@ -28,7 +28,7 @@ procedure Rclada_Selftest is
    Pool      : aliased Debug_Pool;
    Allocator : aliased Allocators.Allocator (Pool'Unchecked_Access);
 
-   Use_Debug_Allocator : constant Boolean := False;
+   Use_Debug_Allocator : constant Boolean := True;
 
    ----------
    -- Test --
@@ -341,7 +341,7 @@ begin
 
       if Pool.Current_Water_Mark /= 0 then
          Logging.Warn ("There is leaked memory");
-         --        raise Constraint_Error with "There is leaked memory";
+         raise Constraint_Error with "There is leaked memory";
       end if;
    end if;
 
