@@ -23,7 +23,7 @@ package rmw_serialized_message_h is
   -- * \return rmw_serialized_message_t a zero initialized serialized message struct
   --  
 
-   function rmw_get_zero_initialized_serialized_message return rmw_types_h.rmw_serialized_message_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/serialized_message.h:36
+   function rmw_get_zero_initialized_serialized_message return rmw_types_h.rmw_serialized_message_t;  -- /opt/ros/bouncy/include/rmw/serialized_message.h:36
    pragma Import (C, rmw_get_zero_initialized_serialized_message, "rmw_get_zero_initialized_serialized_message");
 
   --/ Initialize a zero initialized serialized message struct.
@@ -43,7 +43,7 @@ package rmw_serialized_message_h is
    function rmw_serialized_message_init
      (msg : access rmw_types_h.rmw_serialized_message_t;
       buffer_capacity : stddef_h.size_t;
-      allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return rmw_types_h.rmw_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/serialized_message.h:54
+      allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/serialized_message.h:54
    pragma Import (C, rmw_serialized_message_init, "rmw_serialized_message_init");
 
   --/ Finalize a serialized message struct.
@@ -59,7 +59,7 @@ package rmw_serialized_message_h is
   -- * \return `RMW_RET_ERROR` if an unexpected error occurs
   --  
 
-   function rmw_serialized_message_fini (msg : access rmw_types_h.rmw_serialized_message_t) return rmw_types_h.rmw_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/serialized_message.h:74
+   function rmw_serialized_message_fini (msg : access rmw_types_h.rmw_serialized_message_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/serialized_message.h:74
    pragma Import (C, rmw_serialized_message_fini, "rmw_serialized_message_fini");
 
   --/ Resize the internal buffer for the message byte stream.
@@ -79,7 +79,7 @@ package rmw_serialized_message_h is
   -- * \return `RMW_RET_ERROR` if an unexpected error occurs
   --  
 
-   function rmw_serialized_message_resize (msg : access rmw_types_h.rmw_serialized_message_t; new_size : stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/serialized_message.h:95
+   function rmw_serialized_message_resize (msg : access rmw_types_h.rmw_serialized_message_t; new_size : stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/serialized_message.h:95
    pragma Import (C, rmw_serialized_message_resize, "rmw_serialized_message_resize");
 
 end rmw_serialized_message_h;

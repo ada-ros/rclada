@@ -25,9 +25,9 @@ package rcl_timer_h is
   --/ Structure which encapsulates a ROS Timer.
   --/ Private implementation pointer.
    type rcl_timer_t is record
-      impl : System.Address;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:37
+      impl : System.Address;  -- /opt/ros/bouncy/include/rcl/timer.h:37
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_timer_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:34
+   pragma Convention (C_Pass_By_Copy, rcl_timer_t);  -- /opt/ros/bouncy/include/rcl/timer.h:34
 
   --/ User callback signature for timers.
   --*
@@ -44,10 +44,10 @@ package rcl_timer_h is
   --  
 
    type rcl_timer_callback_t is access procedure (arg1 : access rcl_timer_t; arg2 : x86_64_linux_gnu_bits_stdint_intn_h.int64_t);
-   pragma Convention (C, rcl_timer_callback_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:53
+   pragma Convention (C, rcl_timer_callback_t);  -- /opt/ros/bouncy/include/rcl/timer.h:53
 
   --/ Return a zero initialized timer.
-   function rcl_get_zero_initialized_timer return rcl_timer_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:59
+   function rcl_get_zero_initialized_timer return rcl_timer_t;  -- /opt/ros/bouncy/include/rcl/timer.h:59
    pragma Import (C, rcl_get_zero_initialized_timer, "rcl_get_zero_initialized_timer");
 
   --/ Initialize a timer.
@@ -129,7 +129,7 @@ package rcl_timer_h is
      (timer : access rcl_timer_t;
       period : x86_64_linux_gnu_bits_stdint_intn_h.int64_t;
       callback : rcl_timer_callback_t;
-      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:138
+      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:138
    pragma Import (C, rcl_timer_init, "rcl_timer_init");
 
   --/ Finalize a timer.
@@ -159,7 +159,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_fini (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:173
+   function rcl_timer_fini (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:173
    pragma Import (C, rcl_timer_fini, "rcl_timer_fini");
 
   --/ Call the timer's callback and set the last call time.
@@ -202,7 +202,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_call (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:217
+   function rcl_timer_call (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:217
    pragma Import (C, rcl_timer_call, "rcl_timer_call");
 
   --/ Calculates whether or not the timer should be called.
@@ -231,7 +231,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_is_ready (timer : access constant rcl_timer_t; is_ready : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:247
+   function rcl_timer_is_ready (timer : access constant rcl_timer_t; is_ready : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:247
    pragma Import (C, rcl_timer_is_ready, "rcl_timer_is_ready");
 
   --/ Calculate and retrieve the time until the next call in nanoseconds.
@@ -265,7 +265,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_get_time_until_next_call (timer : access constant rcl_timer_t; time_until_next_call : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:282
+   function rcl_timer_get_time_until_next_call (timer : access constant rcl_timer_t; time_until_next_call : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:282
    pragma Import (C, rcl_timer_get_time_until_next_call, "rcl_timer_get_time_until_next_call");
 
   --/ Retrieve the time since the previous call to rcl_timer_call() occurred.
@@ -296,7 +296,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_get_time_since_last_call (timer : access constant rcl_timer_t; time_since_last_call : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:314
+   function rcl_timer_get_time_since_last_call (timer : access constant rcl_timer_t; time_since_last_call : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:314
    pragma Import (C, rcl_timer_get_time_since_last_call, "rcl_timer_get_time_since_last_call");
 
   --/ Retrieve the period of the timer.
@@ -322,7 +322,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_get_period (timer : access constant rcl_timer_t; period : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:341
+   function rcl_timer_get_period (timer : access constant rcl_timer_t; period : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:341
    pragma Import (C, rcl_timer_get_period, "rcl_timer_get_period");
 
   --/ Exchange the period of the timer and return the previous period.
@@ -355,7 +355,7 @@ package rcl_timer_h is
    function rcl_timer_exchange_period
      (timer : access constant rcl_timer_t;
       new_period : x86_64_linux_gnu_bits_stdint_intn_h.int64_t;
-      old_period : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:372
+      old_period : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:372
    pragma Import (C, rcl_timer_exchange_period, "rcl_timer_exchange_period");
 
   --/ Return the current timer callback.
@@ -377,7 +377,7 @@ package rcl_timer_h is
   -- * \return function pointer to the callback, or `NULL` if an error occurred
   --  
 
-   function rcl_timer_get_callback (timer : access constant rcl_timer_t) return rcl_timer_callback_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:395
+   function rcl_timer_get_callback (timer : access constant rcl_timer_t) return rcl_timer_callback_t;  -- /opt/ros/bouncy/include/rcl/timer.h:395
    pragma Import (C, rcl_timer_get_callback, "rcl_timer_get_callback");
 
   --/ Exchange the current timer callback and return the current callback.
@@ -403,7 +403,7 @@ package rcl_timer_h is
   -- * \return function pointer to the old callback, or `NULL` if an error occurred
   --  
 
-   function rcl_timer_exchange_callback (timer : access rcl_timer_t; new_callback : rcl_timer_callback_t) return rcl_timer_callback_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:422
+   function rcl_timer_exchange_callback (timer : access rcl_timer_t; new_callback : rcl_timer_callback_t) return rcl_timer_callback_t;  -- /opt/ros/bouncy/include/rcl/timer.h:422
    pragma Import (C, rcl_timer_exchange_callback, "rcl_timer_exchange_callback");
 
   --/ Cancel a timer.
@@ -430,7 +430,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_cancel (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:450
+   function rcl_timer_cancel (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:450
    pragma Import (C, rcl_timer_cancel, "rcl_timer_cancel");
 
   --/ Retrieve the canceled state of a timer.
@@ -458,7 +458,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_is_canceled (timer : access constant rcl_timer_t; is_canceled : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:479
+   function rcl_timer_is_canceled (timer : access constant rcl_timer_t; is_canceled : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:479
    pragma Import (C, rcl_timer_is_canceled, "rcl_timer_is_canceled");
 
   --/ Reset a timer.
@@ -483,7 +483,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_reset (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:505
+   function rcl_timer_reset (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:505
    pragma Import (C, rcl_timer_reset, "rcl_timer_reset");
 
   --/ Return the allocator for the timer.
@@ -506,7 +506,7 @@ package rcl_timer_h is
   -- * \return pointer to the allocator, or `NULL` if an error occurred
   --  
 
-   function rcl_timer_get_allocator (timer : access constant rcl_timer_t) return access constant rcl_allocator_h.rcl_allocator_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/timer.h:527
+   function rcl_timer_get_allocator (timer : access constant rcl_timer_t) return access constant rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/bouncy/include/rcl/timer.h:527
    pragma Import (C, rcl_timer_get_allocator, "rcl_timer_get_allocator");
 
 end rcl_timer_h;

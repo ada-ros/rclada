@@ -21,13 +21,13 @@ package rcutils_cmdline_parser_h is
    function rcutils_cli_option_exist
      (c_begin : System.Address;
       c_end : System.Address;
-      option : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/cmdline_parser.h:29
+      option : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /opt/ros/bouncy/include/rcutils/cmdline_parser.h:29
    pragma Import (C, rcutils_cli_option_exist, "rcutils_cli_option_exist");
 
    function rcutils_cli_get_option
      (c_begin : System.Address;
       c_end : System.Address;
-      option : Interfaces.C.Strings.chars_ptr) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/cmdline_parser.h:33
+      option : Interfaces.C.Strings.chars_ptr) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/cmdline_parser.h:33
    pragma Import (C, rcutils_cli_get_option, "rcutils_cli_get_option");
 
 end rcutils_cmdline_parser_h;

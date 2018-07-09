@@ -8,16 +8,16 @@ with rmw_types_h;
 
 package rmw_validate_full_topic_name_h is
 
-   RMW_TOPIC_VALID : constant := 0;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_full_topic_name.h:26
-   RMW_TOPIC_INVALID_IS_EMPTY_STRING : constant := 1;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_full_topic_name.h:27
-   RMW_TOPIC_INVALID_NOT_ABSOLUTE : constant := 2;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_full_topic_name.h:28
-   RMW_TOPIC_INVALID_ENDS_WITH_FORWARD_SLASH : constant := 3;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_full_topic_name.h:29
-   RMW_TOPIC_INVALID_CONTAINS_UNALLOWED_CHARACTERS : constant := 4;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_full_topic_name.h:30
-   RMW_TOPIC_INVALID_CONTAINS_REPEATED_FORWARD_SLASH : constant := 5;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_full_topic_name.h:31
-   RMW_TOPIC_INVALID_NAME_TOKEN_STARTS_WITH_NUMBER : constant := 6;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_full_topic_name.h:32
-   RMW_TOPIC_INVALID_TOO_LONG : constant := 7;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_full_topic_name.h:33
+   RMW_TOPIC_VALID : constant := 0;  --  /opt/ros/bouncy/include/rmw/validate_full_topic_name.h:26
+   RMW_TOPIC_INVALID_IS_EMPTY_STRING : constant := 1;  --  /opt/ros/bouncy/include/rmw/validate_full_topic_name.h:27
+   RMW_TOPIC_INVALID_NOT_ABSOLUTE : constant := 2;  --  /opt/ros/bouncy/include/rmw/validate_full_topic_name.h:28
+   RMW_TOPIC_INVALID_ENDS_WITH_FORWARD_SLASH : constant := 3;  --  /opt/ros/bouncy/include/rmw/validate_full_topic_name.h:29
+   RMW_TOPIC_INVALID_CONTAINS_UNALLOWED_CHARACTERS : constant := 4;  --  /opt/ros/bouncy/include/rmw/validate_full_topic_name.h:30
+   RMW_TOPIC_INVALID_CONTAINS_REPEATED_FORWARD_SLASH : constant := 5;  --  /opt/ros/bouncy/include/rmw/validate_full_topic_name.h:31
+   RMW_TOPIC_INVALID_NAME_TOKEN_STARTS_WITH_NUMBER : constant := 6;  --  /opt/ros/bouncy/include/rmw/validate_full_topic_name.h:32
+   RMW_TOPIC_INVALID_TOO_LONG : constant := 7;  --  /opt/ros/bouncy/include/rmw/validate_full_topic_name.h:33
 
-   RMW_TOPIC_MAX_NAME_LENGTH : constant := 255 - 8;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_full_topic_name.h:35
+   RMW_TOPIC_MAX_NAME_LENGTH : constant := 255 - 8;  --  /opt/ros/bouncy/include/rmw/validate_full_topic_name.h:35
 
   -- Copyright 2017 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
@@ -80,7 +80,7 @@ package rmw_validate_full_topic_name_h is
    function rmw_validate_full_topic_name
      (topic_name : Interfaces.C.Strings.chars_ptr;
       validation_result : access int;
-      invalid_index : access stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_full_topic_name.h:87
+      invalid_index : access stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/validate_full_topic_name.h:87
    pragma Import (C, rmw_validate_full_topic_name, "rmw_validate_full_topic_name");
 
   --/ Deterimine if a given topic name is valid.
@@ -95,11 +95,11 @@ package rmw_validate_full_topic_name_h is
      (topic_name : Interfaces.C.Strings.chars_ptr;
       topic_name_length : stddef_h.size_t;
       validation_result : access int;
-      invalid_index : access stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_full_topic_name.h:102
+      invalid_index : access stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/validate_full_topic_name.h:102
    pragma Import (C, rmw_validate_full_topic_name_with_size, "rmw_validate_full_topic_name_with_size");
 
   --/ Return a validation result description, or NULL if unknown or RMW_TOPIC_VALID.
-   function rmw_full_topic_name_validation_result_string (validation_result : int) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_full_topic_name.h:112
+   function rmw_full_topic_name_validation_result_string (validation_result : int) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rmw/validate_full_topic_name.h:112
    pragma Import (C, rmw_full_topic_name_validation_result_string, "rmw_full_topic_name_validation_result_string");
 
 end rmw_validate_full_topic_name_h;

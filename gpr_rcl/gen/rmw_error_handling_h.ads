@@ -29,7 +29,7 @@ package rmw_error_handling_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   subtype rmw_error_state_t is rcutils_error_handling_h.rcutils_error_state_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/error_handling.h:30
+   subtype rmw_error_state_t is rcutils_error_handling_h.rcutils_error_state_t;  -- /opt/ros/bouncy/include/rmw/error_handling.h:30
 
   -- TODO(wjwwood): replace this completely with rcutils_set_error_state()
   --                once the rmw APIs take an allocator that can be passed
@@ -43,7 +43,7 @@ package rmw_error_handling_h is
    procedure rmw_set_error_state
      (error_msg : Interfaces.C.Strings.chars_ptr;
       file : Interfaces.C.Strings.chars_ptr;
-      line_number : stddef_h.size_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/error_handling.h:46
+      line_number : stddef_h.size_t);  -- /opt/ros/bouncy/include/rmw/error_handling.h:46
    pragma Import (C, rmw_set_error_state, "rmw_set_error_state");
 
   --/ Set the error message, as well as append the current file and line number.

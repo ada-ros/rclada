@@ -7,7 +7,7 @@ private with Rcl_Node_H;
 
 with RCL.Clients.Impl;
 with RCL.Services.Impl;
-with RCL.Subscriptions;
+with RCL.Subscriptions.Impl;
 with RCL.Timers;
 
 with ROSIDL.Impl;
@@ -104,7 +104,7 @@ package RCL.Impl.Dispatchers is
    -------------------
    
    type Subscription_Dispatcher is new Dispatcher with record
-      Subscription : aliased Subscriptions.C_Subscription;
+      Subscription : aliased Subscriptions.Impl.C_Subscription;
       Callback     :         Subscriptions.Callback;
       Support      :         ROSIDL.Typesupport.Message_Support;
    end record;

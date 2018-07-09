@@ -17,7 +17,7 @@ package rcutils_isalnum_no_locale_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
   --/ Custom isalnum() which is not affected by locale.
-   function rcutils_isalnum_no_locale (c : char) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/isalnum_no_locale.h:26
+   function rcutils_isalnum_no_locale (c : char) return Extensions.bool;  -- /opt/ros/bouncy/include/rcutils/isalnum_no_locale.h:26
    pragma Import (C, rcutils_isalnum_no_locale, "rcutils_isalnum_no_locale");
 
   -- if in '0', ..., '9', then ok

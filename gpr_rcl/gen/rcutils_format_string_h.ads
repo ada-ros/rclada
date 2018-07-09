@@ -58,7 +58,7 @@ package rcutils_format_string_h is
      (allocator : rcutils_allocator_h.rcutils_allocator_t;
       limit : stddef_h.size_t;
       format_string : Interfaces.C.Strings.chars_ptr  -- , ...
-      ) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/format_string.h:68
+      ) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/format_string.h:68
    pragma Import (C, rcutils_format_string_limit, "rcutils_format_string_limit");
 
 end rcutils_format_string_h;

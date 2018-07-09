@@ -63,9 +63,9 @@ package body RCL.Wait is
    ---------
 
    procedure Add (This : aliased in out Set;
-                  Sub  : Aliased        Subscriptions.C_Subscription) is
+                  Sub  : Aliased        Subscriptions.Impl.C_Subscription) is
    begin
-      Check (Rcl_Wait_Set_Add_Subscription (This.Impl'Access, Sub.C'Access));
+      Check (Rcl_Wait_Set_Add_Subscription (This.Impl'Access, Sub.Impl'Access));
    end Add;
 
    ---------

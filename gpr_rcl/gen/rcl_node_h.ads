@@ -33,9 +33,9 @@ package rcl_node_h is
   --/ Structure which encapsulates a ROS Node.
   --/ Private implementation pointer.
    type rcl_node_t is record
-      impl : System.Address;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:41
+      impl : System.Address;  -- /opt/ros/bouncy/include/rcl/node.h:41
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_node_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:38
+   pragma Convention (C_Pass_By_Copy, rcl_node_t);  -- /opt/ros/bouncy/include/rcl/node.h:38
 
   --/ Structure which encapsulates the options for creating a rcl_node_t.
   -- bool anonymous_name;
@@ -55,18 +55,18 @@ package rcl_node_h is
   --    
 
    type rcl_node_options_t is record
-      domain_id : aliased stddef_h.size_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:65
-      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:68
-      use_global_arguments : aliased Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:71
-      arguments : aliased rcl_arguments_h.rcl_arguments_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:74
+      domain_id : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/rcl/node.h:65
+      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/bouncy/include/rcl/node.h:68
+      use_global_arguments : aliased Extensions.bool;  -- /opt/ros/bouncy/include/rcl/node.h:71
+      arguments : aliased rcl_arguments_h.rcl_arguments_t;  -- /opt/ros/bouncy/include/rcl/node.h:74
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_node_options_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:45
+   pragma Convention (C_Pass_By_Copy, rcl_node_options_t);  -- /opt/ros/bouncy/include/rcl/node.h:45
 
   --/ Custom allocator used for internal allocations.
   --/ If false then only use arguments in this struct, otherwise use global arguments also.
   --/ Command line arguments that apply only to this node.
   --/ Return a rcl_node_t struct with members initialized to `NULL`.
-   function rcl_get_zero_initialized_node return rcl_node_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:81
+   function rcl_get_zero_initialized_node return rcl_node_t;  -- /opt/ros/bouncy/include/rcl/node.h:81
    pragma Import (C, rcl_get_zero_initialized_node, "rcl_get_zero_initialized_node");
 
   --/ Initialize a ROS node.
@@ -157,7 +157,7 @@ package rcl_node_h is
      (node : access rcl_node_t;
       name : Interfaces.C.Strings.chars_ptr;
       namespace_u : Interfaces.C.Strings.chars_ptr;
-      options : access constant rcl_node_options_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:169
+      options : access constant rcl_node_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/node.h:169
    pragma Import (C, rcl_node_init, "rcl_node_init");
 
   --/ Finalized a rcl_node_t.
@@ -183,7 +183,7 @@ package rcl_node_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_node_fini (node : access rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:200
+   function rcl_node_fini (node : access rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/node.h:200
    pragma Import (C, rcl_node_fini, "rcl_node_fini");
 
   --/ Return the default node options in a rcl_node_options_t.
@@ -194,7 +194,7 @@ package rcl_node_h is
   -- * - allocator = rcl_get_default_allocator()
   --  
 
-   function rcl_node_get_default_options return rcl_node_options_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:211
+   function rcl_node_get_default_options return rcl_node_options_t;  -- /opt/ros/bouncy/include/rcl/node.h:211
    pragma Import (C, rcl_node_get_default_options, "rcl_node_get_default_options");
 
   --/ Copy one options structure into another.
@@ -221,7 +221,7 @@ package rcl_node_h is
    function rcl_node_options_copy
      (error_alloc : rcl_allocator_h.rcl_allocator_t;
       options : access constant rcl_node_options_t;
-      options_out : access rcl_node_options_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:236
+      options_out : access rcl_node_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/node.h:236
    pragma Import (C, rcl_node_options_copy, "rcl_node_options_copy");
 
   --/ Return `true` if the node is valid, else `false`.
@@ -265,7 +265,7 @@ package rcl_node_h is
   -- * \return `true` if the node and allocator are valid, otherwise `false`.
   --  
 
-   function rcl_node_is_valid (node : access constant rcl_node_t; error_msg_allocator : access rcl_allocator_h.rcl_allocator_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:283
+   function rcl_node_is_valid (node : access constant rcl_node_t; error_msg_allocator : access rcl_allocator_h.rcl_allocator_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rcl/node.h:283
    pragma Import (C, rcl_node_is_valid, "rcl_node_is_valid");
 
   --/ Return the name of the node.
@@ -291,7 +291,7 @@ package rcl_node_h is
   -- * \return name string if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:310
+   function rcl_node_get_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcl/node.h:310
    pragma Import (C, rcl_node_get_name, "rcl_node_get_name");
 
   --/ Return the namespace of the node.
@@ -317,7 +317,7 @@ package rcl_node_h is
   -- * \return name string if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_namespace (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:337
+   function rcl_node_get_namespace (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcl/node.h:337
    pragma Import (C, rcl_node_get_namespace, "rcl_node_get_namespace");
 
   --/ Return the rcl node options.
@@ -343,7 +343,7 @@ package rcl_node_h is
   -- * \return options struct if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_options (node : access constant rcl_node_t) return access constant rcl_node_options_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:364
+   function rcl_node_get_options (node : access constant rcl_node_t) return access constant rcl_node_options_t;  -- /opt/ros/bouncy/include/rcl/node.h:364
    pragma Import (C, rcl_node_get_options, "rcl_node_get_options");
 
   --/ Return the ROS domain ID that the node is using.
@@ -375,7 +375,7 @@ package rcl_node_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_node_get_domain_id (node : access constant rcl_node_t; domain_id : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:397
+   function rcl_node_get_domain_id (node : access constant rcl_node_t; domain_id : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/node.h:397
    pragma Import (C, rcl_node_get_domain_id, "rcl_node_get_domain_id");
 
   --/ Return the rmw node handle.
@@ -405,7 +405,7 @@ package rcl_node_h is
   -- * \return rmw node handle if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_rmw_handle (node : access constant rcl_node_t) return access rmw_types_h.rmw_node_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:428
+   function rcl_node_get_rmw_handle (node : access constant rcl_node_t) return access rmw_types_h.rmw_node_t;  -- /opt/ros/bouncy/include/rcl/node.h:428
    pragma Import (C, rcl_node_get_rmw_handle, "rcl_node_get_rmw_handle");
 
   --/ Return the associated rcl instance id.
@@ -433,7 +433,7 @@ package rcl_node_h is
   -- * \return rcl instance id captured during node init or `0` on error
   --  
 
-   function rcl_node_get_rcl_instance_id (node : access constant rcl_node_t) return x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:457
+   function rcl_node_get_rcl_instance_id (node : access constant rcl_node_t) return x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/bouncy/include/rcl/node.h:457
    pragma Import (C, rcl_node_get_rcl_instance_id, "rcl_node_get_rcl_instance_id");
 
   --/ Return a guard condition which is triggered when the ROS graph changes.
@@ -465,7 +465,7 @@ package rcl_node_h is
   -- * \return rcl guard condition handle if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_graph_guard_condition (node : access constant rcl_node_t) return System.Address;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:490
+   function rcl_node_get_graph_guard_condition (node : access constant rcl_node_t) return System.Address;  -- /opt/ros/bouncy/include/rcl/node.h:490
    pragma Import (C, rcl_node_get_graph_guard_condition, "rcl_node_get_graph_guard_condition");
 
   --/ Return the logger name of the node.
@@ -491,7 +491,7 @@ package rcl_node_h is
   -- * \return logger_name string if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_logger_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/node.h:517
+   function rcl_node_get_logger_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcl/node.h:517
    pragma Import (C, rcl_node_get_logger_name, "rcl_node_get_logger_name");
 
 end rcl_node_h;

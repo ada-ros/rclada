@@ -25,7 +25,7 @@ package rcl_graph_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   subtype rcl_names_and_types_t is rmw_names_and_types_h.rmw_names_and_types_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/graph.h:35
+   subtype rcl_names_and_types_t is rmw_names_and_types_h.rmw_names_and_types_t;  -- /opt/ros/bouncy/include/rcl/graph.h:35
 
   --/ Return a list of topic names and their types.
   --*
@@ -74,7 +74,7 @@ package rcl_graph_h is
      (node : access constant rcl_node_h.rcl_node_t;
       allocator : access rcl_allocator_h.rcl_allocator_t;
       no_demangle : Extensions.bool;
-      topic_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/graph.h:84
+      topic_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:84
    pragma Import (C, rcl_get_topic_names_and_types, "rcl_get_topic_names_and_types");
 
   --/ Return a list of service names and their types.
@@ -115,7 +115,7 @@ package rcl_graph_h is
    function rcl_get_service_names_and_types
      (node : access constant rcl_node_h.rcl_node_t;
       allocator : access rcl_allocator_h.rcl_allocator_t;
-      service_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/graph.h:127
+      service_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:127
    pragma Import (C, rcl_get_service_names_and_types, "rcl_get_service_names_and_types");
 
   --/ Finalize a rcl_names_and_types_t object.
@@ -142,7 +142,7 @@ package rcl_graph_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_names_and_types_fini (names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/graph.h:158
+   function rcl_names_and_types_fini (names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:158
    pragma Import (C, rcl_names_and_types_fini, "rcl_names_and_types_fini");
 
   --/ Return a list of available nodes in the ROS graph.
@@ -196,7 +196,7 @@ package rcl_graph_h is
    function rcl_get_node_names
      (node : access constant rcl_node_h.rcl_node_t;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      node_names : access rcutils_types_string_array_h.rcutils_string_array_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/graph.h:210
+      node_names : access rcutils_types_string_array_h.rcutils_string_array_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:210
    pragma Import (C, rcl_get_node_names, "rcl_get_node_names");
 
   --/ Return the number of publishers on a given topic.
@@ -242,7 +242,7 @@ package rcl_graph_h is
    function rcl_count_publishers
      (node : access constant rcl_node_h.rcl_node_t;
       topic_name : Interfaces.C.Strings.chars_ptr;
-      count : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/graph.h:257
+      count : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:257
    pragma Import (C, rcl_count_publishers, "rcl_count_publishers");
 
   --/ Return the number of subscriptions on a given topic.
@@ -288,7 +288,7 @@ package rcl_graph_h is
    function rcl_count_subscribers
      (node : access constant rcl_node_h.rcl_node_t;
       topic_name : Interfaces.C.Strings.chars_ptr;
-      count : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/graph.h:304
+      count : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:304
    pragma Import (C, rcl_count_subscribers, "rcl_count_subscribers");
 
   --/ Check if a service server is available for the given service client.
@@ -330,7 +330,7 @@ package rcl_graph_h is
    function rcl_service_server_is_available
      (node : access constant rcl_node_h.rcl_node_t;
       client : access constant rcl_client_h.rcl_client_t;
-      is_available : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/graph.h:347
+      is_available : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:347
    pragma Import (C, rcl_service_server_is_available, "rcl_service_server_is_available");
 
 end rcl_graph_h;

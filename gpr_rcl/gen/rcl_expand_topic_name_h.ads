@@ -112,7 +112,7 @@ package rcl_expand_topic_name_h is
       node_namespace : Interfaces.C.Strings.chars_ptr;
       substitutions : access constant rcutils_types_string_map_h.rcutils_string_map_t;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      output_topic_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/expand_topic_name.h:117
+      output_topic_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/expand_topic_name.h:117
    pragma Import (C, rcl_expand_topic_name, "rcl_expand_topic_name");
 
   --/ Fill a given string map with the default substitution pairs.
@@ -126,7 +126,7 @@ package rcl_expand_topic_name_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_get_default_topic_name_substitutions (string_map : access rcutils_types_string_map_h.rcutils_string_map_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/expand_topic_name.h:138
+   function rcl_get_default_topic_name_substitutions (string_map : access rcutils_types_string_map_h.rcutils_string_map_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/expand_topic_name.h:138
    pragma Import (C, rcl_get_default_topic_name_substitutions, "rcl_get_default_topic_name_substitutions");
 
 end rcl_expand_topic_name_h;

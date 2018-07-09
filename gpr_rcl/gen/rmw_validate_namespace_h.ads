@@ -8,14 +8,14 @@ with rmw_types_h;
 
 package rmw_validate_namespace_h is
 
-   RMW_NAMESPACE_VALID : constant := 0;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_namespace.h:27
-   RMW_NAMESPACE_INVALID_IS_EMPTY_STRING : constant := 1;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_namespace.h:28
-   RMW_NAMESPACE_INVALID_NOT_ABSOLUTE : constant := 2;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_namespace.h:29
-   RMW_NAMESPACE_INVALID_ENDS_WITH_FORWARD_SLASH : constant := 3;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_namespace.h:30
-   RMW_NAMESPACE_INVALID_CONTAINS_UNALLOWED_CHARACTERS : constant := 4;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_namespace.h:31
-   RMW_NAMESPACE_INVALID_CONTAINS_REPEATED_FORWARD_SLASH : constant := 5;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_namespace.h:32
-   RMW_NAMESPACE_INVALID_NAME_TOKEN_STARTS_WITH_NUMBER : constant := 6;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_namespace.h:33
-   RMW_NAMESPACE_INVALID_TOO_LONG : constant := 7;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_namespace.h:34
+   RMW_NAMESPACE_VALID : constant := 0;  --  /opt/ros/bouncy/include/rmw/validate_namespace.h:27
+   RMW_NAMESPACE_INVALID_IS_EMPTY_STRING : constant := 1;  --  /opt/ros/bouncy/include/rmw/validate_namespace.h:28
+   RMW_NAMESPACE_INVALID_NOT_ABSOLUTE : constant := 2;  --  /opt/ros/bouncy/include/rmw/validate_namespace.h:29
+   RMW_NAMESPACE_INVALID_ENDS_WITH_FORWARD_SLASH : constant := 3;  --  /opt/ros/bouncy/include/rmw/validate_namespace.h:30
+   RMW_NAMESPACE_INVALID_CONTAINS_UNALLOWED_CHARACTERS : constant := 4;  --  /opt/ros/bouncy/include/rmw/validate_namespace.h:31
+   RMW_NAMESPACE_INVALID_CONTAINS_REPEATED_FORWARD_SLASH : constant := 5;  --  /opt/ros/bouncy/include/rmw/validate_namespace.h:32
+   RMW_NAMESPACE_INVALID_NAME_TOKEN_STARTS_WITH_NUMBER : constant := 6;  --  /opt/ros/bouncy/include/rmw/validate_namespace.h:33
+   RMW_NAMESPACE_INVALID_TOO_LONG : constant := 7;  --  /opt/ros/bouncy/include/rmw/validate_namespace.h:34
    --  unsupported macro: RMW_NAMESPACE_MAX_LENGTH (RMW_TOPIC_MAX_NAME_LENGTH - 2U)
 
   -- Copyright 2017 Open Source Robotics Foundation, Inc.
@@ -84,7 +84,7 @@ package rmw_validate_namespace_h is
    function rmw_validate_namespace
      (namespace_u : Interfaces.C.Strings.chars_ptr;
       validation_result : access int;
-      invalid_index : access stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_namespace.h:93
+      invalid_index : access stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/validate_namespace.h:93
    pragma Import (C, rmw_validate_namespace, "rmw_validate_namespace");
 
   --/ Deterimine if a given namespace is valid.
@@ -99,11 +99,11 @@ package rmw_validate_namespace_h is
      (namespace_u : Interfaces.C.Strings.chars_ptr;
       namespace_length : stddef_h.size_t;
       validation_result : access int;
-      invalid_index : access stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_namespace.h:108
+      invalid_index : access stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/validate_namespace.h:108
    pragma Import (C, rmw_validate_namespace_with_size, "rmw_validate_namespace_with_size");
 
   --/ Return a validation result description, or NULL if unknown or RMW_NAMESPACE_VALID.
-   function rmw_namespace_validation_result_string (validation_result : int) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_namespace.h:118
+   function rmw_namespace_validation_result_string (validation_result : int) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rmw/validate_namespace.h:118
    pragma Import (C, rmw_namespace_validation_result_string, "rmw_namespace_validation_result_string");
 
 end rmw_validate_namespace_h;

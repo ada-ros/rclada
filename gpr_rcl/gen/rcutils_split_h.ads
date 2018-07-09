@@ -35,7 +35,7 @@ package rcutils_split_h is
      (str : Interfaces.C.Strings.chars_ptr;
       delimiter : char;
       allocator : rcutils_allocator_h.rcutils_allocator_t;
-      string_array : access rcutils_types_string_array_h.rcutils_string_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/split.h:40
+      string_array : access rcutils_types_string_array_h.rcutils_string_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/split.h:40
    pragma Import (C, rcutils_split, "rcutils_split");
 
   --/ Split a given string on the last occurrence of the specified delimiter
@@ -51,7 +51,7 @@ package rcutils_split_h is
      (str : Interfaces.C.Strings.chars_ptr;
       delimiter : char;
       allocator : rcutils_allocator_h.rcutils_allocator_t;
-      string_array : access rcutils_types_string_array_h.rcutils_string_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/split.h:56
+      string_array : access rcutils_types_string_array_h.rcutils_string_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/split.h:56
    pragma Import (C, rcutils_split_last, "rcutils_split_last");
 
 end rcutils_split_h;

@@ -8,13 +8,13 @@ with rmw_types_h;
 
 package rmw_validate_node_name_h is
 
-   RMW_NODE_NAME_VALID : constant := 0;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_node_name.h:26
-   RMW_NODE_NAME_INVALID_IS_EMPTY_STRING : constant := 1;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_node_name.h:27
-   RMW_NODE_NAME_INVALID_CONTAINS_UNALLOWED_CHARACTERS : constant := 2;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_node_name.h:28
-   RMW_NODE_NAME_INVALID_STARTS_WITH_NUMBER : constant := 3;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_node_name.h:29
-   RMW_NODE_NAME_INVALID_TOO_LONG : constant := 4;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_node_name.h:30
+   RMW_NODE_NAME_VALID : constant := 0;  --  /opt/ros/bouncy/include/rmw/validate_node_name.h:26
+   RMW_NODE_NAME_INVALID_IS_EMPTY_STRING : constant := 1;  --  /opt/ros/bouncy/include/rmw/validate_node_name.h:27
+   RMW_NODE_NAME_INVALID_CONTAINS_UNALLOWED_CHARACTERS : constant := 2;  --  /opt/ros/bouncy/include/rmw/validate_node_name.h:28
+   RMW_NODE_NAME_INVALID_STARTS_WITH_NUMBER : constant := 3;  --  /opt/ros/bouncy/include/rmw/validate_node_name.h:29
+   RMW_NODE_NAME_INVALID_TOO_LONG : constant := 4;  --  /opt/ros/bouncy/include/rmw/validate_node_name.h:30
 
-   RMW_NODE_NAME_MAX_NAME_LENGTH : constant := 255;  --  /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_node_name.h:32
+   RMW_NODE_NAME_MAX_NAME_LENGTH : constant := 255;  --  /opt/ros/bouncy/include/rmw/validate_node_name.h:32
 
   -- Copyright 2017 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
@@ -74,7 +74,7 @@ package rmw_validate_node_name_h is
    function rmw_validate_node_name
      (node_name : Interfaces.C.Strings.chars_ptr;
       validation_result : access int;
-      invalid_index : access stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_node_name.h:81
+      invalid_index : access stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/validate_node_name.h:81
    pragma Import (C, rmw_validate_node_name, "rmw_validate_node_name");
 
   --/ Deterimine if a given node name is valid.
@@ -89,11 +89,11 @@ package rmw_validate_node_name_h is
      (node_name : Interfaces.C.Strings.chars_ptr;
       node_name_length : stddef_h.size_t;
       validation_result : access int;
-      invalid_index : access stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_node_name.h:96
+      invalid_index : access stddef_h.size_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/validate_node_name.h:96
    pragma Import (C, rmw_validate_node_name_with_size, "rmw_validate_node_name_with_size");
 
   --/ Return a validation result description, or NULL if unknown or RMW_NODE_NAME_VALID.
-   function rmw_node_name_validation_result_string (validation_result : int) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/validate_node_name.h:106
+   function rmw_node_name_validation_result_string (validation_result : int) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rmw/validate_node_name.h:106
    pragma Import (C, rmw_node_name_validation_result_string, "rmw_node_name_validation_result_string");
 
 end rmw_validate_node_name_h;

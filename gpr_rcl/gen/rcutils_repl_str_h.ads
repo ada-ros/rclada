@@ -116,7 +116,7 @@ package rcutils_repl_str_h is
      (str : Interfaces.C.Strings.chars_ptr;
       from : Interfaces.C.Strings.chars_ptr;
       to : Interfaces.C.Strings.chars_ptr;
-      allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/repl_str.h:128
+      allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/repl_str.h:128
    pragma Import (C, rcutils_repl_str, "rcutils_repl_str");
 
   -- Implementation copied from above mentioned source continues in repl_str.c.

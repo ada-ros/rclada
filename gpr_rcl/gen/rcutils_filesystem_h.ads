@@ -28,7 +28,7 @@ package rcutils_filesystem_h is
   -- *              False on failure
   --  
 
-   function rcutils_get_cwd (buffer : Interfaces.C.Strings.chars_ptr; max_length : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/filesystem.h:41
+   function rcutils_get_cwd (buffer : Interfaces.C.Strings.chars_ptr; max_length : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rcutils/filesystem.h:41
    pragma Import (C, rcutils_get_cwd, "rcutils_get_cwd");
 
   --/ Check if the provided path points to a directory.
@@ -39,7 +39,7 @@ package rcutils_filesystem_h is
   -- *              False on failure
   --  
 
-   function rcutils_is_directory (abs_path : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/filesystem.h:52
+   function rcutils_is_directory (abs_path : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /opt/ros/bouncy/include/rcutils/filesystem.h:52
    pragma Import (C, rcutils_is_directory, "rcutils_is_directory");
 
   --/ Check if the provided path points to a file.
@@ -50,7 +50,7 @@ package rcutils_filesystem_h is
   -- *              False on failure
   --  
 
-   function rcutils_is_file (abs_path : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/filesystem.h:63
+   function rcutils_is_file (abs_path : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /opt/ros/bouncy/include/rcutils/filesystem.h:63
    pragma Import (C, rcutils_is_file, "rcutils_is_file");
 
   --/ Check if the provided path points to an existing file/folder.
@@ -61,7 +61,7 @@ package rcutils_filesystem_h is
   -- *              False on failure
   --  
 
-   function rcutils_exists (abs_path : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/filesystem.h:74
+   function rcutils_exists (abs_path : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /opt/ros/bouncy/include/rcutils/filesystem.h:74
    pragma Import (C, rcutils_exists, "rcutils_exists");
 
   --/ Check if the provided path points to a file/folder readable by current user.
@@ -72,7 +72,7 @@ package rcutils_filesystem_h is
   -- *              False on failure
   --  
 
-   function rcutils_is_readable (abs_path : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/filesystem.h:85
+   function rcutils_is_readable (abs_path : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /opt/ros/bouncy/include/rcutils/filesystem.h:85
    pragma Import (C, rcutils_is_readable, "rcutils_is_readable");
 
   --/ Check if the provided path points to a file/folder writable by current user.
@@ -83,7 +83,7 @@ package rcutils_filesystem_h is
   -- *              False on failure
   --  
 
-   function rcutils_is_writable (abs_path : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/filesystem.h:96
+   function rcutils_is_writable (abs_path : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /opt/ros/bouncy/include/rcutils/filesystem.h:96
    pragma Import (C, rcutils_is_writable, "rcutils_is_writable");
 
   --/ Check if the provided path points to a file/folder both readable and writable by current user.
@@ -94,7 +94,7 @@ package rcutils_filesystem_h is
   -- *              False on failure
   --  
 
-   function rcutils_is_readable_and_writable (abs_path : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/filesystem.h:107
+   function rcutils_is_readable_and_writable (abs_path : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /opt/ros/bouncy/include/rcutils/filesystem.h:107
    pragma Import (C, rcutils_is_readable_and_writable, "rcutils_is_readable_and_writable");
 
   --/ Return newly allocated string with arguments separated by correct delimiter for the platform.
@@ -114,7 +114,7 @@ package rcutils_filesystem_h is
    function rcutils_join_path
      (left_hand_path : Interfaces.C.Strings.chars_ptr;
       right_hand_path : Interfaces.C.Strings.chars_ptr;
-      allocator : rcutils_allocator_h.rcutils_allocator_t) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/filesystem.h:124
+      allocator : rcutils_allocator_h.rcutils_allocator_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/filesystem.h:124
    pragma Import (C, rcutils_join_path, "rcutils_join_path");
 
 end rcutils_filesystem_h;

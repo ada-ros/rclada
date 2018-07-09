@@ -43,6 +43,6 @@ package rcl_error_handling_h is
   -- * occur during normal runtime, is should be okay to use the default allocator.
   --  
 
-   subtype rcl_error_state_t is rcutils_error_handling_h.rcutils_error_state_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/error_handling.h:32
+   subtype rcl_error_state_t is rcutils_error_handling_h.rcutils_error_state_t;  -- /opt/ros/bouncy/include/rcl/error_handling.h:32
 
 end rcl_error_handling_h;

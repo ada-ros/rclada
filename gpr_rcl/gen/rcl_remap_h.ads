@@ -91,7 +91,7 @@ package rcl_remap_h is
       node_name : Interfaces.C.Strings.chars_ptr;
       node_namespace : Interfaces.C.Strings.chars_ptr;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      output_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/remap.h:95
+      output_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/remap.h:95
    pragma Import (C, rcl_remap_topic_name, "rcl_remap_topic_name");
 
   -- TODO(sloretz) add documentation about rosservice:// when it is supported
@@ -135,7 +135,7 @@ package rcl_remap_h is
       node_name : Interfaces.C.Strings.chars_ptr;
       node_namespace : Interfaces.C.Strings.chars_ptr;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      output_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/remap.h:140
+      output_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/remap.h:140
    pragma Import (C, rcl_remap_service_name, "rcl_remap_service_name");
 
   --/ Remap a node name based on given rules.
@@ -179,7 +179,7 @@ package rcl_remap_h is
       global_arguments : access constant rcl_arguments_h.rcl_arguments_t;
       node_name : Interfaces.C.Strings.chars_ptr;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      output_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/remap.h:187
+      output_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/remap.h:187
    pragma Import (C, rcl_remap_node_name, "rcl_remap_node_name");
 
   --/ Remap a namespace based on given rules.
@@ -219,7 +219,7 @@ package rcl_remap_h is
       global_arguments : access constant rcl_arguments_h.rcl_arguments_t;
       node_name : Interfaces.C.Strings.chars_ptr;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      output_namespace : System.Address) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/remap.h:228
+      output_namespace : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/remap.h:228
    pragma Import (C, rcl_remap_node_namespace, "rcl_remap_node_namespace");
 
 end rcl_remap_h;

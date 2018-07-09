@@ -31,7 +31,7 @@ package rcutils_strdup_h is
   -- * \returns duplicated string or null if there is an error
   --  
 
-   function rcutils_strdup (str : Interfaces.C.Strings.chars_ptr; allocator : rcutils_allocator_h.rcutils_allocator_t) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/strdup.h:44
+   function rcutils_strdup (str : Interfaces.C.Strings.chars_ptr; allocator : rcutils_allocator_h.rcutils_allocator_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/strdup.h:44
    pragma Import (C, rcutils_strdup, "rcutils_strdup");
 
   --/ Return a duplicated string with an allocator, or null if an error occurs.
@@ -57,7 +57,7 @@ package rcutils_strdup_h is
    function rcutils_strndup
      (str : Interfaces.C.Strings.chars_ptr;
       string_length : stddef_h.size_t;
-      allocator : rcutils_allocator_h.rcutils_allocator_t) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/strdup.h:68
+      allocator : rcutils_allocator_h.rcutils_allocator_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/strdup.h:68
    pragma Import (C, rcutils_strndup, "rcutils_strndup");
 
 end rcutils_strdup_h;

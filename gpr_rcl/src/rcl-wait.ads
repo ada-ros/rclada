@@ -5,7 +5,7 @@ with RCL.Allocators;
 with RCL.Clients.Impl;
 with RCL.Impl.Dispatchers;
 with RCL.Services.Impl;
-limited with RCL.Subscriptions;
+limited with RCL.Subscriptions.Impl;
 with RCL.Timers;
 
 with Rcl_Wait_H; use Rcl_Wait_H;
@@ -55,7 +55,7 @@ package RCL.Wait is
                   Srv  : aliased        Services.Impl.C_Service); 
    
    procedure Add (This : aliased in out Set; 
-                  Sub  : aliased        Subscriptions.C_Subscription); 
+                  Sub  : aliased        Subscriptions.Impl.C_Subscription); 
    
    procedure Add (This  : aliased in out Set; 
                   Timer : aliased        Timers.Timer_Id); 

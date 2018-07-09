@@ -178,6 +178,7 @@ package RCL.Nodes is
    
    -------------------
    --  Misc access  --
+
    function Allocator (This : Node) return Allocators.Handle;      
    
 private   

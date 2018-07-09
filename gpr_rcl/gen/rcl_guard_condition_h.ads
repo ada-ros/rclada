@@ -24,19 +24,19 @@ package rcl_guard_condition_h is
 
   --/ Handle for a rcl guard condition.
    type rcl_guard_condition_t is record
-      impl : System.Address;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/guard_condition.h:34
+      impl : System.Address;  -- /opt/ros/bouncy/include/rcl/guard_condition.h:34
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_guard_condition_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/guard_condition.h:32
+   pragma Convention (C_Pass_By_Copy, rcl_guard_condition_t);  -- /opt/ros/bouncy/include/rcl/guard_condition.h:32
 
   --/ Options available for a rcl guard condition.
   --/ Custom allocator for the guard condition, used for internal allocations.
    type rcl_guard_condition_options_t is record
-      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/guard_condition.h:41
+      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/bouncy/include/rcl/guard_condition.h:41
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_guard_condition_options_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/guard_condition.h:38
+   pragma Convention (C_Pass_By_Copy, rcl_guard_condition_options_t);  -- /opt/ros/bouncy/include/rcl/guard_condition.h:38
 
   --/ Return a rcl_guard_condition_t struct with members set to `NULL`.
-   function rcl_get_zero_initialized_guard_condition return rcl_guard_condition_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/guard_condition.h:48
+   function rcl_get_zero_initialized_guard_condition return rcl_guard_condition_t;  -- /opt/ros/bouncy/include/rcl/guard_condition.h:48
    pragma Import (C, rcl_get_zero_initialized_guard_condition, "rcl_get_zero_initialized_guard_condition");
 
   --/ Initialize a rcl guard_condition.
@@ -76,7 +76,7 @@ package rcl_guard_condition_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_guard_condition_init (guard_condition : access rcl_guard_condition_t; options : rcl_guard_condition_options_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/guard_condition.h:89
+   function rcl_guard_condition_init (guard_condition : access rcl_guard_condition_t; options : rcl_guard_condition_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/guard_condition.h:89
    pragma Import (C, rcl_guard_condition_init, "rcl_guard_condition_init");
 
   --/ Same as rcl_guard_condition_init(), but reusing an existing rmw handle.
@@ -114,7 +114,7 @@ package rcl_guard_condition_h is
    function rcl_guard_condition_init_from_rmw
      (guard_condition : access rcl_guard_condition_t;
       rmw_guard_condition : access constant rmw_types_h.rmw_guard_condition_t;
-      options : rcl_guard_condition_options_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/guard_condition.h:125
+      options : rcl_guard_condition_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/guard_condition.h:125
    pragma Import (C, rcl_guard_condition_init_from_rmw, "rcl_guard_condition_init_from_rmw");
 
   --/ Finalize a rcl_guard_condition_t.
@@ -137,7 +137,7 @@ package rcl_guard_condition_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_guard_condition_fini (guard_condition : access rcl_guard_condition_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/guard_condition.h:152
+   function rcl_guard_condition_fini (guard_condition : access rcl_guard_condition_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/guard_condition.h:152
    pragma Import (C, rcl_guard_condition_fini, "rcl_guard_condition_fini");
 
   --/ Return the default options in a rcl_guard_condition_options_t struct.
@@ -147,7 +147,7 @@ package rcl_guard_condition_h is
   -- * - allocator = rcl_get_default_allocator()
   --  
 
-   function rcl_guard_condition_get_default_options return rcl_guard_condition_options_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/guard_condition.h:163
+   function rcl_guard_condition_get_default_options return rcl_guard_condition_options_t;  -- /opt/ros/bouncy/include/rcl/guard_condition.h:163
    pragma Import (C, rcl_guard_condition_get_default_options, "rcl_guard_condition_get_default_options");
 
   --/ Trigger a rcl guard condition.
@@ -173,7 +173,7 @@ package rcl_guard_condition_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_trigger_guard_condition (guard_condition : access rcl_guard_condition_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/guard_condition.h:190
+   function rcl_trigger_guard_condition (guard_condition : access rcl_guard_condition_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/guard_condition.h:190
    pragma Import (C, rcl_trigger_guard_condition, "rcl_trigger_guard_condition");
 
   --/ Return the guard condition options.
@@ -197,7 +197,7 @@ package rcl_guard_condition_h is
   -- * \return rcl guard condition options if successful, otherwise `NULL`
   --  
 
-   function rcl_guard_condition_get_options (guard_condition : access constant rcl_guard_condition_t) return access constant rcl_guard_condition_options_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/guard_condition.h:215
+   function rcl_guard_condition_get_options (guard_condition : access constant rcl_guard_condition_t) return access constant rcl_guard_condition_options_t;  -- /opt/ros/bouncy/include/rcl/guard_condition.h:215
    pragma Import (C, rcl_guard_condition_get_options, "rcl_guard_condition_get_options");
 
   --/ Return the rmw guard condition handle.
@@ -227,7 +227,7 @@ package rcl_guard_condition_h is
   -- * \return rmw guard condition handle if successful, otherwise `NULL`
   --  
 
-   function rcl_guard_condition_get_rmw_handle (guard_condition : access constant rcl_guard_condition_t) return access rmw_types_h.rmw_guard_condition_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/guard_condition.h:246
+   function rcl_guard_condition_get_rmw_handle (guard_condition : access constant rcl_guard_condition_t) return access rmw_types_h.rmw_guard_condition_t;  -- /opt/ros/bouncy/include/rcl/guard_condition.h:246
    pragma Import (C, rcl_guard_condition_get_rmw_handle, "rcl_guard_condition_get_rmw_handle");
 
 end rcl_guard_condition_h;

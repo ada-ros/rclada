@@ -33,10 +33,10 @@ package rcl_time_h is
   --/ Convenience macro to convert nanoseconds to milliseconds.
   --/ Convenience macro to convert nanoseconds to microseconds.
   --/ A single point in time, measured in nanoseconds since the Unix epoch.
-   subtype rcl_time_point_value_t is rcutils_time_h.rcutils_time_point_value_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:44
+   subtype rcl_time_point_value_t is rcutils_time_h.rcutils_time_point_value_t;  -- /opt/ros/bouncy/include/rcl/time.h:44
 
   --/ A duration of time, measured in nanoseconds.
-   subtype rcl_duration_value_t is rcutils_time_h.rcutils_duration_value_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:46
+   subtype rcl_duration_value_t is rcutils_time_h.rcutils_duration_value_t;  -- /opt/ros/bouncy/include/rcl/time.h:46
 
   --/ Time source type, used to indicate the source of a time measurement.
    type rcl_clock_type_t is 
@@ -44,32 +44,32 @@ package rcl_time_h is
       RCL_ROS_TIME,
       RCL_SYSTEM_TIME,
       RCL_STEADY_TIME);
-   pragma Convention (C, rcl_clock_type_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:49
+   pragma Convention (C, rcl_clock_type_t);  -- /opt/ros/bouncy/include/rcl/time.h:49
 
   --/ Encapsulation of a time source.
    type rcl_clock_t is record
-      c_type : aliased rcl_clock_type_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:60
-      pre_update : access procedure;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:61
-      post_update : access procedure;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:62
-      get_now : access function (arg1 : System.Address; arg2 : access rcl_time_point_value_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:63
-      data : System.Address;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:65
-      allocator : access rcl_allocator_h.rcl_allocator_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:66
+      c_type : aliased rcl_clock_type_t;  -- /opt/ros/bouncy/include/rcl/time.h:60
+      pre_update : access procedure;  -- /opt/ros/bouncy/include/rcl/time.h:61
+      post_update : access procedure;  -- /opt/ros/bouncy/include/rcl/time.h:62
+      get_now : access function (arg1 : System.Address; arg2 : access rcl_time_point_value_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:63
+      data : System.Address;  -- /opt/ros/bouncy/include/rcl/time.h:65
+      allocator : access rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/bouncy/include/rcl/time.h:66
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_clock_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:58
+   pragma Convention (C_Pass_By_Copy, rcl_clock_t);  -- /opt/ros/bouncy/include/rcl/time.h:58
 
   -- void (*set_now) (rcl_time_point_value_t);
   --/ A single point in time, measured in nanoseconds, the reference point is based on the source.
    type rcl_time_point_t is record
-      nanoseconds : aliased rcl_time_point_value_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:72
-      clock_type : aliased rcl_clock_type_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:73
+      nanoseconds : aliased rcl_time_point_value_t;  -- /opt/ros/bouncy/include/rcl/time.h:72
+      clock_type : aliased rcl_clock_type_t;  -- /opt/ros/bouncy/include/rcl/time.h:73
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_time_point_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:70
+   pragma Convention (C_Pass_By_Copy, rcl_time_point_t);  -- /opt/ros/bouncy/include/rcl/time.h:70
 
   --/ A duration of time, measured in nanoseconds and its source.
    type rcl_duration_t is record
-      nanoseconds : aliased rcl_duration_value_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:79
+      nanoseconds : aliased rcl_duration_value_t;  -- /opt/ros/bouncy/include/rcl/time.h:79
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_duration_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:77
+   pragma Convention (C_Pass_By_Copy, rcl_duration_t);  -- /opt/ros/bouncy/include/rcl/time.h:77
 
   -- typedef struct rcl_rate_t
   -- {
@@ -89,7 +89,7 @@ package rcl_time_h is
   -- * \return true if the source is believed to be valid, otherwise return false.
   --  
 
-   function rcl_clock_valid (clock : access rcl_clock_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:103
+   function rcl_clock_valid (clock : access rcl_clock_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rcl/time.h:103
    pragma Import (C, rcl_clock_valid, "rcl_clock_valid");
 
   --/ Initialize a clock based on the passed type.
@@ -107,7 +107,7 @@ package rcl_time_h is
    function rcl_clock_init
      (clock_type : rcl_clock_type_t;
       clock : access rcl_clock_t;
-      allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:119
+      allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:119
    pragma Import (C, rcl_clock_init, "rcl_clock_init");
 
   --/ Finalize a clock.
@@ -124,7 +124,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:139
+   function rcl_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:139
    pragma Import (C, rcl_clock_fini, "rcl_clock_fini");
 
   --/ Initialize a clock as a RCL_ROS_TIME time source.
@@ -139,7 +139,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_ros_clock_init (clock : access rcl_clock_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:156
+   function rcl_ros_clock_init (clock : access rcl_clock_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:156
    pragma Import (C, rcl_ros_clock_init, "rcl_ros_clock_init");
 
   --/ Finalize a clock as a `RCL_ROS_TIME` time source.
@@ -154,7 +154,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_ros_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:174
+   function rcl_ros_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:174
    pragma Import (C, rcl_ros_clock_fini, "rcl_ros_clock_fini");
 
   --/ Initialize a clock as a `RCL_STEADY_TIME` time source.
@@ -169,7 +169,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_steady_clock_init (clock : access rcl_clock_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:191
+   function rcl_steady_clock_init (clock : access rcl_clock_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:191
    pragma Import (C, rcl_steady_clock_init, "rcl_steady_clock_init");
 
   --/ Finalize a clock as a `RCL_STEADY_TIME` time source.
@@ -186,7 +186,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_steady_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:211
+   function rcl_steady_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:211
    pragma Import (C, rcl_steady_clock_fini, "rcl_steady_clock_fini");
 
   --/ Initialize a clock as a `RCL_SYSTEM_TIME` time source.
@@ -203,7 +203,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_system_clock_init (clock : access rcl_clock_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:230
+   function rcl_system_clock_init (clock : access rcl_clock_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:230
    pragma Import (C, rcl_system_clock_init, "rcl_system_clock_init");
 
   --/ Finalize a clock as a `RCL_SYSTEM_TIME` time source.
@@ -220,7 +220,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_system_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:250
+   function rcl_system_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:250
    pragma Import (C, rcl_system_clock_fini, "rcl_system_clock_fini");
 
   --/ Compute the difference between two time points
@@ -243,7 +243,7 @@ package rcl_time_h is
    function rcl_difference_times
      (start : access rcl_time_point_t;
       finish : access rcl_time_point_t;
-      c_delta : access rcl_duration_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:272
+      c_delta : access rcl_duration_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:272
    pragma Import (C, rcl_difference_times, "rcl_difference_times");
 
   --/ Fill the time point with the current value of the associated clock.
@@ -257,7 +257,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_clock_get_now (clock : access rcl_clock_t; time_point : access rcl_time_point_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:288
+   function rcl_clock_get_now (clock : access rcl_clock_t; time_point : access rcl_time_point_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:288
    pragma Import (C, rcl_clock_get_now, "rcl_clock_get_now");
 
   --/ Enable the ROS time abstraction override.
@@ -272,7 +272,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_enable_ros_time_override (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:305
+   function rcl_enable_ros_time_override (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:305
    pragma Import (C, rcl_enable_ros_time_override, "rcl_enable_ros_time_override");
 
   --/ Disable the ROS time abstraction override.
@@ -287,7 +287,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_disable_ros_time_override (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:321
+   function rcl_disable_ros_time_override (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:321
    pragma Import (C, rcl_disable_ros_time_override, "rcl_disable_ros_time_override");
 
   --/ Check if the `RCL_ROS_TIME` time source has the override enabled.
@@ -303,7 +303,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_is_enabled_ros_time_override (clock : access rcl_clock_t; is_enabled : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:339
+   function rcl_is_enabled_ros_time_override (clock : access rcl_clock_t; is_enabled : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:339
    pragma Import (C, rcl_is_enabled_ros_time_override, "rcl_is_enabled_ros_time_override");
 
   --/ Set the current time for this `RCL_ROS_TIME` time source.
@@ -320,7 +320,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_set_ros_time_override (clock : access rcl_clock_t; time_value : rcl_time_point_value_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/time.h:358
+   function rcl_set_ros_time_override (clock : access rcl_clock_t; time_value : rcl_time_point_value_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:358
    pragma Import (C, rcl_set_ros_time_override, "rcl_set_ros_time_override");
 
 end rcl_time_h;

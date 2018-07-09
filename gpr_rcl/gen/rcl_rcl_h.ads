@@ -114,7 +114,7 @@ package rcl_rcl_h is
    function rcl_init
      (argc : int;
       argv : System.Address;
-      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/rcl.h:124
+      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/rcl.h:124
    pragma Import (C, rcl_init, "rcl_init");
 
   --/ Signal global shutdown of rcl.
@@ -148,7 +148,7 @@ package rcl_rcl_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occur.
   --  
 
-   function rcl_shutdown return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/rcl.h:159
+   function rcl_shutdown return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/rcl.h:159
    pragma Import (C, rcl_shutdown, "rcl_shutdown");
 
   --/ Returns an uint64_t number that is unique for the latest rcl_init call.
@@ -167,7 +167,7 @@ package rcl_rcl_h is
   -- * \return a unique id specific to this rcl instance, or `0` if not initialized.
   --  
 
-   function rcl_get_instance_id return x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/rcl.h:179
+   function rcl_get_instance_id return x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/bouncy/include/rcl/rcl.h:179
    pragma Import (C, rcl_get_instance_id, "rcl_get_instance_id");
 
   --/ Return `true` if rcl is currently initialized, otherwise `false`.
@@ -181,7 +181,7 @@ package rcl_rcl_h is
   -- * <i>[1] if `atomic_is_lock_free()` returns true for `atomic_uint_least64_t`</i>
   --  
 
-   function rcl_ok return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/rcl.h:194
+   function rcl_ok return Extensions.bool;  -- /opt/ros/bouncy/include/rcl/rcl.h:194
    pragma Import (C, rcl_ok, "rcl_ok");
 
 end rcl_rcl_h;

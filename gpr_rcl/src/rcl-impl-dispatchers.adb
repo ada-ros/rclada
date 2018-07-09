@@ -98,11 +98,11 @@ package body RCL.Impl.Dispatchers is
       Msg  : constant ROSIDL.Dynamic.Shared_Message := ROSIDL.Dynamic.Init_Shared (This.Support);
         -- (This.Support.Message_Class.Package_Name, This.Support.Message_Class.Message_Name);
       Info : ROSIDL.Message_Info;
-      Sub  : Subscriptions.C_Subscription := This.Subscription;
+      Sub  : Subscriptions.Impl.C_Subscription := This.Subscription;
    begin
-      if Subscriptions.Take_Raw (Sub,
-                                 Msg.To_Ptr,
-                                 Info)
+      if Subscriptions.Impl.Take_Raw (Sub,
+                                      Msg.To_Ptr,
+                                      Info)
       then
          This.Current_Executor.Call
            (Callbacks.Subscription_Callback'(Node          => This.Node,
@@ -150,7 +150,7 @@ package body RCL.Impl.Dispatchers is
 
    procedure Finalize (This : in out Subscription_Dispatcher) is
    begin
-      Subscriptions.Finalize (This.Subscription, This.C_Node);
+      Subscriptions.Impl.Finalize (This.Subscription, This.C_Node);
    end Finalize;
 
    --------------

@@ -20,11 +20,11 @@ package rcutils_types_string_array_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
    type rcutils_string_array_t is record
-      size : aliased stddef_h.size_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_array.h:32
-      data : System.Address;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_array.h:33
-      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_array.h:34
+      size : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/rcutils/types/string_array.h:32
+      data : System.Address;  -- /opt/ros/bouncy/include/rcutils/types/string_array.h:33
+      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/bouncy/include/rcutils/types/string_array.h:34
    end record;
-   pragma Convention (C_Pass_By_Copy, rcutils_string_array_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_array.h:30
+   pragma Convention (C_Pass_By_Copy, rcutils_string_array_t);  -- /opt/ros/bouncy/include/rcutils/types/string_array.h:30
 
   --/ Return an empty string array struct.
   --*
@@ -45,7 +45,7 @@ package rcutils_types_string_array_h is
   -- * ```
   --  
 
-   function rcutils_get_zero_initialized_string_array return rcutils_string_array_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_array.h:57
+   function rcutils_get_zero_initialized_string_array return rcutils_string_array_t;  -- /opt/ros/bouncy/include/rcutils/types/string_array.h:57
    pragma Import (C, rcutils_get_zero_initialized_string_array, "rcutils_get_zero_initialized_string_array");
 
   --/ Initialize a string array with a given size.
@@ -81,7 +81,7 @@ package rcutils_types_string_array_h is
    function rcutils_string_array_init
      (string_array : access rcutils_string_array_t;
       size : stddef_h.size_t;
-      allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_array.h:90
+      allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/types/string_array.h:90
    pragma Import (C, rcutils_string_array_init, "rcutils_string_array_init");
 
   --/ Finalize a string array, reclaiming all resources.
@@ -98,7 +98,7 @@ package rcutils_types_string_array_h is
   -- * \return `RCUTILS_RET_ERROR` if an unknown error occurs
   --  
 
-   function rcutils_string_array_fini (string_array : access rcutils_string_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_array.h:111
+   function rcutils_string_array_fini (string_array : access rcutils_string_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/types/string_array.h:111
    pragma Import (C, rcutils_string_array_fini, "rcutils_string_array_fini");
 
 end rcutils_types_string_array_h;

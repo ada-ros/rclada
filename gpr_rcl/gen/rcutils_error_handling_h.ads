@@ -31,12 +31,12 @@ package rcutils_error_handling_h is
   -- Note: migrated from rmw/error_handling.h in 2017-04
   --/ Struct which encapsulates the error state set by RCUTILS_SET_ERROR_MSG().
    type rcutils_error_state_t is record
-      message : Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/error_handling.h:40
-      file : Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/error_handling.h:41
-      line_number : aliased stddef_h.size_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/error_handling.h:42
-      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/error_handling.h:43
+      message : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/error_handling.h:40
+      file : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/error_handling.h:41
+      line_number : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/rcutils/error_handling.h:42
+      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/bouncy/include/rcutils/error_handling.h:43
    end record;
-   pragma Convention (C_Pass_By_Copy, rcutils_error_state_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/error_handling.h:38
+   pragma Convention (C_Pass_By_Copy, rcutils_error_state_t);  -- /opt/ros/bouncy/include/rcutils/error_handling.h:38
 
   -- TODO(dhood): use __STDC_LIB_EXT1__ if/when supported in other implementations.
   -- Limit the buffer size in the `fwrite` call to give an upper bound to buffer overrun in the case
@@ -55,11 +55,11 @@ package rcutils_error_handling_h is
   -- * \returns RCUTILS_RET_ERROR if an unknown error occurs.
   --  
 
-   function rcutils_error_state_copy (src : access constant rcutils_error_state_t; dst : access rcutils_error_state_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/error_handling.h:71
+   function rcutils_error_state_copy (src : access constant rcutils_error_state_t; dst : access rcutils_error_state_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/error_handling.h:71
    pragma Import (C, rcutils_error_state_copy, "rcutils_error_state_copy");
 
   --/ Finalizes a copied error state.
-   procedure rcutils_error_state_fini (error_state : access rcutils_error_state_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/error_handling.h:76
+   procedure rcutils_error_state_fini (error_state : access rcutils_error_state_t);  -- /opt/ros/bouncy/include/rcutils/error_handling.h:76
    pragma Import (C, rcutils_error_state_fini, "rcutils_error_state_fini");
 
   --/ Set the error message, as well as the file and line on which it occurred.
@@ -89,7 +89,7 @@ package rcutils_error_handling_h is
      (error_string : Interfaces.C.Strings.chars_ptr;
       file : Interfaces.C.Strings.chars_ptr;
       line_number : stddef_h.size_t;
-      allocator : rcutils_allocator_h.rcutils_allocator_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/error_handling.h:102
+      allocator : rcutils_allocator_h.rcutils_allocator_t);  -- /opt/ros/bouncy/include/rcutils/error_handling.h:102
    pragma Import (C, rcutils_set_error_state, "rcutils_set_error_state");
 
   --/ Check an argument for a null value.
@@ -136,7 +136,7 @@ package rcutils_error_handling_h is
   --  
 
   --/ Return `true` if the error is set, otherwise `false`.
-   function rcutils_error_is_set return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/error_handling.h:172
+   function rcutils_error_is_set return Extensions.bool;  -- /opt/ros/bouncy/include/rcutils/error_handling.h:172
    pragma Import (C, rcutils_error_is_set, "rcutils_error_is_set");
 
   --/ Return an rcutils_error_state_t which was set with rcutils_set_error_state().
@@ -149,7 +149,7 @@ package rcutils_error_handling_h is
   -- * \return A pointer to the current error state struct.
   --  
 
-   function rcutils_get_error_state return access constant rcutils_error_state_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/error_handling.h:185
+   function rcutils_get_error_state return access constant rcutils_error_state_t;  -- /opt/ros/bouncy/include/rcutils/error_handling.h:185
    pragma Import (C, rcutils_get_error_state, "rcutils_get_error_state");
 
   --/ Return the error message followed by `, at <file>:<line>`, or `NULL`.
@@ -160,7 +160,7 @@ package rcutils_error_handling_h is
   -- * \return The current formatted error string, or NULL if not set.
   --  
 
-   function rcutils_get_error_string return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/error_handling.h:196
+   function rcutils_get_error_string return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/error_handling.h:196
    pragma Import (C, rcutils_get_error_string, "rcutils_get_error_string");
 
   --/ Return the error message followed by `, at <file>:<line>` if set, else "error not set".
@@ -173,11 +173,11 @@ package rcutils_error_handling_h is
   -- * \return The current error string, with file and line number, or "error not set" if not set.
   --  
 
-   function rcutils_get_error_string_safe return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/error_handling.h:209
+   function rcutils_get_error_string_safe return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/error_handling.h:209
    pragma Import (C, rcutils_get_error_string_safe, "rcutils_get_error_string_safe");
 
   --/ Reset the error state by clearing any previously set error state.
-   procedure rcutils_reset_error;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/error_handling.h:214
+   procedure rcutils_reset_error;  -- /opt/ros/bouncy/include/rcutils/error_handling.h:214
    pragma Import (C, rcutils_reset_error, "rcutils_reset_error");
 
 end rcutils_error_handling_h;

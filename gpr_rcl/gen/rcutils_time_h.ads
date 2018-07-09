@@ -38,10 +38,10 @@ package rcutils_time_h is
   --/ Convenience macro to convert nanoseconds to milliseconds.
   --/ Convenience macro to convert nanoseconds to microseconds.
   --/ A single point in time, measured in nanoseconds since the Unix epoch.
-   subtype rcutils_time_point_value_t is x86_64_linux_gnu_bits_stdint_intn_h.int64_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/time.h:44
+   subtype rcutils_time_point_value_t is x86_64_linux_gnu_bits_stdint_intn_h.int64_t;  -- /opt/ros/bouncy/include/rcutils/time.h:44
 
   --/ A duration of time, measured in nanoseconds.
-   subtype rcutils_duration_value_t is x86_64_linux_gnu_bits_stdint_intn_h.int64_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/time.h:46
+   subtype rcutils_duration_value_t is x86_64_linux_gnu_bits_stdint_intn_h.int64_t;  -- /opt/ros/bouncy/include/rcutils/time.h:46
 
   --*
   -- * This function returns the time from a system clock.
@@ -66,7 +66,7 @@ package rcutils_time_h is
   -- * \return `RCUTILS_RET_ERROR` if an unspecified error occur.
   --  
 
-   function rcutils_system_time_now (now : access rcutils_time_point_value_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/time.h:73
+   function rcutils_system_time_now (now : access rcutils_time_point_value_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/time.h:73
    pragma Import (C, rcutils_system_time_now, "rcutils_system_time_now");
 
   --/ Retrieve the current time as a rcutils_time_point_value_t object.
@@ -93,7 +93,7 @@ package rcutils_time_h is
   -- * \return `RCUTILS_RET_ERROR` if an unspecified error occur.
   --  
 
-   function rcutils_steady_time_now (now : access rcutils_time_point_value_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/time.h:101
+   function rcutils_steady_time_now (now : access rcutils_time_point_value_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/time.h:101
    pragma Import (C, rcutils_steady_time_now, "rcutils_steady_time_now");
 
   --/ Return a time point as nanoseconds in a string.
@@ -131,7 +131,7 @@ package rcutils_time_h is
    function rcutils_time_point_value_as_nanoseconds_string
      (time_point : access rcutils_time_point_value_t;
       str : Interfaces.C.Strings.chars_ptr;
-      str_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/time.h:137
+      str_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/time.h:137
    pragma Import (C, rcutils_time_point_value_as_nanoseconds_string, "rcutils_time_point_value_as_nanoseconds_string");
 
   --/ Return a time point as floating point seconds in a string.
@@ -169,7 +169,7 @@ package rcutils_time_h is
    function rcutils_time_point_value_as_seconds_string
      (time_point : access rcutils_time_point_value_t;
       str : Interfaces.C.Strings.chars_ptr;
-      str_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/time.h:176
+      str_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/time.h:176
    pragma Import (C, rcutils_time_point_value_as_seconds_string, "rcutils_time_point_value_as_seconds_string");
 
 end rcutils_time_h;

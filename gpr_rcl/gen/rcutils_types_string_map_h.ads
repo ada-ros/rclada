@@ -24,9 +24,9 @@ package rcutils_types_string_map_h is
    --  skipped empty struct rcutils_string_map_impl_t
 
    type rcutils_string_map_t is record
-      impl : System.Address;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:34
+      impl : System.Address;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:34
    end record;
-   pragma Convention (C_Pass_By_Copy, rcutils_string_map_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:32
+   pragma Convention (C_Pass_By_Copy, rcutils_string_map_t);  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:32
 
   --/ Return an empty string map struct.
   -- * This function returns an empty and zero initialized string map struct.
@@ -44,7 +44,7 @@ package rcutils_types_string_map_h is
   -- * ```
   -- *  
 
-   function rcutils_get_zero_initialized_string_map return rcutils_string_map_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:56
+   function rcutils_get_zero_initialized_string_map return rcutils_string_map_t;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:56
    pragma Import (C, rcutils_get_zero_initialized_string_map, "rcutils_get_zero_initialized_string_map");
 
   --/ Initialize a rcutils_string_map_t, allocating space for given capacity.
@@ -86,7 +86,7 @@ package rcutils_types_string_map_h is
    function rcutils_string_map_init
      (string_map : access rcutils_string_map_t;
       initial_capacity : stddef_h.size_t;
-      allocator : rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:96
+      allocator : rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:96
    pragma Import (C, rcutils_string_map_init, "rcutils_string_map_init");
 
   --/ Finalize the previously initialized string map struct.
@@ -100,7 +100,7 @@ package rcutils_types_string_map_h is
   -- * \return `RCUTILS_RET_ERROR` if an unknown error occurs
   --  
 
-   function rcutils_string_map_fini (string_map : access rcutils_string_map_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:114
+   function rcutils_string_map_fini (string_map : access rcutils_string_map_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:114
    pragma Import (C, rcutils_string_map_fini, "rcutils_string_map_fini");
 
   --/ Get the current capacity of the string map.
@@ -120,7 +120,7 @@ package rcutils_types_string_map_h is
   -- * \return `RCUTILS_RET_ERROR` if an unknown error occurs
   --  
 
-   function rcutils_string_map_get_capacity (string_map : access constant rcutils_string_map_t; capacity : access stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:135
+   function rcutils_string_map_get_capacity (string_map : access constant rcutils_string_map_t; capacity : access stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:135
    pragma Import (C, rcutils_string_map_get_capacity, "rcutils_string_map_get_capacity");
 
   --/ Get the current size of the string map.
@@ -138,7 +138,7 @@ package rcutils_types_string_map_h is
   -- * \return `RCUTILS_RET_ERROR` if an unknown error occurs
   --  
 
-   function rcutils_string_map_get_size (string_map : access constant rcutils_string_map_t; size : access stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:154
+   function rcutils_string_map_get_size (string_map : access constant rcutils_string_map_t; size : access stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:154
    pragma Import (C, rcutils_string_map_get_size, "rcutils_string_map_get_size");
 
   --/ Reserve a given amount of capacity in the map.
@@ -165,7 +165,7 @@ package rcutils_types_string_map_h is
   -- * \return `RCUTILS_RET_ERROR` if an unknown error occurs
   --  
 
-   function rcutils_string_map_reserve (string_map : access rcutils_string_map_t; capacity : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:182
+   function rcutils_string_map_reserve (string_map : access rcutils_string_map_t; capacity : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:182
    pragma Import (C, rcutils_string_map_reserve, "rcutils_string_map_reserve");
 
   --/ Remove all key value pairs from the map.
@@ -181,7 +181,7 @@ package rcutils_types_string_map_h is
   -- * \return `RCUTILS_RET_ERROR` if an unknown error occurs
   --  
 
-   function rcutils_string_map_clear (string_map : access rcutils_string_map_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:199
+   function rcutils_string_map_clear (string_map : access rcutils_string_map_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:199
    pragma Import (C, rcutils_string_map_clear, "rcutils_string_map_clear");
 
   --/ Set a key value pair in the map, increasing capacity if necessary.
@@ -204,7 +204,7 @@ package rcutils_types_string_map_h is
    function rcutils_string_map_set
      (string_map : access rcutils_string_map_t;
       key : Interfaces.C.Strings.chars_ptr;
-      value : Interfaces.C.Strings.chars_ptr) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:220
+      value : Interfaces.C.Strings.chars_ptr) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:220
    pragma Import (C, rcutils_string_map_set, "rcutils_string_map_set");
 
   --/ Set a key value pair in the map but only if the map has enough capacity.
@@ -239,7 +239,7 @@ package rcutils_types_string_map_h is
    function rcutils_string_map_set_no_resize
      (string_map : access rcutils_string_map_t;
       key : Interfaces.C.Strings.chars_ptr;
-      value : Interfaces.C.Strings.chars_ptr) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:253
+      value : Interfaces.C.Strings.chars_ptr) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:253
    pragma Import (C, rcutils_string_map_set_no_resize, "rcutils_string_map_set_no_resize");
 
   --/ Unset a key value pair in the map.
@@ -256,7 +256,7 @@ package rcutils_types_string_map_h is
   -- * \return `RCUTILS_RET_ERROR` if an unknown error occurs
   --  
 
-   function rcutils_string_map_unset (string_map : access rcutils_string_map_t; key : Interfaces.C.Strings.chars_ptr) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:274
+   function rcutils_string_map_unset (string_map : access rcutils_string_map_t; key : Interfaces.C.Strings.chars_ptr) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:274
    pragma Import (C, rcutils_string_map_unset, "rcutils_string_map_unset");
 
   --/ Get whether or not a key exists.
@@ -275,7 +275,7 @@ package rcutils_types_string_map_h is
   -- * \return `false` if the string map is invalid
   --  
 
-   function rcutils_string_map_key_exists (string_map : access constant rcutils_string_map_t; key : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:293
+   function rcutils_string_map_key_exists (string_map : access constant rcutils_string_map_t; key : Interfaces.C.Strings.chars_ptr) return Extensions.bool;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:293
    pragma Import (C, rcutils_string_map_key_exists, "rcutils_string_map_key_exists");
 
   --/ Get whether or not a key of known length exists.
@@ -295,7 +295,7 @@ package rcutils_types_string_map_h is
    function rcutils_string_map_key_existsn
      (string_map : access constant rcutils_string_map_t;
       key : Interfaces.C.Strings.chars_ptr;
-      key_length : stddef_h.size_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:310
+      key_length : stddef_h.size_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:310
    pragma Import (C, rcutils_string_map_key_existsn, "rcutils_string_map_key_existsn");
 
   --/ Get value given a key.
@@ -322,7 +322,7 @@ package rcutils_types_string_map_h is
   -- * \return `NULL` if an unknown error occurs
   --  
 
-   function rcutils_string_map_get (string_map : access constant rcutils_string_map_t; key : Interfaces.C.Strings.chars_ptr) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:340
+   function rcutils_string_map_get (string_map : access constant rcutils_string_map_t; key : Interfaces.C.Strings.chars_ptr) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:340
    pragma Import (C, rcutils_string_map_get, "rcutils_string_map_get");
 
   --/ Get value given a key and key length.
@@ -343,7 +343,7 @@ package rcutils_types_string_map_h is
    function rcutils_string_map_getn
      (string_map : access constant rcutils_string_map_t;
       key : Interfaces.C.Strings.chars_ptr;
-      key_length : stddef_h.size_t) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:358
+      key_length : stddef_h.size_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:358
    pragma Import (C, rcutils_string_map_getn, "rcutils_string_map_getn");
 
   --/ Get the next key in the map, unless NULL is given, then get the first key.
@@ -388,7 +388,7 @@ package rcutils_types_string_map_h is
   -- * \return `NULL` if an unknown error occurs
   --  
 
-   function rcutils_string_map_get_next_key (string_map : access constant rcutils_string_map_t; key : Interfaces.C.Strings.chars_ptr) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:406
+   function rcutils_string_map_get_next_key (string_map : access constant rcutils_string_map_t; key : Interfaces.C.Strings.chars_ptr) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:406
    pragma Import (C, rcutils_string_map_get_next_key, "rcutils_string_map_get_next_key");
 
   --/ Copy all the key value pairs from one map into another, overwritting and resizing if needed.
@@ -410,7 +410,7 @@ package rcutils_types_string_map_h is
   -- * \return `RCUTILS_RET_ERROR` if an unknown error occurs
   --  
 
-   function rcutils_string_map_copy (src_string_map : access constant rcutils_string_map_t; dst_string_map : access rcutils_string_map_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/string_map.h:431
+   function rcutils_string_map_copy (src_string_map : access constant rcutils_string_map_t; dst_string_map : access rcutils_string_map_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/bouncy/include/rcutils/types/string_map.h:431
    pragma Import (C, rcutils_string_map_copy, "rcutils_string_map_copy");
 
 end rcutils_types_string_map_h;

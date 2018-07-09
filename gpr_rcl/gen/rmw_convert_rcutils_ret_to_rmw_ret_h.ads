@@ -17,7 +17,7 @@ package rmw_convert_rcutils_ret_to_rmw_ret_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   function rmw_convert_rcutils_ret_to_rmw_ret (rcutils_ret : rcutils_types_rcutils_ret_h.rcutils_ret_t) return rmw_types_h.rmw_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/convert_rcutils_ret_to_rmw_ret.h:31
+   function rmw_convert_rcutils_ret_to_rmw_ret (rcutils_ret : rcutils_types_rcutils_ret_h.rcutils_ret_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/convert_rcutils_ret_to_rmw_ret.h:31
    pragma Import (C, rmw_convert_rcutils_ret_to_rmw_ret, "rmw_convert_rcutils_ret_to_rmw_ret");
 
   -- extern "C"

@@ -28,17 +28,17 @@ package rcl_publisher_h is
 
   --/ Structure which encapsulates a ROS Publisher.
    type rcl_publisher_t is record
-      impl : System.Address;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:35
+      impl : System.Address;  -- /opt/ros/bouncy/include/rcl/publisher.h:35
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_publisher_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:33
+   pragma Convention (C_Pass_By_Copy, rcl_publisher_t);  -- /opt/ros/bouncy/include/rcl/publisher.h:33
 
   --/ Options available for a rcl publisher.
   --/ Middleware quality of service settings for the publisher.
    type rcl_publisher_options_t is record
-      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:42
-      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:45
+      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:42
+      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:45
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_publisher_options_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:39
+   pragma Convention (C_Pass_By_Copy, rcl_publisher_options_t);  -- /opt/ros/bouncy/include/rcl/publisher.h:39
 
   --/ Custom allocator for the publisher, used for incidental allocations.
   --* For default behavior (malloc/free), use: rcl_get_default_allocator()  
@@ -48,7 +48,7 @@ package rcl_publisher_h is
   -- * rcl_publisher_init().
   --  
 
-   function rcl_get_zero_initialized_publisher return rcl_publisher_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:56
+   function rcl_get_zero_initialized_publisher return rcl_publisher_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:56
    pragma Import (C, rcl_get_zero_initialized_publisher, "rcl_get_zero_initialized_publisher");
 
   --/ Initialize a rcl publisher.
@@ -143,7 +143,7 @@ package rcl_publisher_h is
       node : access constant rcl_node_h.rcl_node_t;
       type_support : access constant rosidl_generator_c_message_type_support_struct_h.rosidl_message_type_support_t;
       topic_name : Interfaces.C.Strings.chars_ptr;
-      options : access constant rcl_publisher_options_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:147
+      options : access constant rcl_publisher_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:147
    pragma Import (C, rcl_publisher_init, "rcl_publisher_init");
 
   --/ Finalize a rcl_publisher_t.
@@ -170,7 +170,7 @@ package rcl_publisher_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_publisher_fini (publisher : access rcl_publisher_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:180
+   function rcl_publisher_fini (publisher : access rcl_publisher_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:180
    pragma Import (C, rcl_publisher_fini, "rcl_publisher_fini");
 
   --/ Return the default publisher options in a rcl_publisher_options_t.
@@ -181,7 +181,7 @@ package rcl_publisher_h is
   -- * - allocator = rcl_get_default_allocator()
   --  
 
-   function rcl_publisher_get_default_options return rcl_publisher_options_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:192
+   function rcl_publisher_get_default_options return rcl_publisher_options_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:192
    pragma Import (C, rcl_publisher_get_default_options, "rcl_publisher_get_default_options");
 
   --/ Publish a ROS message on a topic using a publisher.
@@ -241,7 +241,7 @@ package rcl_publisher_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_publish (publisher : access constant rcl_publisher_t; ros_message : System.Address) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:253
+   function rcl_publish (publisher : access constant rcl_publisher_t; ros_message : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:253
    pragma Import (C, rcl_publish, "rcl_publish");
 
   --/ Publish a serialized message on a topic using a publisher.
@@ -275,7 +275,7 @@ package rcl_publisher_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_publish_serialized_message (publisher : access constant rcl_publisher_t; serialized_message : access constant rcl_types_h.rcl_serialized_message_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:288
+   function rcl_publish_serialized_message (publisher : access constant rcl_publisher_t; serialized_message : access constant rcl_types_h.rcl_serialized_message_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:288
    pragma Import (C, rcl_publish_serialized_message, "rcl_publish_serialized_message");
 
   --/ Get the topic name for the publisher.
@@ -301,7 +301,7 @@ package rcl_publisher_h is
   -- * \return name string if successful, otherwise `NULL`
   --  
 
-   function rcl_publisher_get_topic_name (publisher : access constant rcl_publisher_t) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:316
+   function rcl_publisher_get_topic_name (publisher : access constant rcl_publisher_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcl/publisher.h:316
    pragma Import (C, rcl_publisher_get_topic_name, "rcl_publisher_get_topic_name");
 
   --/ Return the rcl publisher options.
@@ -327,7 +327,7 @@ package rcl_publisher_h is
   -- * \return options struct if successful, otherwise `NULL`
   --  
 
-   function rcl_publisher_get_options (publisher : access constant rcl_publisher_t) return access constant rcl_publisher_options_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:343
+   function rcl_publisher_get_options (publisher : access constant rcl_publisher_t) return access constant rcl_publisher_options_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:343
    pragma Import (C, rcl_publisher_get_options, "rcl_publisher_get_options");
 
   --/ Return the rmw publisher handle.
@@ -357,7 +357,7 @@ package rcl_publisher_h is
   -- * \return rmw publisher handle if successful, otherwise `NULL`
   --  
 
-   function rcl_publisher_get_rmw_handle (publisher : access constant rcl_publisher_t) return access rmw_types_h.rmw_publisher_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:374
+   function rcl_publisher_get_rmw_handle (publisher : access constant rcl_publisher_t) return access rmw_types_h.rmw_publisher_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:374
    pragma Import (C, rcl_publisher_get_rmw_handle, "rcl_publisher_get_rmw_handle");
 
   --/ Check that the publisher is valid
@@ -381,7 +381,7 @@ package rcl_publisher_h is
   -- * \return `true` if `publisher` is valid, otherwise `false`
   --  
 
-   function rcl_publisher_is_valid (publisher : access constant rcl_publisher_t; error_msg_allocator : access rcl_allocator_h.rcl_allocator_t) return Extensions.bool;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/publisher.h:398
+   function rcl_publisher_is_valid (publisher : access constant rcl_publisher_t; error_msg_allocator : access rcl_allocator_h.rcl_allocator_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rcl/publisher.h:398
    pragma Import (C, rcl_publisher_is_valid, "rcl_publisher_is_valid");
 
 end rcl_publisher_h;

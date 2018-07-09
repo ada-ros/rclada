@@ -48,7 +48,7 @@ package rcutils_snprintf_h is
      (buffer : Interfaces.C.Strings.chars_ptr;
       buffer_size : stddef_h.size_t;
       format : Interfaces.C.Strings.chars_ptr  -- , ...
-      ) return int;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/snprintf.h:57
+      ) return int;  -- /opt/ros/bouncy/include/rcutils/snprintf.h:57
    pragma Import (C, rcutils_snprintf, "rcutils_snprintf");
 
   --/ Format a string with va_list for arguments, see rcutils_snprintf().
@@ -56,7 +56,7 @@ package rcutils_snprintf_h is
      (buffer : Interfaces.C.Strings.chars_ptr;
       buffer_size : stddef_h.size_t;
       format : Interfaces.C.Strings.chars_ptr;
-      args : access System.Address) return int;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/snprintf.h:63
+      args : access System.Address) return int;  -- /opt/ros/bouncy/include/rcutils/snprintf.h:63
    pragma Import (C, rcutils_vsnprintf, "rcutils_vsnprintf");
 
 end rcutils_snprintf_h;

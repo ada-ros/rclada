@@ -6,6 +6,7 @@ with RCL.Init;
 with RCL.Logging;
 with RCL.Publishers.Impl;
 with RCL.Services.Impl;
+with RCL.Subscriptions.Impl;
 with RCL.Utils.Names_And_Types;
 with RCL.Utils.String_Arrays;
 
@@ -422,11 +423,11 @@ package body RCL.Nodes is
                         Topic    :        String;
                         Callback :        Subscriptions.Callback)
    is
-      Sub : constant Subscriptions.Subscription :=
-              Subscriptions.Init (This, Msg_Type, Topic);
+      Sub : constant Subscriptions.Impl.C_Subscription :=
+              Subscriptions.Impl.Init (This, Msg_Type, Topic);
    begin
       This.Dispatchers.Insert
-        (Subscription_Dispatcher'(This.Self, Sub.To_C, Callback, Msg_Type));
+        (Subscription_Dispatcher'(This.Self, Sub, Callback, Msg_Type));
    end Subscribe;
 
    ---------------

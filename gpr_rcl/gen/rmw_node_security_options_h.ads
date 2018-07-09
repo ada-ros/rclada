@@ -16,10 +16,10 @@ package rmw_node_security_options_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   function rmw_get_zero_initialized_node_security_options return rmw_types_h.rmw_node_security_options_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/node_security_options.h:27
+   function rmw_get_zero_initialized_node_security_options return rmw_types_h.rmw_node_security_options_t;  -- /opt/ros/bouncy/include/rmw/node_security_options.h:27
    pragma Import (C, rmw_get_zero_initialized_node_security_options, "rmw_get_zero_initialized_node_security_options");
 
-   function rmw_get_default_node_security_options return rmw_types_h.rmw_node_security_options_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/node_security_options.h:31
+   function rmw_get_default_node_security_options return rmw_types_h.rmw_node_security_options_t;  -- /opt/ros/bouncy/include/rmw/node_security_options.h:31
    pragma Import (C, rmw_get_default_node_security_options, "rmw_get_default_node_security_options");
 
 end rmw_node_security_options_h;

@@ -5,25 +5,25 @@ with Interfaces.C; use Interfaces.C;
 
 package rcutils_types_rcutils_ret_h is
 
-   RCUTILS_RET_OK : constant := 0;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/rcutils_ret.h:24
-   RCUTILS_RET_WARN : constant := 1;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/rcutils_ret.h:25
-   RCUTILS_RET_ERROR : constant := 2;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/rcutils_ret.h:26
+   RCUTILS_RET_OK : constant := 0;  --  /opt/ros/bouncy/include/rcutils/types/rcutils_ret.h:24
+   RCUTILS_RET_WARN : constant := 1;  --  /opt/ros/bouncy/include/rcutils/types/rcutils_ret.h:25
+   RCUTILS_RET_ERROR : constant := 2;  --  /opt/ros/bouncy/include/rcutils/types/rcutils_ret.h:26
 
-   RCUTILS_RET_BAD_ALLOC : constant := 10;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/rcutils_ret.h:29
+   RCUTILS_RET_BAD_ALLOC : constant := 10;  --  /opt/ros/bouncy/include/rcutils/types/rcutils_ret.h:29
 
-   RCUTILS_RET_INVALID_ARGUMENT : constant := 11;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/rcutils_ret.h:31
+   RCUTILS_RET_INVALID_ARGUMENT : constant := 11;  --  /opt/ros/bouncy/include/rcutils/types/rcutils_ret.h:31
 
-   RCUTILS_RET_NOT_ENOUGH_SPACE : constant := 12;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/rcutils_ret.h:33
+   RCUTILS_RET_NOT_ENOUGH_SPACE : constant := 12;  --  /opt/ros/bouncy/include/rcutils/types/rcutils_ret.h:33
 
-   RCUTILS_RET_STRING_MAP_ALREADY_INIT : constant := 30;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/rcutils_ret.h:36
+   RCUTILS_RET_STRING_MAP_ALREADY_INIT : constant := 30;  --  /opt/ros/bouncy/include/rcutils/types/rcutils_ret.h:36
 
-   RCUTILS_RET_STRING_MAP_INVALID : constant := 31;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/rcutils_ret.h:38
+   RCUTILS_RET_STRING_MAP_INVALID : constant := 31;  --  /opt/ros/bouncy/include/rcutils/types/rcutils_ret.h:38
 
-   RCUTILS_RET_STRING_KEY_NOT_FOUND : constant := 32;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/rcutils_ret.h:40
+   RCUTILS_RET_STRING_KEY_NOT_FOUND : constant := 32;  --  /opt/ros/bouncy/include/rcutils/types/rcutils_ret.h:40
 
-   RCUTILS_RET_LOGGING_SEVERITY_MAP_INVALID : constant := 40;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/rcutils_ret.h:43
+   RCUTILS_RET_LOGGING_SEVERITY_MAP_INVALID : constant := 40;  --  /opt/ros/bouncy/include/rcutils/types/rcutils_ret.h:43
 
-   RCUTILS_RET_LOGGING_SEVERITY_STRING_INVALID : constant := 41;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/rcutils_ret.h:45
+   RCUTILS_RET_LOGGING_SEVERITY_STRING_INVALID : constant := 41;  --  /opt/ros/bouncy/include/rcutils/types/rcutils_ret.h:45
 
   -- Copyright 2017 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@ package rcutils_types_rcutils_ret_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   subtype rcutils_ret_t is int;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/types/rcutils_ret.h:23
+   subtype rcutils_ret_t is int;  -- /opt/ros/bouncy/include/rcutils/types/rcutils_ret.h:23
 
   --/ Failed to allocate memory return code.
   --/ Invalid argument return code.

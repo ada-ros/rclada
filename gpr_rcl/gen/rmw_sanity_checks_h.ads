@@ -18,7 +18,7 @@ package rmw_sanity_checks_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
   --/ Check that a rmw_node_names_t struct is zero initialized.
-   function rmw_check_zero_rmw_string_array (c_array : access rcutils_types_string_array_h.rcutils_string_array_t) return rmw_types_h.rmw_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/sanity_checks.h:33
+   function rmw_check_zero_rmw_string_array (c_array : access rcutils_types_string_array_h.rcutils_string_array_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/sanity_checks.h:33
    pragma Import (C, rmw_check_zero_rmw_string_array, "rmw_check_zero_rmw_string_array");
 
 end rmw_sanity_checks_h;

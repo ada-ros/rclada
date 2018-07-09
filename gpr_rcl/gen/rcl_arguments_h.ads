@@ -8,8 +8,8 @@ with rcl_types_h;
 
 package rcl_arguments_h is
 
-   RCL_LOG_LEVEL_ARG_RULE : aliased constant String := "__log_level:=" & ASCII.NUL;  --  /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:37
-   RCL_PARAM_FILE_ARG_RULE : aliased constant String := "__params:=" & ASCII.NUL;  --  /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:38
+   RCL_LOG_LEVEL_ARG_RULE : aliased constant String := "__log_level:=" & ASCII.NUL;  --  /opt/ros/bouncy/include/rcl/arguments.h:37
+   RCL_PARAM_FILE_ARG_RULE : aliased constant String := "__params:=" & ASCII.NUL;  --  /opt/ros/bouncy/include/rcl/arguments.h:38
 
   -- Copyright 2018 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,12 +26,12 @@ package rcl_arguments_h is
   --/ Hold output of parsing command line arguments.
   --/ Private implementation pointer.
    type rcl_arguments_t is record
-      impl : System.Address;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:34
+      impl : System.Address;  -- /opt/ros/bouncy/include/rcl/arguments.h:34
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_arguments_t);  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:31
+   pragma Convention (C_Pass_By_Copy, rcl_arguments_t);  -- /opt/ros/bouncy/include/rcl/arguments.h:31
 
   --/ Return a rcl_node_t struct with members initialized to `NULL`.
-   function rcl_get_zero_initialized_arguments return rcl_arguments_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:44
+   function rcl_get_zero_initialized_arguments return rcl_arguments_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:44
    pragma Import (C, rcl_get_zero_initialized_arguments, "rcl_get_zero_initialized_arguments");
 
   --/ Parse command line arguments into a structure usable by code.
@@ -80,7 +80,7 @@ package rcl_arguments_h is
      (argc : int;
       argv : System.Address;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      args_output : access rcl_arguments_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:90
+      args_output : access rcl_arguments_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:90
    pragma Import (C, rcl_parse_arguments, "rcl_parse_arguments");
 
   --/ Return the number of arguments that were not successfully parsed.
@@ -98,7 +98,7 @@ package rcl_arguments_h is
   -- * \return -1 if args is `NULL` or zero initialized.
   --  
 
-   function rcl_arguments_get_count_unparsed (args : access constant rcl_arguments_t) return int;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:113
+   function rcl_arguments_get_count_unparsed (args : access constant rcl_arguments_t) return int;  -- /opt/ros/bouncy/include/rcl/arguments.h:113
    pragma Import (C, rcl_arguments_get_count_unparsed, "rcl_arguments_get_count_unparsed");
 
   --/ Return a list of indexes that weren't successfully parsed.
@@ -130,7 +130,7 @@ package rcl_arguments_h is
    function rcl_arguments_get_unparsed
      (args : access constant rcl_arguments_t;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      output_unparsed_indices : System.Address) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:144
+      output_unparsed_indices : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:144
    pragma Import (C, rcl_arguments_get_unparsed, "rcl_arguments_get_unparsed");
 
   --/ Return the number of parameter yaml files given in the arguments.
@@ -148,7 +148,7 @@ package rcl_arguments_h is
   -- * \return -1 if args is `NULL` or zero initialized.
   --  
 
-   function rcl_arguments_get_param_files_count (args : access constant rcl_arguments_t) return int;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:166
+   function rcl_arguments_get_param_files_count (args : access constant rcl_arguments_t) return int;  -- /opt/ros/bouncy/include/rcl/arguments.h:166
    pragma Import (C, rcl_arguments_get_param_files_count, "rcl_arguments_get_param_files_count");
 
   --/ Return a list of yaml parameter file paths specified on the command line.
@@ -175,7 +175,7 @@ package rcl_arguments_h is
    function rcl_arguments_get_param_files
      (arguments : access constant rcl_arguments_t;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      parameter_files : System.Address) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:193
+      parameter_files : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:193
    pragma Import (C, rcl_arguments_get_param_files, "rcl_arguments_get_param_files");
 
   --/ Return a list of arguments with ROS-specific arguments removed.
@@ -211,7 +211,7 @@ package rcl_arguments_h is
       args : access constant rcl_arguments_t;
       allocator : rcl_allocator_h.rcl_allocator_t;
       nonros_argc : access int;
-      nonros_argv : System.Address) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:228
+      nonros_argv : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:228
    pragma Import (C, rcl_remove_ros_arguments, "rcl_remove_ros_arguments");
 
   --/ Copy one arguments structure into another.
@@ -238,7 +238,7 @@ package rcl_arguments_h is
    function rcl_arguments_copy
      (error_alloc : rcl_allocator_h.rcl_allocator_t;
       args : access constant rcl_arguments_t;
-      args_out : access rcl_arguments_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:258
+      args_out : access rcl_arguments_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:258
    pragma Import (C, rcl_arguments_copy, "rcl_arguments_copy");
 
   --/ Reclaim resources held inside rcl_arguments_t structure.
@@ -258,7 +258,7 @@ package rcl_arguments_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_arguments_fini (args : access rcl_arguments_t) return rcl_types_h.rcl_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:282
+   function rcl_arguments_fini (args : access rcl_arguments_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:282
    pragma Import (C, rcl_arguments_fini, "rcl_arguments_fini");
 
   --/ Get a global instance of command line arguments.
@@ -281,7 +281,7 @@ package rcl_arguments_h is
   -- * \return a global instance of parsed command line arguments.
   --  
 
-   function rcl_get_global_arguments return access rcl_arguments_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcl/include/rcl/arguments.h:307
+   function rcl_get_global_arguments return access rcl_arguments_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:307
    pragma Import (C, rcl_get_global_arguments, "rcl_get_global_arguments");
 
 end rcl_arguments_h;

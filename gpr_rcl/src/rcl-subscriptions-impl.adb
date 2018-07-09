@@ -1,14 +1,13 @@
-with Ada.Unchecked_Conversion;
-
-with C_Strings; use C_Strings;
-
 with RCL.Nodes.Impl;
 
 with Rcl_Types_H; use Rcl_Types_H;
-with Rmw_Types_H; use Rmw_Types_H;
-with Rosidl_Generator_C_Message_Type_Support_Struct_H; use Rosidl_Generator_C_Message_Type_Support_Struct_H;
 
-package body RCL.Subscriptions is
+with Rmw_Types_H; use Rmw_Types_H;
+
+with Rosidl_Generator_C_Message_Type_Support_Struct_H; 
+use  Rosidl_Generator_C_Message_Type_Support_Struct_H;
+
+package body RCL.Subscriptions.Impl is
 
    ----------
    -- Init --
@@ -16,22 +15,21 @@ package body RCL.Subscriptions is
 
    function Init (Node     : in out Nodes.Node;
                   Msg_Type :        ROSIDL.Typesupport.Message_Support;
-                  Topic    :        String) return Subscription
+                  Topic    :        String) return C_Subscription
    is
       Opts : aliased constant Rcl_Subscription_Options_T :=
                Rcl_Subscription_Get_default_Options;
 
       type Ptr is access constant Rosidl_Message_Type_Support_T;
+      
       function To_Ptr is new
         Ada.Unchecked_Conversion (ROSIDL.Typesupport.Msg_Support_Handle,
                                   Ptr);
    begin
-      return Sub : Subscription do
-         Sub.Node := Nodes.Impl.To_C (Node).Ptr;
-
+      return Sub : C_Subscription := (Impl => Rcl_Get_Zero_Initialized_Subscription) do
          Check (Rcl_Subscription_Init
-                  (Sub.Impl.C'Access,
-                   Sub.Node,
+                  (Sub.Impl'Access,
+                   Nodes.Impl.To_C (Node).Ptr,
                    To_Ptr (Msg_Type.To_C),
                    To_C (Topic).To_Ptr,
                    Opts'Access));
@@ -44,7 +42,7 @@ package body RCL.Subscriptions is
 
    procedure Finalize (This : in out C_Subscription; Node : access Rcl_Node_T) is
    begin
-      Check (Rcl_Subscription_Fini (This.C'Access, Node));
+      Check (Rcl_Subscription_Fini (This.Impl'Access, Node));
    end Finalize;
 
    --------------
@@ -57,7 +55,7 @@ package body RCL.Subscriptions is
                       return                  Boolean
    is
       Impl_Info : aliased Rmw_Message_Info_T;
-      Ret       : constant Rcl_Ret_T := Rcl_Take (This.C'Access,
+      Ret       : constant Rcl_Ret_T := Rcl_Take (This.Impl'Access,
                                                   Buffer,
                                                   Impl_Info'Access);
    begin
@@ -71,14 +69,4 @@ package body RCL.Subscriptions is
       end if;
    end Take_Raw;
 
-   --------------
-   -- Take_Raw --
-   --------------
-
-   function Take_Raw (This   : in out Subscription;
-                      Buffer :        System.Address;
-                      Info   :    out ROSIDL.Message_Info)
-                      return          Boolean is
-      (Take_Raw (This.Impl, Buffer, Info));
-
-end RCL.Subscriptions;
+end RCL.Subscriptions.Impl;

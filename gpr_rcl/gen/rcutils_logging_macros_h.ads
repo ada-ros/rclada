@@ -6,12 +6,12 @@ with Interfaces.C.Extensions;
 
 package rcutils_logging_macros_h is
 
-   RCUTILS_LOG_MIN_SEVERITY_DEBUG : constant := 0;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/logging_macros.h:33
-   RCUTILS_LOG_MIN_SEVERITY_INFO : constant := 1;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/logging_macros.h:34
-   RCUTILS_LOG_MIN_SEVERITY_WARN : constant := 2;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/logging_macros.h:35
-   RCUTILS_LOG_MIN_SEVERITY_ERROR : constant := 3;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/logging_macros.h:36
-   RCUTILS_LOG_MIN_SEVERITY_FATAL : constant := 4;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/logging_macros.h:37
-   RCUTILS_LOG_MIN_SEVERITY_NONE : constant := 5;  --  /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/logging_macros.h:38
+   RCUTILS_LOG_MIN_SEVERITY_DEBUG : constant := 0;  --  /opt/ros/bouncy/include/rcutils/logging_macros.h:33
+   RCUTILS_LOG_MIN_SEVERITY_INFO : constant := 1;  --  /opt/ros/bouncy/include/rcutils/logging_macros.h:34
+   RCUTILS_LOG_MIN_SEVERITY_WARN : constant := 2;  --  /opt/ros/bouncy/include/rcutils/logging_macros.h:35
+   RCUTILS_LOG_MIN_SEVERITY_ERROR : constant := 3;  --  /opt/ros/bouncy/include/rcutils/logging_macros.h:36
+   RCUTILS_LOG_MIN_SEVERITY_FATAL : constant := 4;  --  /opt/ros/bouncy/include/rcutils/logging_macros.h:37
+   RCUTILS_LOG_MIN_SEVERITY_NONE : constant := 5;  --  /opt/ros/bouncy/include/rcutils/logging_macros.h:38
    --  unsupported macro: RCUTILS_LOG_MIN_SEVERITY RCUTILS_LOG_MIN_SEVERITY_DEBUG
    --  unsupported macro: RCUTILS_LOG_COND_NAMED(severity,condition_before,condition_after,name,...) { RCUTILS_LOGGING_AUTOINIT static rcutils_log_location_t __rcutils_logging_location = {__func__, __FILE__, __LINE__}; if (rcutils_logging_logger_is_enabled_for(name, severity)) { condition_before rcutils_log(&__rcutils_logging_location, severity, name, __VA_ARGS__); condition_after } }
    --  unsupported macro: RCUTILS_LOG_CONDITION_ONCE_BEFORE { static int __rcutils_logging_once = 0; if (RCUTILS_UNLIKELY(0 == __rcutils_logging_once)) { __rcutils_logging_once = 1;
@@ -183,7 +183,7 @@ package rcutils_logging_macros_h is
   --  
 
    type RclLogFilter is access function return Extensions.bool;
-   pragma Convention (C, RclLogFilter);  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/logging_macros.h:129
+   pragma Convention (C, RclLogFilter);  -- /opt/ros/bouncy/include/rcutils/logging_macros.h:129
 
   --*
   -- * \def RCUTILS_LOG_CONDITION_FUNCTION_BEFORE

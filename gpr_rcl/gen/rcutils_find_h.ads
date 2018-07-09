@@ -27,7 +27,7 @@ package rcutils_find_h is
   -- * \returns `SIZE_MAX` for invalid arguments or if the delimiter is not found
   --  
 
-   function rcutils_find (str : Interfaces.C.Strings.chars_ptr; delimiter : char) return stddef_h.size_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/find.h:37
+   function rcutils_find (str : Interfaces.C.Strings.chars_ptr; delimiter : char) return stddef_h.size_t;  -- /opt/ros/bouncy/include/rcutils/find.h:37
    pragma Import (C, rcutils_find, "rcutils_find");
 
   --/ Return the first index of a character in a string of specified length.
@@ -45,7 +45,7 @@ package rcutils_find_h is
    function rcutils_findn
      (str : Interfaces.C.Strings.chars_ptr;
       delimiter : char;
-      string_length : stddef_h.size_t) return stddef_h.size_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/find.h:52
+      string_length : stddef_h.size_t) return stddef_h.size_t;  -- /opt/ros/bouncy/include/rcutils/find.h:52
    pragma Import (C, rcutils_findn, "rcutils_findn");
 
   --/ Return the last index of a character in a string.
@@ -58,7 +58,7 @@ package rcutils_find_h is
   -- * \returns `SIZE_MAX` for invalid arguments or if the delimiter is not found
   --  
 
-   function rcutils_find_last (str : Interfaces.C.Strings.chars_ptr; delimiter : char) return stddef_h.size_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/find.h:65
+   function rcutils_find_last (str : Interfaces.C.Strings.chars_ptr; delimiter : char) return stddef_h.size_t;  -- /opt/ros/bouncy/include/rcutils/find.h:65
    pragma Import (C, rcutils_find_last, "rcutils_find_last");
 
   --/ Return the last index of a character in a string of specifed length.
@@ -76,7 +76,7 @@ package rcutils_find_h is
    function rcutils_find_lastn
      (str : Interfaces.C.Strings.chars_ptr;
       delimiter : char;
-      string_length : stddef_h.size_t) return stddef_h.size_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/find.h:80
+      string_length : stddef_h.size_t) return stddef_h.size_t;  -- /opt/ros/bouncy/include/rcutils/find.h:80
    pragma Import (C, rcutils_find_lastn, "rcutils_find_lastn");
 
 end rcutils_find_h;

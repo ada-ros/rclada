@@ -51,7 +51,7 @@ package rcutils_get_env_h is
   -- *         error string on failure
   --  
 
-   function rcutils_get_env (env_name : Interfaces.C.Strings.chars_ptr; env_value : System.Address) return Interfaces.C.Strings.chars_ptr;  -- /home/jano/local/ros2/ros2_bouncy/install/rcutils/include/rcutils/get_env.h:62
+   function rcutils_get_env (env_name : Interfaces.C.Strings.chars_ptr; env_value : System.Address) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcutils/get_env.h:62
    pragma Import (C, rcutils_get_env, "rcutils_get_env");
 
 end rcutils_get_env_h;

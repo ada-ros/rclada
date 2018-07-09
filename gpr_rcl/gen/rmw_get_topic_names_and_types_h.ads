@@ -70,7 +70,7 @@ package rmw_get_topic_names_and_types_h is
      (node : access constant rmw_types_h.rmw_node_t;
       allocator : access rcutils_allocator_h.rcutils_allocator_t;
       no_demangle : Extensions.bool;
-      topic_names_and_types : access rmw_names_and_types_h.rmw_names_and_types_t) return rmw_types_h.rmw_ret_t;  -- /home/jano/local/ros2/ros2_bouncy/install/rmw/include/rmw/get_topic_names_and_types.h:77
+      topic_names_and_types : access rmw_names_and_types_h.rmw_names_and_types_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/get_topic_names_and_types.h:77
    pragma Import (C, rmw_get_topic_names_and_types, "rmw_get_topic_names_and_types");
 
 end rmw_get_topic_names_and_types_h;
