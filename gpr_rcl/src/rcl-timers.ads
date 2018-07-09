@@ -30,7 +30,6 @@ package RCL.Timers is
    
    procedure Cancel (This : in out Timer);
    --  Will internally call Node.Timer_Cancel
-   --  Useful e.g. fromo a callback that has not the node in scope
    
    procedure Change_Period (This       : in out Timer; 
                             New_Period :        Duration);   
