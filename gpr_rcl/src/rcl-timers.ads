@@ -48,11 +48,14 @@ package RCL.Timers is
                   Node    : aliased in out Nodes.Node'Class) return Timer;   
    
    procedure Finalize (This : in out Timer);
+   --  Note! This type is not controlled and this is not autocalled.
+   --  The node calls it when the timer is deleted
+   --  It's not for client use
    
    procedure Free (This : in out Timer_Id);
    
    function Init (Period    : Duration;
-                  Allocator : Allocators.Allocator) return Timer;
+                  Allocator : Allocators.Handle) return Timer;
    --  Note: the timer won't work by itself; it must be created through
    --  Node facilities
    

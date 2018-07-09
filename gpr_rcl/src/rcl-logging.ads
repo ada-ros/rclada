@@ -12,10 +12,7 @@ package RCL.Logging with Elaborate_Body is
    type Log_Location (<>) is private;
    
    No_Location : constant Log_Location;
-   
-   procedure Set_Name (Name : String);
-   --  Name used in log messages. If not overriden, command name will be used.
-   
+    
    function Location (Subprogram  : String;
                       File_Name   : String;
                       Line_Number : Natural) return Log_Location;
@@ -56,6 +53,7 @@ package RCL.Logging with Elaborate_Body is
                     Location : Log_Location := No_Location;
                     Name     : String       := "");
    
+   procedure Initialize (Name : String);
    procedure Shutdown;      
    
 private

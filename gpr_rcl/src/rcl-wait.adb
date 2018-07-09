@@ -185,7 +185,7 @@ package body RCL.Wait is
    -- Init --
    ----------
 
-   function Init (Allocator         : Allocators.Allocator;
+   function Init (Allocator         : Allocators.Handle;
                   Num_Clients       : Natural := 0;
                   Num_Services      : Natural := 0;
                   Num_Subscriptions : Natural := 0;
@@ -212,7 +212,7 @@ package body RCL.Wait is
    -- Init --
    ----------
 
-   function Init (Allocator : Allocators.Allocator;
+   function Init (Allocator : Allocators.Handle;
                   Callbacks : RCL.Dispatchers.Set) return Set is
    begin
       return S : Set := Init (Allocator         => Allocator,

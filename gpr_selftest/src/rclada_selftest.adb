@@ -6,6 +6,7 @@ with GNAT.Debug_Pools; use GNAT.Debug_Pools;
 
 with RCL.Allocators;
 with RCL.Calendar;
+with RCL.Init;
 with RCL.Logging;
 with RCL.Nodes;
 with RCL.Publishers;
@@ -22,14 +23,10 @@ procedure Rclada_Selftest is
 
    use RCL;
    use ROSIDL.Types;
-
    use all type RCL.Calendar.Time;
 
-   Clock : Calendar.Clock;
-
    Pool      : aliased Debug_Pool;
-   Allocator : aliased constant Allocators.Allocator :=
-                 Allocators.To_Allocator (Pool'Unchecked_Access);
+   Allocator : aliased Allocators.Allocator (Pool'Unchecked_Access);
 
    Use_Debug_Allocator : constant Boolean := False;
 
@@ -40,6 +37,8 @@ procedure Rclada_Selftest is
    procedure Test is
       --  Nested so the allocator can be checked for mem leaks
 
+      Clock : Calendar.Clock;
+
       Support : constant ROSIDl.Typesupport.Message_Support :=
                   ROSIDL.Typesupport.Get_Message_Support
                     ((if Argument_Count >= 1 then Argument (1) else "rosidl_generator_ada"),
@@ -49,7 +48,7 @@ procedure Rclada_Selftest is
       Node  :          Nodes.Node := Nodes.Init
         (Utils.Command_Name,
          Options => (Allocator => (if Use_Debug_Allocator
-                                   then Allocator
+                                   then Allocator'Unchecked_Access
                                    else Allocators.Global_Allocator),
                      others    => <>));
 
@@ -264,9 +263,12 @@ procedure Rclada_Selftest is
                   ROSIDL.Dynamic.Init (Service_Support.Request_Support);
 
       Start : Calendar.Time;
-   begin
-      Logging.Set_Name (Utils.Command_Name);
 
+   ----------
+   -- TEST --
+   ----------
+
+   begin
       pragma Assert (not Clock.Is_Valid, "Uninitialized clock says it's valid!");
       Clock.Init (Calendar.ROS);
       pragma Assert (Clock.Is_Valid, "Initialized clock says it's invalid!");
@@ -324,7 +326,7 @@ procedure Rclada_Selftest is
 
 begin
    if Use_Debug_Allocator then
-      Allocators.Set_Global_Allocator (Allocator);
+      Allocators.Set_Global_Allocator (Allocator'Unchecked_Access);
    end if;
 
    Test;
@@ -342,4 +344,6 @@ begin
          --        raise Constraint_Error with "There is leaked memory";
       end if;
    end if;
+
+   pragma Assert (Init.User_Count = 0, "Remaining user at test end");
 end Rclada_Selftest;

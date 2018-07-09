@@ -25,15 +25,14 @@ procedure Rclada_Test_Allocators Is
    use RCL;      
    
    Pool      : aliased Debug_Pool;
-   Allocator : aliased constant Allocators.Allocator := 
-                 Allocators.To_Allocator (Pool'Unchecked_Access);
+   Allocator : aliased Allocators.Allocator (Pool'Unchecked_Access);
 begin  
    if Argument_Count < 1 then 
       Logging.Error ("First argument must be amount of jobs per second");
       return;
    end if;
    
-   Allocators.Set_Global_Allocator (Allocator);
+   Allocators.Set_Global_Allocator (Allocator'Unchecked_Access);
    --  This shouldn't be necessary since we are explicitly passing it to
    --  both node and executor. But to err on the safe side...
    
@@ -44,7 +43,7 @@ begin
                                                    Namespace => "/",
                                                    Options   => 
                                                      (Executor  => Executor'Unchecked_Access,
-                                                      Allocator => Allocator));
+                                                      Allocator => Allocator'Unchecked_Access));
       
       Support  : constant ROSIDl.Typesupport.Message_Support :=
                    ROSIDL.Typesupport.Get_Message_Support ("std_msgs", "String");  
@@ -105,8 +104,7 @@ begin
    begin
       Node.Subscribe (Support, Topic, Process_Work'Unrestricted_Access);
       Boss.Start;
-      Executor.Spin (During    => Test_Period,
-                     Allocator => Allocator);
+      Executor.Spin (During    => Test_Period);
       
       Logging.Info ("Test period ended, will dump pool info in 3 seconds...");
       delay 3.0;      

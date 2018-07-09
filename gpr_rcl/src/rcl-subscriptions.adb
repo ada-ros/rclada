@@ -1,9 +1,7 @@
-with Ada.Exceptions;
 with Ada.Unchecked_Conversion;
 
 with C_Strings; use C_Strings;
 
-with RCL.Logging;
 with RCL.Nodes;
 
 with Rcl_Types_H; use Rcl_Types_H;
@@ -11,30 +9,6 @@ with Rmw_Types_H; use Rmw_Types_H;
 with Rosidl_Generator_C_Message_Type_Support_Struct_H; use Rosidl_Generator_C_Message_Type_Support_Struct_H;
 
 package body RCL.Subscriptions is
-
-   ------------
-   -- Detach --
-   ------------
-
-   procedure Detach (This : in out Subscription) is
-   begin
-      This.Impl.C := Rcl_Get_Zero_Initialized_Subscription;
-   end Detach;
-
-   --------------
-   -- Finalize --
-   --------------
-
-   overriding procedure Finalize (This : in out Subscription) is
-   begin
-      if To_Boolean (Rcl_Subscription_Is_Valid (This.Impl.C'Access, null)) then
-         Check (Rcl_Subscription_Fini (This.Impl.C'Access, This.Node.Impl'Access));
-      end if;
-   exception
-      when E : others =>
-         Logging.Warn ("Exception while finalizing subscription: " &
-                         Ada.Exceptions.Exception_Information (E));
-   end Finalize;
 
    ----------
    -- Init --
@@ -63,6 +37,15 @@ package body RCL.Subscriptions is
                    Opts'Access));
       end return;
    end Init;
+
+   --------------
+   -- Finalize --
+   --------------
+
+   procedure Finalize (This : in out C_Subscription; Node : in out Nodes.C_Node) is
+   begin
+      Check (Rcl_Subscription_Fini (This.C'Access, Node.Impl'Access));
+   end Finalize;
 
    --------------
    -- Take_Raw --

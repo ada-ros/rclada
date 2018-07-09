@@ -6,6 +6,8 @@ package RCL.Services.Impl is
   
    type C_Service is tagged private;
    
+   procedure Finalize (This : in out C_Service; Node : in out Nodes.C_Node);
+   
    function To_C_Service (C : Rcl_Service_T) return C_Service;
    
    function To_C (This : aliased C_Service) return access constant Rcl_Service_T; 

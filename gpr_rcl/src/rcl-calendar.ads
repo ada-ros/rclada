@@ -1,4 +1,4 @@
-with Ada.Finalization;
+with Ada.Finalization; use Ada.Finalization;
 
 with RCL.Allocators;
 
@@ -21,13 +21,13 @@ package RCL.Calendar is
                   System); -- System wall-time
    --  See http://design.ros2.org/articles/clock_and_time.html
    
-   type Clock is new Ada.Finalization.Limited_Controlled with private;   
+   type Clock is tagged limited private;   
    
    procedure Init (This  : in out Clock; 
                    Kind  : Kinds := ROS;
-                   Alloc : Allocators.Allocator := Allocators.Global_Allocator);
+                   Alloc : Allocators.Handle := Allocators.Global_Allocator);
    
-   overriding
+--     overriding
    procedure Finalize (This : in out Clock);   
    
    function Is_Valid (This : in out Clock) return Boolean;
@@ -50,11 +50,11 @@ package RCL.Calendar is
    function "+" (L : Time; R : Duration) return Time;
    function "-" (L : Time; R : Duration) return Time;
    
-private
+private 
    
    type Time is new Duration;
    
-   type Clock is new Ada.Finalization.Limited_Controlled with record
+   type Clock is new Limited_Controlled with record
       Impl   : aliased Rcl_Clock_T;
       Inited :         Boolean := False;
       Mark   :         Time;

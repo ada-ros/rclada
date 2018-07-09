@@ -38,14 +38,14 @@ package RCL.Wait is
    
    package Set_Iterators is new Ada.Iterator_Interfaces (Cursor, Has_Element);
    
-   function Init (Allocator         : Allocators.Allocator;
+   function Init (Allocator         : Allocators.Handle;
                   Num_Clients       : Natural := 0;
                   Num_Services      : Natural := 0;
                   Num_Subscriptions : Natural := 0;
                   Num_Timers        : Natural := 0) return Set;
    --  At least one of these must be nonzero
    
-   function Init (Allocator         : Allocators.Allocator;
+   function Init (Allocator         : Allocators.Handle;
                   Callbacks         : RCL.Dispatchers.Set) return Set;
    --  Initializes and fills using the given set
 

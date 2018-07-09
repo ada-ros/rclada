@@ -1,5 +1,3 @@
-with Ada.Finalization;
-
 limited with RCL.Nodes;
 
 with Rcl_Subscription_H; use Rcl_Subscription_H; 
@@ -18,7 +16,7 @@ package RCL.Subscriptions is
    --  Not really intended to be used by clients either  --
    --  See Node.Subscribe instead                        --
 
-   type Subscription (<>) is new Ada.Finalization.Limited_Controlled with private;
+   type Subscription (<>) is tagged limited private;
    type C_Subscription is tagged record
       C : aliased Rcl_Subscription_T;  
    end record;
@@ -29,10 +27,7 @@ package RCL.Subscriptions is
                   Topic    :        String) return Subscription;
    --  TODO: options
    
-   procedure Detach (This : in out Subscription);
-   --  Forget the internal C subscription, so it is not finished on this
-   --    object finalization
-   --  Somebody else should take care of freeing the C subscription!
+   procedure Finalize (This : in out C_Subscription; Node : in out Nodes.C_Node);
    
    function Take_Raw (This   : aliased in out C_Subscription;
                       Buffer :                System.Address;
@@ -48,15 +43,13 @@ package RCL.Subscriptions is
    --    how many bytes were taken
    --  TRUE if a message was available.
    
-   overriding procedure Finalize (This : in out Subscription);
-   
    function To_C (This : Subscription'Class) return C_Subscription;
    
    function To_Unique_Addr (This : C_Subscription) return System.Address;
    
 private 
    
-   type Subscription is new Ada.Finalization.Limited_Controlled with record
+   type Subscription is tagged limited record
       Impl : aliased C_subscription := (C => Rcl_Get_Zero_Initialized_Subscription);
       Node :  access Nodes.C_Node;
    end record;

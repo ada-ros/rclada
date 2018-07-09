@@ -111,38 +111,57 @@ package body RCL.Allocators is
    end Zero_Allocate;
 
 
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize (This : in out Allocator) is
+   begin
+      if This.Get_Pool /= null then
+         This.Impl := Rcl_Allocator_T'(Allocate      => Allocate'Access,
+                                       Deallocate    => Deallocate'Access,
+                                       Reallocate    => Reallocate'Access,
+                                       Zero_Allocate => Zero_Allocate'Access,
+                                       State         => To_Address (This.Pool));
+      else
+         This.Impl := Get_Default_C_Allocator;
+      end if;
+   end Initialize;
+
    ----------------------
    -- Global_Allocator --
    ----------------------
 
-   Global_Ada_Allocator : Allocator := (Pool => null);
+   Global_Ada_Instance  : aliased Allocator (Pool => null);
+   Global_Ada_Allocator : Handle := Global_Ada_Instance'Access;
 
-   function Global_Allocator return Allocator is (Global_Ada_Allocator);
+   function Global_Allocator return Handle is (Global_Ada_Allocator);
 
-   ---------------------------
-   -- Set_Default_Allocator --
-   ---------------------------
+   --------------------------
+   -- Set_Global_Allocator --
+   --------------------------
 
-   procedure Set_Global_Allocator (Alloc : Allocator) is
+   procedure Set_Global_Allocator (Alloc : Handle) is
    begin
       Global_Ada_Allocator := Alloc;
    end Set_Global_Allocator;
+
+   --------------
+   -- Set_Pool --
+   --------------
+
+   procedure Set_Pool (This : in out Allocator;
+                       Pool :        Pool_Access) is
+   begin
+      This.Deferred_Pool := Pool;
+      This.Initialize;
+   end Set_Pool;
 
    ----------
    -- To_C --
    ----------
 
-   function To_C (This : Allocator) return Rcl_Allocator_T is
-   begin
-      if This.Pool = null then
-         return Default_C_Allocator_Instance;
-      else
-         return Rcl_Allocator_T'(Allocate      => Allocate'Access,
-                                 Deallocate    => Deallocate'Access,
-                                 Reallocate    => Reallocate'Access,
-                                 Zero_Allocate => Zero_Allocate'Access,
-                                 State         => To_Address (This.Pool));
-      end if;
-   end To_C;
+   function To_C (This : aliased in out Allocator) return Allocator_Reference is
+     (Impl => This.Impl'Access);
 
 end RCL.Allocators;

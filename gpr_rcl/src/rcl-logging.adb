@@ -1,16 +1,12 @@
+with Ada.Strings.Bounded;
+
 with RCL.Utils;
 
 package body RCL.Logging is
 
-   Autoshut : Utils.Initshut (On_Initialize => null,
-                              On_Finalize   => Shutdown'Access) with Unreferenced;
+   package Names is new Ada.Strings.Bounded.Generic_Bounded_Length (255);
 
-   Global_Name : access String := new String'("");
-
-   procedure Set_Name (Name : String) is
-   begin
-      Global_Name := new String'(Name);
-   end Set_Name;
+   Global_Name : Names.Bounded_String;
 
    ---------
    -- Log --
@@ -32,7 +28,9 @@ package body RCL.Logging is
    begin
       Rcutils_Log (Cloc'Access,
                    C.Int (Severity),
-                   To_C ((if Name /= "" then Name else Global_Name.all)).To_Ptr,
+                   To_C ((if Name /= ""
+                          then Name
+                          else Names.To_String (Global_Name))).To_Ptr,
                    To_C (Message).To_Ptr);
    end Log;
 
@@ -128,9 +126,30 @@ package body RCL.Logging is
       end if;
    end Shutdown;
 
-begin
-   if not Initialized then
-      Check (Rcutils_Logging_Initialize);
-   end if;
-   Set_Name (Utils.Command_Name);
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize (Name : String) is
+   begin
+      Global_Name := Names.To_Bounded_String (Name);
+
+      if not Initialized then
+         Check (Rcutils_Logging_Initialize);
+      end if;
+   end Initialize;
+
+   ------------------
+   -- Init_Logging --
+   ------------------
+
+   procedure Init_Logging is
+   begin
+      Logging.Initialize (Utils.Command_Name);
+   end Init_Logging;
+
+   Initer : Utils.Initshut (On_Initialize => Init_Logging'Access,
+                            On_Finalize   => null) with Unreferenced;
+   --  This way we ensure that users cannot log without initialization
+
 end RCL.Logging;

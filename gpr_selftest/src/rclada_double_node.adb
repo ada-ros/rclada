@@ -88,5 +88,5 @@ procedure Rclada_Double_Node is
    end Receiver_Task;
 
 begin
-   Logging.Set_Name (Utils.Command_Name);
+   null;
 end Rclada_Double_Node;

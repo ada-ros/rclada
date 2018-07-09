@@ -30,6 +30,11 @@ package RCL.Dispatchers is
    --    structure in the node. One must directly call node functions to
    --    indicate changes or replace with an updated callback
    
+   procedure Finalize (This : in out Dispatcher) is null;
+   --  Override to free any resources remaining
+   --  The dispatcher will be deleted immediately after this call.
+   --  This is called by the node, is not Finalization in Ada sense.
+   
    function To_Handle (This : Dispatcher) return Handle is abstract;
    --  This is the pointer to the C object that is expected by the
    --    rcl_wait_add_* functions. It also serves to locate the dispatcher
@@ -71,6 +76,8 @@ package RCL.Dispatchers is
    
    procedure Dispatch (This : Client_Dispatcher);
    
+   procedure Finalize (This : in out Client_Dispatcher);
+   
    function To_Handle (This : Client_Dispatcher) return Handle;
    
    --------------
@@ -84,6 +91,8 @@ package RCL.Dispatchers is
    end record;
    
    procedure Dispatch (This : Service_Dispatcher);
+
+   procedure Finalize (This : in out Service_Dispatcher);
    
    function To_Handle (This : Service_Dispatcher) return Handle;   
    
@@ -98,6 +107,8 @@ package RCL.Dispatchers is
    end record;
    
    procedure Dispatch (This : Subscription_Dispatcher);
+
+   procedure Finalize (This : in out Subscription_Dispatcher);
    
    function To_Handle (This : Subscription_Dispatcher) return Handle;
    
@@ -113,6 +124,8 @@ package RCL.Dispatchers is
    function "=" (L, R : Timer_Dispatcher) return Boolean;
    
    procedure Dispatch (This : Timer_Dispatcher);
+   
+   procedure Finalize (This : in out Timer_Dispatcher);
    
    function To_Handle (This : Timer_Dispatcher) return Handle;
    

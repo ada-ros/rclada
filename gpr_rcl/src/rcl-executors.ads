@@ -22,10 +22,13 @@ package RCL.Executors is
    --  Executors are expected to outlive nodes (they should be library-level).
    --  Nodes self-manage their registration-unregistration
    
-   type Executor is abstract tagged limited private;   
+   type Executor is abstract tagged limited private;         
    
-   type Executor_Access is access all Executor'Class with
-     Storage_Size => 0;
+   type Handle is access all Executor'Class with Storage_Size => 0;
+   
+   procedure Set_Allocator (This      : in out Executor;
+                            Allocator :        Allocators.Handle);
+   --  Set an specific allocator
       
    procedure Call (This : in out Executor; 
                    CB   :        Impl.Callbacks.Callback'Class) is abstract;
@@ -39,8 +42,7 @@ package RCL.Executors is
    
    procedure Spin (This      : in out Executor; 
                    Once      :        Boolean       := False;
-                   During    :        ROS2_Duration := 0.1;
-                   Allocator :        Allocators.Allocator := Allocators.Global_Allocator);
+                   During    :        ROS2_Duration := 0.1);
    
    function Spin_Once (This    : in out Executor;
                        Timeout :        ROS2_Duration;
@@ -70,7 +72,8 @@ private
    
    type Executor is abstract tagged limited record
       Nodes     : Node_Set (Executor'Access);      
-      Allocator : Allocators.Allocator; --  Updated in every Spin
+      Allocator : Allocators.Handle := Allocators.Global_Allocator; 
+      --  Updated in every Spin
    end record;
    
    procedure Common_Dispatch (Node   : access Nodes.Node'Class;

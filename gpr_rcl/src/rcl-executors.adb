@@ -38,20 +38,27 @@ package body RCL.Executors is
       This.Nodes.Delete (Node'Unchecked_Access);
    end Remove;
 
+   -------------------
+   -- Set_Allocator --
+   -------------------
+
+   procedure Set_Allocator (This      : in out Executor;
+                            Allocator :        Allocators.Handle) is
+   begin
+      This.Allocator := Allocator;
+   end Set_Allocator;
+
    ----------
    -- Spin --
    ----------
 
    procedure Spin (This      : in out Executor;
                    Once      :        Boolean       := False;
-                   During    :        ROS2_Duration := 0.1;
-                   Allocator :        Allocators.Allocator := Allocators.Global_Allocator)
+                   During    :        ROS2_Duration := 0.1)
    is
       use Ada.Calendar;
       Start : constant Time := Clock;
    begin
-      This.Allocator := Allocator;
-
       loop
          if This.Spin_Once (During - (Clock - Start)) and then Once then
             exit;

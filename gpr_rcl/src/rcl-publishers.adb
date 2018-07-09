@@ -30,7 +30,7 @@ package body RCL.Publishers is
    begin
       if This.Is_Valid then
          Check (Rcl_Publisher_Fini (This.Impl'Access,
-                                    This.Node.To_C.Ptr.Impl'Access));
+                This.Node.To_C.Ptr.Impl'Access));
       end if;
    exception
       when E : others =>

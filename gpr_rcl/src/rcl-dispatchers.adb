@@ -113,6 +113,43 @@ package body RCL.Dispatchers is
                                    Timer         => This.Timer));
    end Dispatch;
 
+   --------------
+   -- Finalize --
+   --------------
+
+   procedure Finalize (This : in out Client_Dispatcher) is
+   begin
+      Clients.Impl.Finalize (This.Client, This.Node.To_C);
+   end Finalize;
+
+   --------------
+   -- Finalize --
+   --------------
+
+   procedure Finalize (This : in out Service_Dispatcher) is
+   begin
+      Services.Impl.Finalize (This.Service, This.Node.To_C);
+   end Finalize;
+
+   --------------
+   -- Finalize --
+   --------------
+
+   procedure Finalize (This : in out Subscription_Dispatcher) is
+   begin
+      Subscriptions.Finalize (This.Subscription, This.Node.To_C);
+   end Finalize;
+
+   --------------
+   -- Finalize --
+   --------------
+
+   procedure Finalize (This : in out Timer_Dispatcher) is
+      Timer : Timers.Timer := Timers.Bind (This.Timer, This.Node.all);
+   begin
+      Timer.Finalize;
+   end Finalize;
+
    ----------------
    -- Force_Addr --
    ----------------

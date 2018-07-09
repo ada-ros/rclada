@@ -2,6 +2,7 @@ with Ada.Calendar;
 with Ada.Exceptions;
 
 with RCL.Clients.Impl;
+with RCL.Init;
 with RCL.Logging;
 with RCL.Publishers.Impl;
 with RCL.Services.Impl;
@@ -25,11 +26,7 @@ package body RCL.Nodes is
 
    procedure Base_Init (This : in out Node'Class) is
    begin
-      if This.Options.Executor /= null then
-         This.Options.Executor.Add (This);
-      else
-         Default_Executor.Add (This);
-      end if;
+      This.Current_Executor.Add (This);
    end Base_Init;
 
    -------------------------
@@ -217,11 +214,14 @@ package body RCL.Nodes is
    procedure Init (This      : in out Node;
                    Name      : String;
                    Namespace : String  := "/";
-                   Options   : Node_Options := Default_Options) is
+                   Options   : Node_Options := Default_Options)
+   is
    begin
+      RCL.Init.Initialize (Options.Allocator, RCL.Init.Dont_Care);
+
       This.Options     := Options;
       This.C_Options   := To_C (Options);
-      This.C_Allocator := Options.Allocator.To_C;
+      This.Allocator   := Options.Allocator;
 
       Check (Rcl_Node_Init
              (This.Impl.Impl'Access,
@@ -238,15 +238,13 @@ package body RCL.Nodes is
 
    overriding procedure Finalize (This : in out Node) is
    begin
-      --  TODO: fini clients, services, etc
+      This.Dispatchers.Finalize;
 
       if To_Boolean (Rcl_Node_Is_Valid (This.Impl.Impl'Access, null)) then
-         if This.Options.Executor /= null then
-            This.Options.Executor.Remove (This);
-         else
-            Default_Executor.Remove (This);
-         end if;
+         This.Current_Executor.Remove (This);
          Check (Rcl_Node_Fini (This.Impl.Impl'Access));
+
+         RCL.Init.Finalize;
       else
          Logging.Warn ("Attempt to finalize already finalized node");
       end if;
@@ -327,7 +325,7 @@ package body RCL.Nodes is
       Check
         (rcl_get_service_names_and_types
            (This.Impl.Impl'Access,
-            This.C_Allocator'Access,
+            This.Allocator.To_C.Impl,
             Arr.To_C));
 
       return V : Utils.Services_And_Types do
@@ -347,7 +345,7 @@ package body RCL.Nodes is
       Check
         (rcl_get_topic_names_and_types
            (This.Impl.Impl'Access,
-            This.C_Allocator'Access,
+            This.Allocator.To_C.Impl,
             (if Demangle then Bool_False else Bool_True), -- Note: in C side is No_Demangle (bool)
             Arr.To_C));
 
@@ -442,12 +440,11 @@ package body RCL.Nodes is
                         Topic    :        String;
                         Callback :        Subscriptions.Callback)
    is
-      Sub : Subscriptions.Subscription :=
+      Sub : constant Subscriptions.Subscription :=
               Subscriptions.Init (This, Msg_Type, Topic);
    begin
       This.Dispatchers.Insert
         (Subscription_Dispatcher'(This.Self, Sub.To_C, Callback, Msg_Type));
-      Sub.Detach;
    end Subscribe;
 
    ---------------
@@ -632,6 +629,24 @@ package body RCL.Nodes is
          Disp.Success := True;
          CBs.Include (Disp);
       end Client_Success;
+
+      --------------
+      -- Finalize --
+      --------------
+
+      procedure Finalize is
+      begin
+         for I in CBs.Iterate loop
+            declare
+               Disp : Dispatchers.Dispatcher'Class := CBs (I);
+               --  Writable copy
+            begin
+               Disp.Finalize;
+            end;
+         end loop;
+
+         CBs.Clear;
+      end Finalize;
 
    end Safe_Dispatchers;
 

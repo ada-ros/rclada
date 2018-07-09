@@ -1,27 +1,29 @@
 with Ada.Exceptions; use Ada.Exceptions;
 
+with RCL.Init;
 with RCL.Logging;
 
 package body RCL.Calendar is
-
+   
    ----------
    -- Init --
    ----------
 
    procedure Init (This  : in out Clock; 
                    Kind  : Kinds := ROS;
-                   Alloc : Allocators.Allocator := Allocators.Global_Allocator) 
+                   Alloc : Allocators.Handle := Allocators.Global_Allocator) 
    is
-      Local_Alloc : aliased Allocators.C_Allocator := Alloc.To_C;
+      
    begin
+      RCL.Init.Initialize (Alloc, RCL.Init.Dont_Care);
+      
       Check (Rcl_Clock_Init (
              (case Kind is
                 when ROS    => RCL_ROS_TIME,
                 when Steady => RCL_STEADY_TIME,
                 when System => RCL_SYSTEM_TIME),
              This.Impl'Access,
-             Local_Alloc'Access));
-      --  This unrestricted access will go away once we have allocators in place
+             Alloc.To_C.Impl));
       
       This.Inited := True;
       This.Mark   := This.Now;
@@ -33,9 +35,10 @@ package body RCL.Calendar is
 
    procedure Finalize (This : in out Clock) is
    begin
-      if False and then This.Inited then 
+      if This.Inited then
          Check (Rcl_Clock_Fini (This.Impl'Access));
          This.Inited := False;
+         RCL.Init.Finalize;
       end if;
    exception
       when E : others =>

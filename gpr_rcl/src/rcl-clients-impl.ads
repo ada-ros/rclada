@@ -6,6 +6,8 @@ package RCL.Clients.Impl is
   
    type C_Client is tagged private;
    
+   procedure Finalize (This : in out C_Client; Node : in out Nodes.C_Node);
+   
    function To_C_Client (C : Rcl_Client_T) return C_Client;
    
    function To_C (This : aliased C_Client) return access constant Rcl_Client_T;

@@ -1,5 +1,6 @@
 with Ada.Unchecked_Deallocation;
 
+with RCL.Init;
 with RCL.Nodes;
 
 package body RCL.Timers is
@@ -51,6 +52,7 @@ package body RCL.Timers is
    procedure Finalize (This : in out Timer) is
    begin
       Check (Rcl_Timer_Fini (This.Impl));
+      RCL.Init.Finalize;
    end Finalize;
 
    ----------
@@ -85,9 +87,11 @@ package body RCL.Timers is
    ----------
 
    function Init (Period    : Duration;
-                  Allocator : Allocators.Allocator) return Timer
+                  Allocator : Allocators.Handle) return Timer
    is
    begin
+      RCL.Init.Initialize (Allocator, RCL.Init.Dont_Care);
+
       return This : aliased Timer do
          This.Impl     := new Rcl_Timer_T;
          This.Impl.all := Rcl_Get_Zero_Initialized_Timer;

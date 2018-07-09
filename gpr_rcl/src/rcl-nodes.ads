@@ -25,8 +25,8 @@ package RCL.Nodes is
    --  Recommended approach is to use Init function to initialize on the spot.
    
    type Node_Options is record
-      Allocator : Allocators.Allocator;
-      Executor  : Executors.Executor_Access;
+      Allocator : Allocators.Handle  := Allocators.Global_Allocator;
+      Executor  : Executors.Handle   := Executors.Handle (No_Executor);
    end record;
    --  TBD, not complete
    
@@ -174,6 +174,10 @@ package RCL.Nodes is
    
    function Graph_Topics (This : in out Node; Demangle : Boolean := True) return Utils.Topics_And_Types;   
    
+   -------------------
+   --  Misc access  --
+   function Allocator (This : Node) return Allocators.Handle;
+   
    -------------------------------------------------
    --  Low level access not intended for clients  --
    
@@ -222,6 +226,8 @@ private
       function  Current_Client return Dispatchers.Client_Dispatcher'Class;
       procedure Client_Success (Client : Dispatchers.Handle);
       
+      procedure Finalize;
+      
    private
       CBs       : RCL.Dispatchers.Set;
       Client    : Handle; -- Client that's blocking and waiting
@@ -236,7 +242,7 @@ private
       Options     : Node_Options;                  
       
       -- Are derived from Options, no need to initialize
-      C_Allocator : aliased Allocators.C_Allocator;
+      Allocator   : Allocators.Handle := Allocators.Global_Allocator;
       C_Options   : aliased Rcl_Node_Options_T;
    end record;   
    
@@ -252,9 +258,12 @@ private
    function To_C (This : aliased in out Node) return Reference is
      (Ptr => This.Impl'Access);
    
+   function Allocator (This : Node) return Allocators.Handle is
+      (This.Allocator);
+   
    Default_Options  : constant Node_Options := (others => <>);
          
-   use all type Executors.Executor_Access;   
+   use all type Executors.Handle;   
    
    function Current_Executor (This : in out Node'Class) return access Executors.Executor'Class is
      (if This.Options.Executor /= null 
