@@ -1,10 +1,11 @@
 with Ada.Calendar;
 with Ada.Exceptions;
 
+with RCL.Impl.Wait; use RCL.Impl;
+
 with RCL.Nodes;
 with RCL.Nodes.Impl;
 with RCL.Logging;
-with RCL.Wait;
 
 package body RCL.Executors is
 
@@ -84,9 +85,6 @@ package body RCL.Executors is
                        return Boolean
    is
       --  True if something was processed
-
-      use all type Wait.Wait_Outcomes;
-
       CBs   : aliased Impl.Dispatchers.Set;
       Nodes : Node_Sets.Set;
    begin
@@ -105,17 +103,17 @@ package body RCL.Executors is
       end if;
 
       declare
-         Set : Wait.Set := Wait.Init (This.Allocator, CBs);
+         Set : Impl.Wait.Set := Impl.Wait.Init (This.Allocator, CBs);
       begin
          Logging.Debug ("Waiting on" & CBs.Length'Img & " callbacks");
          case Set.Wait (Timeout) is
-            when Error     =>
+            when Impl.Wait.Error     =>
                raise Program_Error with "Error in Set.Wait";
 
-            when Wait.Timeout   =>
+            when Impl.Wait.Timeout   =>
                return False;
 
-            when Triggered =>
+            when Impl.Wait.Triggered =>
                for Triggered of Set loop
                   CBs.Element (Triggered.Handle).Dispatch;
                end loop;

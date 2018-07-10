@@ -12,7 +12,7 @@ with Rcl_Wait_H; use Rcl_Wait_H;
 
 with System;
 
-package RCL.Wait is
+package RCL.Impl.Wait is
 
    --  Not really intended for clients
    
@@ -122,4 +122,4 @@ private
    overriding function Next (I        : Iterator;
                              Position : Cursor) return Cursor;
 
-end RCL.Wait;
+end RCL.Impl.Wait;

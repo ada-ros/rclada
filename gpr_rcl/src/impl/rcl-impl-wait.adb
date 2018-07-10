@@ -6,7 +6,7 @@ with RCL.Timers.Impl;
 with Rcl_Types_H;
 with Rmw_Types_H;
 
-package body RCL.Wait is
+package body RCL.Impl.Wait is
 
    use all type System.Address;
 
@@ -290,11 +290,11 @@ package body RCL.Wait is
          when RMW_RET_OK =>
             return Triggered;
          when RMW_RET_TIMEOUT =>
-            return RCL.Wait.Timeout;
+            return Impl.Wait.Timeout;
          when others =>
             Logging.Warn ("Wait failed with code" & Ret'Img);
             return Error;
       end case;
    end Wait;
 
-end RCL.Wait;
+end RCL.Impl.Wait;
