@@ -1,7 +1,5 @@
 limited with RCL.Nodes;
 
-with RCL.Allocators;
-
 with Rcl_Timer_H; use Rcl_Timer_H;
 
 with System;
@@ -14,74 +12,43 @@ package RCL.Timers is
    --  Although Ada has native timers, this may be useful if you want
    --  to stay in a single-threaded, ROS2-managed situation
    
-   type Timer_Id is private;
+   type Timer (Node : not null access Nodes.Node'Class) is tagged private;
    
-   function "=" (L, R : Timer_Id) return Boolean;
-   
-   
-   type Timer (<>) is tagged limited private;   
-   --  Note: this is not a controlled type. 
-   --  The Node finalizes it on timer deletion      
-   
+   function "=" (L, R : Timer) return Boolean;
+    
    type Callback is 
      access procedure (Node    : in out Nodes.Node'Class;
                        Timer   : in out Timers.Timer;
                        Elapsed :        Duration);  
    
    procedure Cancel (This : in out Timer);
-   --  Will internally call Node.Timer_Cancel
    
    procedure Change_Period (This       : in out Timer; 
-                            New_Period :        Duration);   
+                            New_Period :        Duration);
    
    function Get_Period (This : Timer) return Duration;
-   
-   function Id (This : Timer) return Timer_Id;
+         
+   function Is_Canceled (This : Timer) return Boolean;  
    
    function Time_Since_Last_Call (This : Timer) return Duration;
-   
-   -----------------------------------
-   --  Not intended for client use  --
-   
-   function Bind (C_Timer :                Timer_Id; 
-                  Node    : aliased in out Nodes.Node'Class) return Timer;   
-   
-   procedure Finalize (This : in out Timer);
-   --  Note! This type is not controlled and this is not autocalled.
-   --  The node calls it when the timer is deleted
-   --  It's not for client use
-   
-   procedure Free (This : in out Timer_Id);
-   
-   function Init (Period    : Duration;
-                  Allocator : Allocators.Handle) return Timer;
-   --  Note: the timer won't work by itself; it must be created through
-   --  Node facilities
-   
-   function Is_Canceled (This : Timer_Id) return Boolean;  
-   
-   function To_C (This : Timer_Id) return access Rcl_Timer_T;
-      
-   function To_Unique_Addr (This : Timer_Id) return System.Address;
-   
+         
 private   
    
-   type Timer_Id is access Rcl_Timer_T;
-   --  Rcl_Timer_T is just a husk on top of a pointer, we can use it directly
+   --  The user gets to keep a pointer to the node and timer.
    
-   type Timer is tagged limited record
-      Impl : Timer_Id;
-      Node : access Nodes.Node;
+   type Timer (Node : not null access Nodes.Node'Class) is tagged record 
+      Impl : aliased Rcl_Timer_T;
    end record;
    
    use all type System.Address;
    
-   function "=" (L, R : Timer_Id) return Boolean is
-      (L.Impl = R.Impl);
-
-   function To_C (This : Timer_Id) return access Rcl_Timer_T is (This);
+   function "=" (L, R : Timer) return Boolean is
+     (L.Impl.Impl = R.Impl.Impl);
    
-   function To_Unique_Addr (This : Timer_Id) return System.Address is
-      (This.Impl);
+   function To_Duration (Nanoseconds : C.Long) return Duration is
+     (Duration (Nanoseconds) / 1_000_000_000.0);
+
+   function To_Nanoseconds (Dur : Duration) return C.Long is
+      (C.Long (Dur * 1_000_000_000.0));
    
 end RCL.Timers;

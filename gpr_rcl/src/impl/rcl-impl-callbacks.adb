@@ -3,6 +3,7 @@ with Rcl_Timer_H;   use Rcl_Timer_H;
 with Rcl_Types_H;   use Rcl_Types_H;
 
 with RCL.Logging;
+with RCL.Timers.Impl;
 
 with ROSIDL.Dynamic;
 
@@ -53,11 +54,11 @@ package body RCL.Impl.Callbacks is
    ----------
 
    overriding procedure Call (This : Timer_Callback) is
-      Temp    : Timers.Timer  := Timers.Bind (This.Timer, This.Node.all);
       Ret     : Rcl_Error_Code;
-      Elapsed : constant Duration := Temp.Time_Since_Last_Call;
+      Elapsed : constant Duration := This.Timer.Time_Since_Last_Call;
+      Temp    : Timers.Timer      := This.Timer;
    begin
-      Ret := Rcl_Timer_Call (Timers.To_C (This.Timer));
+      Ret := Rcl_Timer_Call (Timers.Impl.To_C_Var (Temp));
       --  This "snoozes" the C timer and resets time since last call
 
       case Ret is

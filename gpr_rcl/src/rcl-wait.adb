@@ -1,6 +1,7 @@
 with RCL.Allocators.Impl;
 with RCL.Logging;
 with RCL.Subscriptions;
+with RCL.Timers.Impl;
 
 with Rcl_Types_H;
 with Rmw_Types_H;
@@ -43,7 +44,7 @@ package body RCL.Wait is
    ---------
 
    procedure Add (This : aliased in out Set;
-                  Cli  : aliased Clients.Impl.C_Client) is
+                  Cli  : aliased in out Clients.Impl.C_Client) is
    begin
       Check (Rcl_Wait_Set_Add_Client (This.Impl'Access, Cli.To_C));
    end Add;
@@ -53,7 +54,7 @@ package body RCL.Wait is
    ---------
 
    procedure Add (This : aliased in out Set;
-                  Srv  : aliased        Services.Impl.C_Service) is
+                  Srv  : aliased in out Services.Impl.C_Service) is
    begin
       Check (Rcl_Wait_Set_Add_Service (This.Impl'Access, Srv.To_C));
    end Add;
@@ -63,7 +64,7 @@ package body RCL.Wait is
    ---------
 
    procedure Add (This : aliased in out Set;
-                  Sub  : Aliased        Subscriptions.Impl.C_Subscription) is
+                  Sub  : Aliased in out Subscriptions.Impl.C_Subscription) is
    begin
       Check (Rcl_Wait_Set_Add_Subscription (This.Impl'Access, Sub.Impl'Access));
    end Add;
@@ -73,10 +74,10 @@ package body RCL.Wait is
    ---------
 
    procedure Add (This  : aliased in out Set;
-                  Timer : Aliased        Timers.Timer_Id)
+                  Timer : Aliased in out Timers.Timer)
    is
    begin
-      Check (Rcl_Wait_Set_Add_Timer (This.Impl'Access, Timers.To_C (Timer)));
+      Check (Rcl_Wait_Set_Add_Timer (This.Impl'Access, Timers.Impl.To_C (Timer)));
    end Add;
 
 
@@ -214,7 +215,7 @@ package body RCL.Wait is
    ----------
 
    function Init (Allocator : Allocators.Handle;
-                  Callbacks : RCL.Impl.Dispatchers.Set) return Set is
+                  Callbacks : aliased in out RCL.Impl.Dispatchers.Set) return Set is
    begin
       return S : Set := Init (Allocator         => Allocator,
                               Num_Clients       => Callbacks.Num_Clients,

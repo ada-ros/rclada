@@ -7,8 +7,6 @@ with System;
 
 package RCL.Subscriptions.Impl is
 
---     type Subscription (<>) is tagged limited private;
-
    type C_Subscription is tagged record
       Impl : aliased Rcl_Subscription_T;  
    end record;
@@ -26,30 +24,11 @@ package RCL.Subscriptions.Impl is
                       Info   :            out ROSIDL.Message_Info)
                       return                  Boolean;
    
---     function Take_Raw (This   : in out Subscription;
---                        Buffer :        System.Address;
---                        Info   :    out ROSIDL.Message_Info)
---                        return          Boolean;
-   --  Raw take, not really intended to be used by clients
-   --  There's no way of knowing the necessary buffer size, nor  
-   --    how many bytes were taken
-   --  TRUE if a message was available.
-   
---     function To_C (This : Subscription'Class) return C_Subscription;
-   
    function To_Unique_Addr (This : C_Subscription) return System.Address;
    
 private 
    
    type Node_Access is access all Rcl_Node_T with Storage_Size => 0;
-   
---     type Subscription is tagged limited record
---        Impl : aliased C_subscription := (C => Rcl_Get_Zero_Initialized_Subscription);
---        Node :         Node_Access;
---     end record;
-      
---     function To_C (This : Subscription'Class) return C_Subscription is
---        (This.Impl);
    
    function To_Unique_Addr (This : C_Subscription) return System.Address is
       (This.Impl.Impl);

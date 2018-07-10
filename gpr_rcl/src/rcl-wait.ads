@@ -45,20 +45,26 @@ package RCL.Wait is
    --  At least one of these must be nonzero
    
    function Init (Allocator         : Allocators.Handle;
-                  Callbacks         : RCL.Impl.Dispatchers.Set) return Set;
+                  Callbacks         : aliased in out RCL.Impl.Dispatchers.Set) return Set;
    --  Initializes and fills using the given set
+   --  WARNING: the set keeps temporary pointers to the C structs in Callbacks
+   --    That's why Callbacks are aliased, and that's why YOU, the caller,
+   --    must ensure these Callbacks remain in scope until the set has been
+   --    entirely processed (after Wait call).
+   
+   --  Same applies for manual initialization with below Add functions
 
    procedure Add (This : aliased in out Set; 
-                  Cli  : aliased        Clients.Impl.C_Client); 
+                  Cli  : aliased in out Clients.Impl.C_Client); 
    
    procedure Add (This : aliased in out Set; 
-                  Srv  : aliased        Services.Impl.C_Service); 
+                  Srv  : aliased in out Services.Impl.C_Service); 
    
    procedure Add (This : aliased in out Set; 
-                  Sub  : aliased        Subscriptions.Impl.C_Subscription); 
+                  Sub  : aliased in out Subscriptions.Impl.C_Subscription); 
    
    procedure Add (This  : aliased in out Set; 
-                  Timer : aliased        Timers.Timer_Id); 
+                  Timer : aliased in out Timers.Timer); 
    
    function Is_Ready (This : Set;
                       Kind : Kinds;

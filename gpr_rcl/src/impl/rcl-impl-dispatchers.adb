@@ -158,46 +158,9 @@ package body RCL.Impl.Dispatchers is
    --------------
 
    procedure Finalize (This : in out Timer_Dispatcher) is
-      Timer : Timers.Timer := Timers.Bind (This.Timer, This.Node.all);
    begin
-      Timer.Finalize;
+      Timers.Impl.Finalize (This.Timer);
    end Finalize;
-
-   ----------------
-   -- Force_Addr --
-   ----------------
-
-   function Force_Addr (This : Dispatcher'Class) return Handle is
-      Ptr : constant access Dispatcher'Class := This'Unrestricted_Access;
-   begin
-      return Ptr.To_Handle;
-   end Force_Addr;
-
-   package Keys is new Dispatcher_Sets.Generic_Keys (Handle,
-                                                     Force_Addr);
-
-   --------------
-   -- Contains --
-   --------------
-
-   function Contains (This : Set; Addr : Handle) return Boolean is
-      (Keys.Contains (Dispatcher_Sets.Set (This), Addr));
-
-   ------------
-   -- Delete --
-   ------------
-
-   procedure Delete (This : in out Set; Addr : Handle) is
-   begin
-      Keys.Delete (Dispatcher_Sets.Set (This), Addr);
-   end Delete;
-
-   ---------
-   -- Get --
-   ---------
-
-   function Get (This : Set; Addr : Handle) return Dispatcher'Class is
-     (Keys.Element (Dispatcher_Sets.Set (This), Addr));
 
    -----------------
    -- Num_Clients --

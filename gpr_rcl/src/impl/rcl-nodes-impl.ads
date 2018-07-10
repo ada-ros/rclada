@@ -4,10 +4,7 @@ package RCL.Nodes.Impl is
    
    use RCL.Impl;
 
-   -------------------------------------------------
-   --  Low level access not intended for clients  --
-   
-   --  Not directly the access because of the subtypes-blind bug
+   type Handle is access all Node'Class with Storage_Size => 0;
    
    type Reference (Ptr : access Rcl_Node_T) is limited null record
      with Implicit_Dereference => Ptr;

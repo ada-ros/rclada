@@ -1,4 +1,4 @@
-with Ada.Containers.Indefinite_Ordered_Sets;
+with Ada.Containers.Indefinite_Ordered_Maps;
 
 limited with RCL.Executors;
 limited with RCL.Nodes;
@@ -8,7 +8,7 @@ private with Rcl_Node_H;
 with RCL.Clients.Impl;
 with RCL.Services.Impl;
 with RCL.Subscriptions.Impl;
-with RCL.Timers;
+with RCL.Timers.Impl;
 
 with ROSIDL.Impl;
 with ROSIDL.Typesupport;
@@ -22,7 +22,7 @@ package RCL.Impl.Dispatchers is
    
    type Handle is new System.Address;
    --  This address uniquely designates a callback, by the implementation pointer
-   --    of the C client data type. This will be hidden in the near future.
+   --    of the C client data type.
    function "+" (Addr : System.Address) return Handle;
    
    type Dispatcher (Node : not null access Nodes.Node'Class) is abstract tagged null record;
@@ -39,29 +39,24 @@ package RCL.Impl.Dispatchers is
    --  This is called by the node, is not Finalization in Ada sense.
    
    function To_Handle (This : Dispatcher) return Handle is abstract;
-   --  This is the pointer to the C object that is expected by the
-   --    rcl_wait_add_* functions. It also serves to locate the dispatcher
+   --  This is the unique pointer to the C implementation inside each C object.
+   --  NOTE: IT IS NOT the address of the C struct, but e.g. rcl_timer_t.impl.
+   --    It also serves to locate the dispatcher
    --    once it has been triggered on the C side.
    
    function "<" (L, R : Dispatcher'Class) return Boolean;
    
    use all type System.Address;
    
-   package Dispatcher_Sets is new Ada.Containers.Indefinite_Ordered_Sets
-     (Dispatcher'Class);
+   package Dispatcher_Maps is new Ada.Containers.Indefinite_Ordered_Maps
+     (Handle, Dispatcher'Class);
    
-   type Set is new Dispatcher_Sets.Set with null record;
+   type Set is new Dispatcher_Maps.Map with null record;
    
    function Num_Clients       (This : Set) return Natural;
    function Num_Services      (This : Set) return Natural;
    function Num_Subscriptions (This : Set) return Natural;
    function Num_Timers        (This : Set) return Natural;
-   
-   function Contains (This : Set; Addr : Handle) return Boolean;
-   
-   function Get (This : Set; Addr : Handle) return Dispatcher'Class;
-   
-   procedure Delete (This : in out Set; Addr : Handle);
 
    -------------
    -- Clients --
@@ -119,8 +114,8 @@ package RCL.Impl.Dispatchers is
    -- Timers --
    ------------
    
-   type Timer_Dispatcher is new Dispatcher with record
-      Timer     : aliased Timers.Timer_Id;
+   type Timer_Dispatcher (Node : not null access Nodes.Node'Class) is new Dispatcher (Node) with record
+      Timer     : aliased Timers.Timer (Node);
       Callback  :         Timers.Callback;
    end record;
    
@@ -136,12 +131,11 @@ private
    
    use Rcl_Node_H;
    
-   use all type Timers.Timer_Id;
+   use all type Timers.Timer;
    
    function "+" (Addr : System.Address) return Handle is (Handle (Addr));
    
-   function "=" (L, R : Timer_Dispatcher) return Boolean is
-     (L.Timer = R.Timer);
+   function "=" (L, R : Timer_Dispatcher) return Boolean is (L.Timer = R.Timer);
    
    function C_Node (This : Dispatcher'Class) return access Rcl_Node_T;
    
@@ -157,6 +151,6 @@ private
      (+This.Subscription.To_Unique_Addr);
    
    function To_Handle (This : Timer_Dispatcher) return Handle is
-     (+Timers.To_Unique_Addr (This.Timer));
+     (+Timers.Impl.To_Unique_Addr (This.Timer));
    
 end RCL.Impl.Dispatchers;

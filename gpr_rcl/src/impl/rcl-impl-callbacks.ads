@@ -46,9 +46,9 @@ package RCL.Impl.Callbacks is
    overriding procedure Call (This : Subscription_Callback);
 
 
-   type Timer_Callback is new Callback with record
+   type Timer_Callback (Node : not null access Nodes.Node'Class) is new Callback (Node) with record
       User_Callback : Timers.Callback;
-      Timer         : Timers.Timer_Id;
+      Timer         : Timers.Timer (Node);
    end record;
    overriding procedure Call (This : Timer_Callback);
 

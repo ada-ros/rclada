@@ -19,8 +19,6 @@ with ROSIDL.Impl;
 
 package body RCL.Nodes is
 
-   use all type Timers.Timer_Id;
-
    ---------------
    -- Base_Init --
    ---------------
@@ -437,17 +435,15 @@ package body RCL.Nodes is
    function Timer_Add (This     : in out Node;
                        Period   :        Duration;
                        Callback :        Timers.Callback)
-                       return            Timers.Timer_Id
-   is
-      Timer : constant Timers.Timer := Timers.Init (Period, This.Options.Allocator);
+                       return            Timers.Timer is
    begin
-      This.Dispatchers.Insert
-        (Timer_Dispatcher'
-           (This.Self,
-            Timer.Id,
-            Callback));
-
-      return Timer.Id;
+      return Timer : constant Timers.Timer := Timers.Impl.Init (This'Access, Period, This.Options.Allocator) do
+         This.Dispatchers.Insert
+           (Timer_Dispatcher'
+              (This.Self,
+               Timer,
+               Callback));
+      end return;
    end Timer_Add;
 
    ---------------
@@ -458,7 +454,7 @@ package body RCL.Nodes is
                         Period   :        Duration;
                         Callback :        Timers.Callback)
    is
-      Id : constant Timers.Timer_Id := This.Timer_Add (Period, Callback)
+      Id : constant Timers.Timer := This.Timer_Add (Period, Callback)
         with Unreferenced;
    begin
       null;
@@ -469,7 +465,7 @@ package body RCL.Nodes is
    ------------------
 
    procedure Timer_Assert (This  : Node;
-                           Timer : Timers.Timer_Id) is
+                           Timer : Timers.Timer) is
    begin
       if not This.Timer_Exists (Timer) then
          raise Constraint_Error with "Timer doesn't exist";
@@ -481,11 +477,11 @@ package body RCL.Nodes is
    ------------------
 
    procedure Timer_Cancel (This  : in out Node;
-                           Timer :        Timers.Timer_Id)
+                           Timer : in out Timers.Timer)
    is
    begin
       This.Timer_Assert (Timer);
-      Check (Rcl_Timer_Cancel (Timers.To_C (Timer)));
+      Check (Rcl_Timer_Cancel (Timers.Impl.To_C_Var (Timer)));
    end Timer_Cancel;
 
    ------------------
@@ -493,16 +489,14 @@ package body RCL.Nodes is
    ------------------
 
    procedure Timer_Delete (This  : in out Node;
-                           Timer :        Timers.Timer_Id)
+                           Timer : in out Timers.Timer)
    is
-      Tmp : Timers.Timer_Id := Timer;
    begin
       This.Timer_Assert (Timer);
-      Check (Rcl_Timer_Fini (Timers.To_C (Timer)));
+      Check (Rcl_Timer_Fini (Timers.Impl.To_C_Var (Timer)));
 
       if This.Timer_Exists (Timer) then
-         This.Dispatchers.Delete (+Timers.To_Unique_Addr (Timer));
-         Timers.Free (Tmp);
+         This.Dispatchers.Delete (+Timers.Impl.To_Unique_Addr (Timer));
       end if;
    end Timer_Delete;
 
@@ -511,11 +505,11 @@ package body RCL.Nodes is
    -----------------
 
    procedure Timer_Reset (This  : in out Node;
-                          Timer :        Timers.Timer_Id)
+                          Timer : in out Timers.Timer)
    is
    begin
       This.Timer_Assert (Timer);
-      Check (Rcl_Timer_Reset (Timers.To_C (Timer)));
+      Check (Rcl_Timer_Reset (Timers.Impl.To_C_Var (Timer)));
    end Timer_Reset;
 
    ----------
@@ -557,8 +551,8 @@ package body RCL.Nodes is
       -- Get --
       ---------
 
-      function  Get      (CB : Impl.Dispatchers.Handle) return Dispatcher'Class is
-         (CBs.Get (CB));
+      function Get (CB : Impl.Dispatchers.Handle) return Dispatcher'Class is
+         (CBs.Element (CB));
 
       ------------
       -- Insert --
@@ -567,7 +561,7 @@ package body RCL.Nodes is
       procedure Insert (CB                 : Dispatcher'Class;
                         Is_Blocking_Client : Boolean := False) is
       begin
-         CBs.Insert (CB);
+         CBs.Insert (CB.To_Handle, CB);
          if Is_Blocking_Client then
             Client := CB.To_Handle;
          end if;
@@ -584,13 +578,19 @@ package body RCL.Nodes is
       -- Union --
       -----------
 
-      procedure Union    (Dst : in out Impl.Dispatchers.Set) is
+      procedure Union (Dst : in out Impl.Dispatchers.Set) is
       begin
-         Dst.Union (CBs);
+         for CB of CBs loop
+            Dst.Insert (CB.To_Handle, CB);
+         end loop;
       end Union;
 
-      function  Current_Client return Impl.Dispatchers.Client_Dispatcher'Class is
-         (Impl.Dispatchers.Client_Dispatcher'Class (CBs.Get (Client)));
+      --------------------
+      -- Current_Client --
+      --------------------
+
+      function Current_Client return Impl.Dispatchers.Client_Dispatcher'Class is
+         (Impl.Dispatchers.Client_Dispatcher'Class (CBs.Element (Client)));
 
       --------------------
       -- Client_Success --
@@ -601,7 +601,7 @@ package body RCL.Nodes is
                   Impl.Dispatchers.Client_Dispatcher'Class (Get (Client));
       begin
          Disp.Success := True;
-         CBs.Include (Disp);
+         CBs.Include (Disp.To_Handle, Disp);
       end Client_Success;
 
       --------------

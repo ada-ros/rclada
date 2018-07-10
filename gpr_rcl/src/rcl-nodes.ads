@@ -8,7 +8,7 @@ with RCL.Executors.Sequential;
 with RCL.Publishers;
 with RCL.Subscriptions;
 with RCL.Services;
-with RCL.Timers;
+with RCL.Timers.Impl;
 with RCL.Utils;
 
 with Rcl_Node_H;         use Rcl_Node_H;
@@ -140,25 +140,25 @@ package RCL.Nodes is
    function Timer_Add (This     : in out Node;
                        Period   :        Duration;
                        Callback :        Timers.Callback)
-                       return            Timers.Timer_Id;
+                       return            Timers.Timer;
    
    procedure Timer_Add (This     : in out Node;
                         Period   :        Duration;
                         Callback :        Timers.Callback);
    
    procedure Timer_Cancel (This  : in out Node;
-                           Timer :        Timers.Timer_Id);
-   --  Disables (but not deletes) a timer
+                           Timer : in out Timers.Timer);
+   --  Disables (but not deletes) a timer. It can be rearmed with Reset
    
    procedure Timer_Delete (This  : in out Node;
-                           Timer :        Timers.Timer_Id);
+                           Timer : in Out Timers.Timer);
    --  Entirely removes a timer.
    
    function Timer_Exists (This  : Node; 
-                          Timer : Timers.Timer_Id) return Boolean;
+                          Timer : Timers.Timer) return Boolean;
    
    procedure Timer_Reset (This  : in out Node;
-                          Timer :        Timers.Timer_Id);
+                          Timer : in out Timers.Timer);
    --  Resets the elapsed time (if enabled), or reenables (if cancelled) a timer
    
    ------------------
@@ -233,11 +233,11 @@ private
                           Ptr  :        Dispatchers.Handle);
    
    procedure Timer_Assert (This  : Node; 
-                           Timer : Timers.Timer_Id);
+                           Timer : Timers.Timer);
    
    function Timer_Exists (This  : Node; 
-                          Timer : Timers.Timer_Id) return Boolean is
-      (This.Dispatchers.Contains (+Timers.To_Unique_Addr (Timer)));   
+                          Timer : Timers.Timer) return Boolean is
+      (This.Dispatchers.Contains (+Timers.Impl.To_Unique_Addr (Timer)));   
    
    function Allocator (This : Node) return Allocators.Handle is
      (This.Allocator);   

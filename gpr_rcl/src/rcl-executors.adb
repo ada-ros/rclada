@@ -87,7 +87,7 @@ package body RCL.Executors is
 
       use all type Wait.Wait_Outcomes;
 
-      CBs   : Impl.Dispatchers.Set;
+      CBs   : aliased Impl.Dispatchers.Set;
       Nodes : Node_Sets.Set;
    begin
       This.Nodes.Get (Nodes);
@@ -117,7 +117,7 @@ package body RCL.Executors is
 
             when Triggered =>
                for Triggered of Set loop
-                  CBs.Get (Triggered.Handle).Dispatch;
+                  CBs.Element (Triggered.Handle).Dispatch;
                end loop;
                return True;
 
