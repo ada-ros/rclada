@@ -105,6 +105,7 @@ begin
       Node.Subscribe (Support, Topic, Process_Work'Unrestricted_Access);
       Boss.Start;
       Executor.Spin (During    => Test_Period);
+      Executor.Shutdown;
       
       Logging.Info ("Test period ended, will dump pool info in 3 seconds...");
       delay 3.0;      

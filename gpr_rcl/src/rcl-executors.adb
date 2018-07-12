@@ -156,6 +156,12 @@ package body RCL.Executors is
          Nodes := Node_Set.Nodes;
       end Get;
 
+      --------------
+      -- Is_Empty --
+      --------------
+
+      function Is_Empty return Boolean is (Nodes.Is_Empty);
+
    end Node_Set;
 
 end RCL.Executors;

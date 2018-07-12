@@ -1,8 +1,11 @@
-pragma Warnings (Off);
-with Ada.Text_Io; use Ada.Text_IO;
-pragma Warnings (On);
+--  pragma Restriction_Warnings (No_Allocators);
+--  pragma Restriction_Warnings (No_Anonymous_Allocators);
+--  pragma Restriction_Warnings (No_Standard_Allocators_After_Elaboration);
+--  pragma Restriction_Warnings (No_Standard_Storage_Pools);
 
-with Ada.Unchecked_Conversion; -- Uh oh...
+--  pragma Default_Storage_Pool (null);
+--    Seems we hit a bug on reference types with this one...
+--    It also hits false positives on No_Allocators it seems
 
 with C_Strings; pragma Unreferenced (C_Strings);
 

@@ -42,8 +42,8 @@ package body RCL.Init is
 --        Logging.Warn ("USER COUNT++:" & Users'Img);
    exception
       when E : others =>
-         Put_Line ("Exception while initializing rcl:");
-         Put_Line (Ada.Exceptions.Exception_Information (E));
+         Logging.Warn ("Exception while initializing rcl:");
+         Logging.Warn (Ada.Exceptions.Exception_Information (E));
    end Initialize;
 
    --------------
@@ -59,8 +59,8 @@ package body RCL.Init is
 --        Logging.Warn ("USER COUNT--:" & Users'Img);
    exception
       when E : others =>
-         Put_Line ("Exception while finalizing rcl:");
-         Put_Line (Ada.Exceptions.Exception_Information (E));
+         Logging.Warn ("Exception while finalizing rcl:");
+         Logging.Warn (Ada.Exceptions.Exception_Information (E));
    end Finalize;
    
    ----------------

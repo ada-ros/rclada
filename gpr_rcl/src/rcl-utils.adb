@@ -1,6 +1,7 @@
 with Ada.Command_Line; use Ada.Command_Line;
 with Ada.Directories;  use Ada.Directories;
 with Ada.Exceptions;   use Ada.Exceptions;
+with Ada.Text_IO;      use Ada.Text_IO;
 
 package body RCL.Utils is
 
@@ -18,8 +19,8 @@ package body RCL.Utils is
       end if;
    exception
       when E : others =>
-         Put_Line ("Exception when initializing:");
-         Put_Line (Exception_Information (E));
+         Put_line ("Exception when initializing:");
+         Put_line (Exception_Information (E));
    end Initialize;
 
    --------------
@@ -33,8 +34,8 @@ package body RCL.Utils is
       end if;
    exception
       when E : others =>
-         Put_Line ("Exception when finalizing:");
-         Put_Line (Exception_Information (E));
+         Put_line ("Exception when finalizing:");
+         Put_line (Exception_Information (E));
    end Finalize;
 
 end RCL.Utils;

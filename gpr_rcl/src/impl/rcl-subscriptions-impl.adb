@@ -1,3 +1,5 @@
+with Ada.Unchecked_Conversion;
+
 with RCL.Nodes.Impl;
 
 with Rcl_Types_H; use Rcl_Types_H;

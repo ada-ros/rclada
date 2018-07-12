@@ -1,7 +1,6 @@
 with Ada.Containers.Bounded_Synchronized_Queues;
 with Ada.Containers.Indefinite_Holders;
 with Ada.Containers.Synchronized_Queue_Interfaces;
-with Ada.Finalization;
 
 with System.Multiprocessors; use System.Multiprocessors;
 
@@ -20,6 +19,9 @@ package RCL.Executors.Concurrent is
    procedure Call (This : in out Executor; 
                    CB   :        Impl.Callbacks.Callback'Class);
    
+   overriding
+   procedure Shutdown (This : in out Executor);
+   
 private    
    
    package CB_Holders is new Ada.Containers.Indefinite_Holders
@@ -31,21 +33,14 @@ private
    package Queues is new Bounded_Synchronized_Queues (Queue_Elements,
                                                       Default_Capacity => 0);
    
-   type Executor_Access is access all Executor;
+   type Executor_Access is access all Executor with Storage_Size => 0;
    
-   task type Runner (Parent : access Executor) is
+   task type Runner is
+      entry Init (Parent : Executor_Access);
       entry Shutdown;
    end Runner;
    
-   type Runner_Access is access Runner;
-   
-   type Runner_Pool is array (Positive range <>) of Runner_Access;
-   
-   type Controller (Parent : access Executor) is
-     new Ada.Finalization.Limited_Controlled with null record;
-   
-   overriding procedure Initialize (This : in out Controller);
-   overriding procedure Finalize   (This : in out Controller);
+   type Runner_Pool is array (Positive range <>) of Runner;
    
    type Executor (Queue_Size : Count_Type := Count_Type (System.Multiprocessors.Number_Of_CPUs) * 32;
                   Threads    : Positive   := Positive (System.Multiprocessors.Number_Of_CPUs);
@@ -56,7 +51,6 @@ private
          Pool  : Runner_Pool  (1 .. Threads);
          Queue : Queues.Queue (Capacity => Queue_Size, 
                                Ceiling  => Priority);
-         Control : Controller (Executor'Access);
          Started : Boolean := False;
       end record;
    

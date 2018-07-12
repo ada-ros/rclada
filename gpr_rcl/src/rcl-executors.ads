@@ -39,6 +39,8 @@ package RCL.Executors is
    
    procedure Remove (This :         in out Executor; 
                      Node : aliased in out Nodes.Node'Class);
+   --  Automatically called by the node on going out of scope, no need to 
+   --    do it manually.
    
    procedure Spin (This      : in out Executor; 
                    Once      :        Boolean       := False;
@@ -48,6 +50,10 @@ package RCL.Executors is
                        Timeout :        ROS2_Duration;
                        Node    : access Nodes.Node'Class := null) return Boolean;
    --  Will spin on the given node or all of them when null
+   
+   procedure Shutdown (This : in out Executor) is null;
+   --  Concurrent executors must be shut down or otherwise they do not finalize (tasks inside)
+   --  Parent must be called if overriden.
    
 private   
    
@@ -66,6 +72,7 @@ private
       procedure Delete (Node  : Node_Access);
       procedure Insert (Node  : Node_Access);
       procedure Get    (Nodes : out Node_Sets.Set);
+      function  Is_Empty return Boolean;
    private
       Nodes : Node_Sets.Set;
    end Node_Set;
@@ -73,7 +80,6 @@ private
    type Executor is abstract tagged limited record
       Nodes     : Node_Set (Executor'Access);      
       Allocator : Allocators.Handle := Allocators.Global_Allocator; 
-      --  Updated in every Spin
    end record;
    
    procedure Common_Dispatch (Node   : access Nodes.Node'Class;

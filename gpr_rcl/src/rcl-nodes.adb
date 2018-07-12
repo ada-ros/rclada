@@ -240,8 +240,8 @@ package body RCL.Nodes is
       end if;
    exception
       when E : others =>
-         Put_Line ("Exception while finalizing node:");
-         Put_Line (Ada.Exceptions.Exception_Information (E));
+         Logging.Warn ("Exception while finalizing node:");
+         Logging.Warn (Ada.Exceptions.Exception_Information (E));
    end Finalize;
 
    ----------------------------

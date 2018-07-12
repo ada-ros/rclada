@@ -1,9 +1,16 @@
 with Ada.Exceptions; use Ada.Exceptions;
-with Ada.Unchecked_Deallocation;
+--  with Ada.Unchecked_Deallocation;
 
 with RCL.Logging;
 
 package body RCL.Executors.Concurrent is
+
+   procedure Awake (This : in out Executor) is
+   begin
+      for I in This.Pool'Range loop
+         This.Pool (I).Init (This.Self);
+      end loop;
+   end Awake;
 
    ----------
    -- Call --
@@ -12,6 +19,11 @@ package body RCL.Executors.Concurrent is
    procedure Call (This : in out Executor;
                    CB   :        Impl.Callbacks.Callback'Class) is
    begin
+      if not This.Started then
+         This.Awake;
+         This.Started := True;
+      end if;
+
       select
          This.Queue.Enqueue (CB_Holders.To_Holder (CB));
       else
@@ -20,57 +32,46 @@ package body RCL.Executors.Concurrent is
    end Call;
 
    --------------
-   -- Finalize --
+   -- Shutdown --
    --------------
 
-   overriding procedure Finalize   (This : in out Controller) is
-      procedure Free is new Ada.Unchecked_Deallocation (Runner, Runner_Access);
+   procedure Shutdown (This : in out Executor) is
    begin
-      if This.Parent.Queue.Current_Use > 0 then
+      Logging.Debug ("Executor shutting down...");
+
+      if This.Queue.Current_Use > 0 then
          Logging.Warn ("Executor pool starting shutdown with" &
-                         This.Parent.Queue.Current_Use'Img &
+                         This.Queue.Current_Use'Img &
                          " queued pending calls!");
       end if;
 
-      for I in This.Parent.Pool'Range loop
+      for I in This.Pool'Range loop
          Logging.Debug ("Stopping down runner" & I'Img & "...");
-         This.Parent.Pool (I).Shutdown;
-      end loop;
-
-      for I in This.Parent.Pool'Range loop
-         while not This.Parent.Pool (I)'terminated loop
-            delay 0.1;
-         end loop;
-         Free (This.Parent.Pool (I));
+         This.Pool (I).Shutdown;
       end loop;
 
       Logging.Debug ("All stopped");
 
-      if This.Parent.Queue.Current_Use > 0 then
+      if This.Queue.Current_Use > 0 then
          Logging.Warn ("Executor pool shut down with" &
-                         This.Parent.Queue.Current_Use'Img &
+                         This.Queue.Current_Use'Img &
                          " queued pending calls!");
       end if;
-   end Finalize;
-
-   ----------------
-   -- Initialize --
-   ----------------
-
-   overriding procedure Initialize (This : in out Controller) is
-   begin
-      for I in This.Parent.Pool'Range loop
-         This.Parent.Pool (I) := new Runner (This.Parent.all'Unchecked_Access);
-      end loop;
-   end Initialize;
+   end Shutdown;
 
    ------------
    -- Runner --
    ------------
 
    task body Runner is
+      Parent : Executor_Access;
       Done   : Boolean := False;
    begin
+
+      accept Init (Parent : Executor_Access) do
+         Runner.Parent := Parent;
+      end Init;
+
       Logging.Debug ("Runner started");
 
       while not Done loop
