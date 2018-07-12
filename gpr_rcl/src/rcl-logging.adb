@@ -15,7 +15,7 @@ package body RCL.Logging is
    procedure Log (Severity : Levels;
                   Message  : String;
                   Locate   : Boolean := False; -- see Include_Source_Location
-                  Location : Log_Location := No_Location; -- Manual location
+                  Location : Log_Location := Logging.Location; -- Manual location
                   Name     : String  := ""     -- Identify a particular logger
                  )
    is
@@ -41,7 +41,7 @@ package body RCL.Logging is
 
    procedure Debug (Message  : String;
                     Locate   : Boolean      := False;
-                    Location : Log_Location := No_Location;
+                    Location : Log_Location := Logging.Location;
                     Name     : String       := "") is
    begin
       Log (Levels (RCUTILS_LOG_SEVERITY_DEBUG),
@@ -57,7 +57,7 @@ package body RCL.Logging is
 
    procedure Info (Message  : String;
                     Locate   : Boolean      := False;
-                    Location : Log_Location := No_Location;
+                    Location : Log_Location := Logging.Location;
                     Name     : String       := "") is
    begin
       Log (Levels (RCUTILS_LOG_SEVERITY_INFO),
@@ -73,7 +73,7 @@ package body RCL.Logging is
 
    procedure Warn (Message  : String;
                     Locate   : Boolean      := False;
-                    Location : Log_Location := No_Location;
+                    Location : Log_Location := Logging.Location;
                     Name     : String       := "") is
    begin
       Log (Levels (RCUTILS_LOG_SEVERITY_WARN),
@@ -89,7 +89,7 @@ package body RCL.Logging is
 
    procedure Error (Message  : String;
                     Locate   : Boolean      := False;
-                    Location : Log_Location := No_Location;
+                    Location : Log_Location := Logging.Location;
                     Name     : String       := "") is
    begin
       Log (Levels (RCUTILS_LOG_SEVERITY_ERROR),
@@ -105,7 +105,7 @@ package body RCL.Logging is
 
    procedure Fatal (Message  : String;
                     Locate   : Boolean      := False;
-                    Location : Log_Location := No_Location;
+                    Location : Log_Location := Logging.Location;
                     Name     : String       := "") is
    begin
       Log (Levels (RCUTILS_LOG_SEVERITY_FATAL),
