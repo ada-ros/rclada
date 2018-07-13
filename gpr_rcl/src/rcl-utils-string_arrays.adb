@@ -4,6 +4,33 @@ with RCL.Logging;
 
 package body RCL.Utils.String_Arrays is
 
+   type Iterator (Arr : access constant String_Array) is
+     new Iterators.Forward_Iterator With
+      record
+         Pos : Positive;
+      end record;
+
+   -----------
+   -- First --
+   -----------
+
+   function First (This : Iterator) return Cursor is (This.Arr, Positive'First);
+
+   ----------
+   -- Next --
+   ----------
+
+   function Next
+     (This   : Iterator;
+      Position : Cursor) return Cursor is (This.Arr, Position.Pos + 1);
+
+   -------------
+   -- Iterate --
+   -------------
+
+   function Iterate (This : String_Array) return Iterators.Forward_Iterator'Class is
+      (Iterator'(This'Access, Positive'First));
+
    --------------
    -- Finalize --
    --------------

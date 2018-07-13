@@ -7,8 +7,6 @@ with RCL.Logging;
 with RCL.Publishers.Impl;
 with RCL.Services.Impl;
 with RCL.Subscriptions.Impl;
-with RCL.Utils.Names_And_Types;
-with RCL.Utils.String_Arrays;
 
 with Rcl_Client_H;  use Rcl_Client_H;
 with Rcl_Graph_H;   use Rcl_Graph_H;
@@ -280,19 +278,15 @@ package body RCL.Nodes is
    -- Graph_Node_Names --
    ----------------------
 
-   function Graph_Node_Names (This : Node) return Utils.Node_Name_Vector is
-      Arr : aliased Utils.String_Arrays.String_Array;
-   begin
-      Check
-        (Rcl_Get_Node_Names
-           (This.Impl'Access,
-            Allocators.Impl.To_C (This.Options.Allocator.all),
-            Arr.To_C));
+   function Graph_Node_Names (This : Node) return Utils.String_Arrays.String_Array is
 
-      return V : Utils.Node_Name_Vector do
-         for I in 1 .. Arr.Length loop
-            V.Append (Arr.Element (I));
-         end loop;
+   begin
+      return Arr : aliased Utils.String_Arrays.String_Array do
+         Check
+           (Rcl_Get_Node_Names
+              (This.Impl'Access,
+               Allocators.Impl.To_C (This.Options.Allocator.all),
+               Arr.To_C));
       end return;
    end Graph_Node_Names;
 
@@ -300,19 +294,14 @@ package body RCL.Nodes is
    -- Graph_Services --
    --------------------
 
-   function Graph_Services (This : in out Node) return Utils.Services_And_Types is
-      Arr   : aliased Utils.Names_And_Types.Vector;
+   function Graph_Services (This : in out Node) return Utils.Names_And_Types.Vector is
    begin
-      Check
-        (rcl_get_service_names_and_types
-           (This.Impl'Access,
-            This.C_Allocator.Impl,
-            Arr.To_C));
-
-      return V : Utils.Services_And_Types do
-         for I in 1 .. Arr.Length loop
-            V.Insert (Arr.Names (I), Arr.Types (I));
-         end loop;
+      return Arr : aliased Utils.Names_And_Types.Vector do
+         Check
+           (Rcl_Get_Service_Names_And_Types
+              (This.Impl'Access,
+               This.C_Allocator.Impl,
+               Arr.To_C));
       end return;
    end Graph_Services;
 
@@ -320,20 +309,16 @@ package body RCL.Nodes is
    -- Graph_Topics --
    ------------------
 
-   function Graph_Topics (This : in out Node; Demangle : Boolean := True) return Utils.Topics_And_Types is
-      Arr   : aliased Utils.Names_And_Types.Vector;
+   function Graph_Topics (This     : in out Node;
+                          Demangle : Boolean := True) return Utils.Names_And_Types.Vector is
    begin
-      Check
-        (rcl_get_topic_names_and_types
-           (This.Impl'Access,
-            This.C_Allocator.Impl,
-            (if Demangle then Bool_False else Bool_True), -- Note: in C side is No_Demangle (bool)
-            Arr.To_C));
-
-      return V : Utils.Topics_And_Types do
-         for I in 1 .. Arr.Length loop
-            V.Insert (Arr.Names (I), Arr.Types (I));
-         end loop;
+      return Arr : aliased Utils.Names_And_Types.Vector do
+         Check
+           (Rcl_Get_Topic_Names_And_Types
+              (This.Impl'Access,
+               This.C_Allocator.Impl,
+               (if Demangle then Bool_False else Bool_True), -- Note: in C side is No_Demangle (bool)
+               Arr.To_C));
       end return;
    end Graph_Topics;
 

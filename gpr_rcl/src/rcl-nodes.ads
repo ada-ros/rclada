@@ -9,7 +9,8 @@ with RCL.Publishers;
 with RCL.Subscriptions;
 with RCL.Services;
 with RCL.Timers.Impl;
-with RCL.Utils;
+with RCL.Utils.Names_And_Types;
+with RCL.Utils.String_Arrays;
 
 with Rcl_Node_H;         use Rcl_Node_H;
 
@@ -170,11 +171,12 @@ package RCL.Nodes is
    
    function Graph_Count_Subscribers (This : Node; Topic : String) return Natural;
    
-   function Graph_Node_Names (This : Node) return Utils.Node_Name_Vector;
+   function Graph_Node_Names (This : Node) return Utils.String_Arrays.String_Array;
    
-   function Graph_Services (This : in out Node) return Utils.Services_And_Types;
+   function Graph_Services (This : in out Node) return Utils.Names_And_Types.Vector;
    
-   function Graph_Topics (This : in out Node; Demangle : Boolean := True) return Utils.Topics_And_Types;   
+   function Graph_Topics (This     : in out Node; 
+                          Demangle : Boolean := True) return Utils.Names_And_Types.Vector;
    
    -------------------
    --  Misc access  --
