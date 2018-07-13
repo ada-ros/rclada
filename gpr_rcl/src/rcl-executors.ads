@@ -1,4 +1,4 @@
-with Ada.Containers.Ordered_Sets;
+with Ada.Containers.Bounded_Vectors; use Ada.Containers;
 with Ada.Unchecked_Conversion;
 
 with RCL.Allocators;
@@ -22,7 +22,9 @@ package RCL.Executors is
    --  Executors are expected to outlive nodes (they should be library-level).
    --  Nodes self-manage their registration-unregistration
    
-   type Executor is abstract tagged limited private;         
+   type Executor (Max_Nodes : Count_Type := Default_Nodes_Per_Executor) is 
+     abstract tagged limited private;         
+   --  To avoid use of dynamic memory, node space is preallocated.
    
    type Handle is access all Executor'Class with Storage_Size => 0;
    
@@ -57,7 +59,7 @@ package RCL.Executors is
    
 private   
    
-   type Node_Access is not null access all Nodes.Node'Class;
+   type Node_Access is access all Nodes.Node'Class;
    
    function To_Ptr is new Ada.Unchecked_Conversion (Node_Access, System.Address);
    
@@ -66,21 +68,27 @@ private
    function "<" (L, R : Node_Access) return Boolean is
       (To_Ptr (L) < To_Ptr (R));
    
-   package Node_Sets is new Ada.Containers.Ordered_Sets (Node_Access);
+   package Node_Sets is new Ada.Containers.Bounded_Vectors (Positive, Node_Access);
+   subtype Set is Node_Sets.Vector;
+   --  This should be (and was) a set, but bounded_sets cause some bizarre
+   --    accessibility check (might be related to uninitialized components)
    
-   protected type Node_Set (Parent : access Executor'Class) is
+   protected type Node_Set (Max_Nodes : Count_Type;
+                            Parent    : access Executor'Class) is
       procedure Delete (Node  : Node_Access);
       procedure Insert (Node  : Node_Access);
-      procedure Get    (Nodes : out Node_Sets.Set);
+      procedure Get    (Nodes : out Set);
       function  Is_Empty return Boolean;
    private
-      Nodes : Node_Sets.Set;
+      Nodes : Set (Max_Nodes);
    end Node_Set;
    
-   type Executor is abstract tagged limited record
-      Nodes     : Node_Set (Executor'Access);      
-      Allocator : Allocators.Handle := Allocators.Global_Allocator; 
-   end record;
+   type Executor (Max_Nodes : Count_Type := Default_Nodes_Per_Executor) is 
+     abstract tagged limited 
+      record
+         Nodes     : Node_Set (Max_Nodes, Executor'Access);      
+         Allocator : Allocators.Handle := Allocators.Global_Allocator; 
+      end record;
    
    procedure Common_Dispatch (Node   : access Nodes.Node'Class;
                               Handle :        Impl.Dispatchers.Handle);

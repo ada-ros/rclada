@@ -5,12 +5,11 @@ with Ada.Containers.Synchronized_Queue_Interfaces;
 with System.Multiprocessors; use System.Multiprocessors;
 
 package RCL.Executors.Concurrent is
-
-   use Ada.Containers;
    
    --  Thread pool
    
-   type Executor (Queue_Size : Count_Type      := Count_Type (System.Multiprocessors.Number_Of_CPUs) * 32;
+   type Executor (Max_Nodes  : Count_Type      := Default_Nodes_Per_Executor;
+                  Queue_Size : Count_Type      := Count_Type (System.Multiprocessors.Number_Of_CPUs) * 32;
                   Threads    : Positive        := Positive   (System.Multiprocessors.Number_Of_CPUs);
                   Priority   : System.Priority := System.Max_Priority) is
      new Executors.Executor with private;
@@ -42,10 +41,11 @@ private
    
    type Runner_Pool is array (Positive range <>) of Runner;
    
-   type Executor (Queue_Size : Count_Type := Count_Type (System.Multiprocessors.Number_Of_CPUs) * 32;
+   type Executor (Max_Nodes  : Count_Type      := Default_Nodes_Per_Executor;
+                  Queue_Size : Count_Type := Count_Type (System.Multiprocessors.Number_Of_CPUs) * 32;
                   Threads    : Positive   := Positive (System.Multiprocessors.Number_Of_CPUs);
                   Priority   : System.Priority := System.Max_Priority) is
-     new Executors.Executor with 
+     new Executors.Executor (Max_Nodes) with 
       record
          Self  : access Executor := Executor'Unchecked_Access;
          Pool  : Runner_Pool  (1 .. Threads);

@@ -86,7 +86,7 @@ package body RCL.Executors is
    is
       --  True if something was processed
       CBs   : aliased Impl.Dispatchers.Set;
-      Nodes : Node_Sets.Set;
+      Nodes : Set (This.Max_Nodes);
    begin
       This.Nodes.Get (Nodes);
 
@@ -135,7 +135,14 @@ package body RCL.Executors is
 
       procedure Delete (Node  : Node_Access) is
       begin
-         Nodes.Delete (Node);
+         for I in 1 .. Natural (Nodes.Length) loop
+            if Nodes (I) = Node then
+               Nodes.Delete (I);
+               return;
+            end if;
+         end loop;
+
+         raise Constraint_Error with "Node not in executor";
       end Delete;
 
       ------------
@@ -144,14 +151,14 @@ package body RCL.Executors is
 
       procedure Insert (Node  : Node_Access) is
       begin
-         Nodes.Insert (Node);
+         Nodes.Append (Node);
       end Insert;
 
       ---------
       -- Get --
       ---------
 
-      procedure Get    (Nodes : out Node_Sets.Set) is
+      procedure Get    (Nodes : out Set) is
       begin
          Nodes := Node_Set.Nodes;
       end Get;

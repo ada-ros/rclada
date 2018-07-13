@@ -33,7 +33,13 @@ package RCL is
    
    subtype ROS2_Duration is Duration range Duration'First .. Forever;
    
-   No_Executor : constant access Executors.Executor'Class := null;
+   ----------------
+   --  DEFAULTS  --
+   ----------------
+   
+   Default_Nodes_Per_Executor : constant := 16;
+   
+   No_Executor : constant access Executors.Executor'Class := null;   
 
 private
    
