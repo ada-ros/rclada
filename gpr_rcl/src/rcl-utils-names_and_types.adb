@@ -2,7 +2,48 @@ with Ada.Exceptions; use Ada.Exceptions;
 
 with RCL.Logging;
 
+with Rcutils_Types_String_Array_H; use Rcutils_Types_String_Array_H;
+
 package body RCL.Utils.Names_And_Types is
+
+   type Iterator (V : access constant Vector) is
+     new Iterators.Forward_Iterator With
+      record
+         Pos : Positive;
+      end record;
+
+   -----------
+   -- First --
+   -----------
+
+   function First (This : Iterator) return Cursor is (This.V, Positive'First);
+
+   ----------
+   -- Next --
+   ----------
+
+   function Next
+     (This   : Iterator;
+      Position : Cursor) return Cursor is (This.V, Position.Pos + 1);
+
+   -------------
+   -- Iterate --
+   -------------
+
+   function Iterate (This : Vector) return Iterators.Forward_Iterator'Class is
+      (Iterator'(This'Access, Positive'First));
+
+
+   -------------
+   -- Element --
+   -------------
+
+   function Element (This : Vector; Pos : Positive) return Name_And_Type is
+      N : constant String := This.Names (Pos);
+      T : constant String := This.Types (Pos);
+   begin
+      return (N'Length, T'Length, N, T);
+   end Element;
 
    --------------
    -- Finalize --
@@ -34,12 +75,22 @@ package body RCL.Utils.Names_And_Types is
    -----------
 
    function Types (This : Vector; Pos : Positive) return String is
-      Elems : array (1 .. This.Length) of CS.Chars_Ptr with
+      --  The C side is an "associative map": There is one array of Names,
+      --    and for each name there is another array, in this case of length 1,
+      --    containing the type corresponding to that name.
+
+      Elems : array (1 .. This.Length) of Rcutils_String_Array_T with
         Convention => C,
         Import,
-        Address => This.Impl.Types.Data;
+        Address => This.Impl.Types.all'Address;
+      --  Binding reports the array of string arrays as a pointer to the first string_array
+
+      Elem  : CS.Chars_Ptr with -- Since we know theres only one element, we can bypass it and just point to the first element in it
+        Convention => C,
+        Import,
+        Address => Elems (Pos).data;
    begin
-      return Value (Elems (Pos));
+      return Value (Elem);
    end Types;
 
    ------------

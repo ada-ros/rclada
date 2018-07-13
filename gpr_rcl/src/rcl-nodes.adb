@@ -294,7 +294,7 @@ package body RCL.Nodes is
    -- Graph_Services --
    --------------------
 
-   function Graph_Services (This : in out Node) return Utils.Names_And_Types.Vector is
+   function Graph_Services (This : Node) return Utils.Names_And_Types.Vector is
    begin
       return Arr : aliased Utils.Names_And_Types.Vector do
          Check
@@ -309,7 +309,7 @@ package body RCL.Nodes is
    -- Graph_Topics --
    ------------------
 
-   function Graph_Topics (This     : in out Node;
+   function Graph_Topics (This     : Node;
                           Demangle : Boolean := True) return Utils.Names_And_Types.Vector is
    begin
       return Arr : aliased Utils.Names_And_Types.Vector do

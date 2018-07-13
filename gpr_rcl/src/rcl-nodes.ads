@@ -173,9 +173,9 @@ package RCL.Nodes is
    
    function Graph_Node_Names (This : Node) return Utils.String_Arrays.String_Array;
    
-   function Graph_Services (This : in out Node) return Utils.Names_And_Types.Vector;
+   function Graph_Services (This : Node) return Utils.Names_And_Types.Vector;
    
-   function Graph_Topics (This     : in out Node; 
+   function Graph_Topics (This     : Node; 
                           Demangle : Boolean := True) return Utils.Names_And_Types.Vector;
    
    -------------------
