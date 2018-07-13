@@ -80,7 +80,7 @@ package body RCL.Executors.Concurrent is
          begin
             select
                Parent.Queue.Dequeue (CB);
-               CB.Element.Call;
+               CB_Holders.Get (CB).Call;
             or
                delay 1.0;
             end select;

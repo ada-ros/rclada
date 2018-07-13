@@ -1,5 +1,5 @@
 with Ada.Containers.Bounded_Synchronized_Queues;
-with Ada.Containers.Indefinite_Holders;
+with Ada.Containers.Bounded_Holders;
 with Ada.Containers.Synchronized_Queue_Interfaces;
 
 with System.Multiprocessors; use System.Multiprocessors;
@@ -23,8 +23,8 @@ package RCL.Executors.Concurrent is
    
 private    
    
-   package CB_Holders is new Ada.Containers.Indefinite_Holders
-     (Impl.Callbacks.Callback'Class, Impl.Callbacks."=");
+   package CB_Holders is new Ada.Containers.Bounded_Holders
+     (Impl.Callbacks.Callback'Class, "=" => Impl.Callbacks."=");
    
    subtype Callable is CB_Holders.Holder;
    
