@@ -22,7 +22,7 @@ package RCL.Utils.String_Arrays is
    
    package Iterators is new Ada.Iterator_Interfaces (Cursor, Has_Element);
    
-   function Iterate (This : String_Array) return Iterators.Forward_Iterator'Class;
+   function Iterate (This : aliased String_Array) return Iterators.Forward_Iterator'Class;
    
    function To_C (This : aliased in out String_Array) return access Rcutils_String_Array_T;
    

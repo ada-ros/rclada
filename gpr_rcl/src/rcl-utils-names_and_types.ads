@@ -31,7 +31,7 @@ package RCL.Utils.Names_And_Types is
    
    package Iterators is new Ada.Iterator_Interfaces (Cursor, Has_Element);
    
-   function Iterate (This : Vector) return Iterators.Forward_Iterator'Class;
+   function Iterate (This : aliased Vector) return Iterators.Forward_Iterator'Class;
    
    function To_C (This : aliased in out Vector) return access Rmw_Names_And_Types_T;
    

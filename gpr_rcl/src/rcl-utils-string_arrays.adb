@@ -4,9 +4,10 @@ with RCL.Logging;
 
 package body RCL.Utils.String_Arrays is
 
-   type Iterator (Arr : access constant String_Array) is
+   type Iterator is
      new Iterators.Forward_Iterator With
       record
+         Arr : access constant String_Array;
          Pos : Positive;
       end record;
 
@@ -28,7 +29,7 @@ package body RCL.Utils.String_Arrays is
    -- Iterate --
    -------------
 
-   function Iterate (This : String_Array) return Iterators.Forward_Iterator'Class is
+   function Iterate (This : aliased String_Array) return Iterators.Forward_Iterator'Class is
       (Iterator'(This'Access, Positive'First));
 
    --------------

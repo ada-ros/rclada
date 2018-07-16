@@ -1,4 +1,5 @@
 with Ada.Exceptions; use Ada.Exceptions;
+with Ada.Unchecked_Conversion;
 
 with RCL.Logging;
 
@@ -6,9 +7,10 @@ with Rcutils_Types_String_Array_H; use Rcutils_Types_String_Array_H;
 
 package body RCL.Utils.Names_And_Types is
 
-   type Iterator (V : access constant Vector) is
+   type Iterator is
      new Iterators.Forward_Iterator With
       record
+         V   : access constant Vector;
          Pos : Positive;
       end record;
 
@@ -30,7 +32,7 @@ package body RCL.Utils.Names_And_Types is
    -- Iterate --
    -------------
 
-   function Iterate (This : Vector) return Iterators.Forward_Iterator'Class is
+   function Iterate (This : aliased Vector) return Iterators.Forward_Iterator'Class is
       (Iterator'(This'Access, Positive'First));
 
 
