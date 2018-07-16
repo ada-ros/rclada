@@ -215,7 +215,7 @@ package body RCL.Impl.Wait is
    ----------
 
    function Init (Allocator : Allocators.Handle;
-                  Callbacks : aliased in out RCL.Impl.Dispatchers.Set) return Set is
+                  Callbacks : aliased in out RCL.Impl.Dispatchers.Maps.Set) return Set is
    begin
       return S : Set := Init (Allocator         => Allocator,
                               Num_Clients       => Callbacks.Num_Clients,

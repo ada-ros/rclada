@@ -3,7 +3,7 @@ with Ada.Iterator_Interfaces;
 
 with RCL.Allocators;
 with RCL.Clients.Impl;
-with RCL.Impl.Dispatchers;
+with RCL.Impl.Dispatchers.Maps;
 with RCL.Services.Impl;
 limited with RCL.Subscriptions.Impl;
 with RCL.Timers;
@@ -45,7 +45,7 @@ package RCL.Impl.Wait is
    --  At least one of these must be nonzero
    
    function Init (Allocator         : Allocators.Handle;
-                  Callbacks         : aliased in out RCL.Impl.Dispatchers.Set) return Set;
+                  Callbacks         : aliased in out RCL.Impl.Dispatchers.Maps.Set) return Set;
    --  Initializes and fills using the given set
    --  WARNING: the set keeps temporary pointers to the C structs in Callbacks
    --    That's why Callbacks are aliased, and that's why YOU, the caller,

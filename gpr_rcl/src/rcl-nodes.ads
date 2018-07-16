@@ -1,7 +1,7 @@
 with Ada.Finalization;
 
 with RCL.Allocators;
-with RCL.Impl.Dispatchers;
+with RCL.Impl.Dispatchers.Maps;
 with RCL.Clients;
 with RCL.Executors;
 with RCL.Executors.Sequential;
@@ -201,7 +201,7 @@ private
       procedure Insert (CB                 : Dispatcher'Class; 
                         Is_Blocking_Client : Boolean := False);
       function  Is_Empty return Boolean;
-      procedure Union    (Dst : in out Impl.Dispatchers.Set);      
+      procedure Union    (Dst : in out Impl.Dispatchers.Maps.Set);      
       
       function  Current_Client return Impl.Dispatchers.Client_Dispatcher'Class;
       procedure Client_Success (Client : Impl.Dispatchers.Handle);
@@ -209,7 +209,7 @@ private
       procedure Finalize;
       
    private
-      CBs       : RCL.Impl.Dispatchers.Set;
+      CBs       : RCL.Impl.Dispatchers.Maps.Set (Default_Pending_Events_Per_Node);
       Client    : Handle; -- Client that's blocking and waiting
    end Safe_Dispatchers;
    

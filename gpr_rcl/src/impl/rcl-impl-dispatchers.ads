@@ -1,5 +1,3 @@
-with Ada.Containers.Indefinite_Ordered_Maps;
-
 limited with RCL.Executors;
 limited with RCL.Nodes;
 
@@ -46,17 +44,7 @@ package RCL.Impl.Dispatchers is
    
    function "<" (L, R : Dispatcher'Class) return Boolean;
    
-   use all type System.Address;
-   
-   package Dispatcher_Maps is new Ada.Containers.Indefinite_Ordered_Maps
-     (Handle, Dispatcher'Class);
-   
-   type Set is new Dispatcher_Maps.Map with null record;
-   
-   function Num_Clients       (This : Set) return Natural;
-   function Num_Services      (This : Set) return Natural;
-   function Num_Subscriptions (This : Set) return Natural;
-   function Num_Timers        (This : Set) return Natural;
+   use all type System.Address;  
 
    -------------
    -- Clients --
@@ -137,19 +125,6 @@ package RCL.Impl.Dispatchers is
    type Kinds is (Invalid, Client, Service, Subscription, Timer);
    
    type Definite_Dispatcher (Kind : Kinds    := Invalid; 
-                             Node : Node_Ptr := null) is private;
-   
-   function To_Definite (This : Dispatcher'Class;
-                         Node : Node_Ptr) return Definite_Dispatcher;
-   
-   procedure Dispatch (This : Definite_Dispatcher);
-   procedure Finalize (This : in out Definite_Dispatcher);
-   function To_Handle (This : Definite_Dispatcher) return Handle;
-   function Reference (This : aliased in out Definite_Dispatcher) return access Dispatcher'Class;
-   
-private
-   
-   type Definite_Dispatcher (Kind : Kinds    := Invalid; 
                              Node : Node_Ptr := null) is 
       record
          case Kind is 
@@ -160,6 +135,16 @@ private
             when Invalid      => null;
          end case;
       end record;
+   
+   function To_Definite (This : Dispatcher'Class;
+                         Node : Node_Ptr) return Definite_Dispatcher;
+   
+   procedure Dispatch (This : Definite_Dispatcher);
+   procedure Finalize (This : in out Definite_Dispatcher);
+   function To_Handle (This : Definite_Dispatcher) return Handle;
+   function Reference (This : aliased in out Definite_Dispatcher) return access Dispatcher'Class;         
+   
+private      
    
    use Rcl_Node_H;
    

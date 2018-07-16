@@ -37,7 +37,9 @@ package RCL is
    --  DEFAULTS  --
    ----------------
    
-   Default_Nodes_Per_Executor : constant := 16;
+   Default_Nodes_Per_Executor      : constant := 16;
+   Default_Pending_Events_Per_Node : constant := 128;
+   --  TODO: make this default overridable in nodes
    
    No_Executor : constant access Executors.Executor'Class := null;   
 
