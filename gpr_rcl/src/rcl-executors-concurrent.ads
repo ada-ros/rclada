@@ -1,5 +1,4 @@
 with Ada.Containers.Bounded_Synchronized_Queues;
-with Ada.Containers.Indefinite_Holders;
 with Ada.Containers.Synchronized_Queue_Interfaces;
 
 with System.Multiprocessors; use System.Multiprocessors;
@@ -21,13 +20,9 @@ package RCL.Executors.Concurrent is
    overriding
    procedure Shutdown (This : in out Executor);
    
-private    
-   
-   package CB_Holders is new Ada.Containers.Indefinite_Holders
-     (Impl.Callbacks.Callback'Class,
-      "=" => Impl.Callbacks."=");
-   
-   subtype Callable is CB_Holders.Holder;
+private          
+
+   subtype Callable is Impl.Callbacks.Definite_Callback;
    
    package Queue_Elements is new Synchronized_Queue_Interfaces (Callable);
    package Queues is new Bounded_Synchronized_Queues (Queue_Elements,

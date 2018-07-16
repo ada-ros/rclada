@@ -25,7 +25,7 @@ package body RCL.Executors.Concurrent is
       end if;
 
       select
-         This.Queue.Enqueue (CB_Holders.To_Holder (CB));
+         This.Queue.Enqueue (Impl.Callbacks.To_Definite (CB, CB.Node));
       else
          Logging.Warn ("Queue full! Events are being DISCARDED!");
       end select;
@@ -80,7 +80,7 @@ package body RCL.Executors.Concurrent is
          begin
             select
                Parent.Queue.Dequeue (CB);
-               CB_Holders.Element (CB).Call;
+               Impl.Callbacks.Call (CB);
             or
                delay 1.0;
             end select;

@@ -13,6 +13,21 @@ package body RCL.Impl.Callbacks is
    -- Call --
    ----------
 
+   procedure Call (This : Definite_Callback) is
+   begin
+      case This.Kind is
+         when Client       => This.Client.Call;
+         when Service      => This.Service.Call;
+         when Subscription => This.Subscription.Call;
+         when Timer        => This.Timer.Call;
+         when others       => raise Program_Error;
+      end case;
+   end Call;
+
+   ----------
+   -- Call --
+   ----------
+
    overriding procedure Call (This : Client_Callback) is
    begin
       This.User_Callback (This.Node.all,

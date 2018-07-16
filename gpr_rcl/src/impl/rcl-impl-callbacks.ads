@@ -52,4 +52,38 @@ package RCL.Impl.Callbacks is
    end record;
    overriding procedure Call (This : Timer_Callback);
 
+   type Kinds is (Invalid, Client, Service, Subscription, Timer);
+
+   --  Following klunk is to avoid the use of dynamic allocation
+
+   type Node_Ptr is access all Nodes.Node'Class with Storage_Size => 0;
+
+   type Definite_Callback (Kind : Kinds := Invalid;
+                           Node : Node_Ptr := null) is record
+      case Kind is
+         when Invalid      => null;
+         when Client       => Client       : Client_Callback (Node);
+         when Service      => Service      : Service_Callback (Node);
+         when Subscription => Subscription : Subscription_Callback (Node);
+         when Timer        => Timer        : Timer_Callback (Node);
+      end case;
+   end record;
+
+   procedure Call (This : Definite_Callback);
+
+   function To_Definite (This : Callback'Class;
+                         Node : Node_Ptr)
+                         return Definite_Callback;
+
+private
+
+   function To_Definite (This : Callback'Class;
+                         Node : Node_Ptr)
+                         return Definite_Callback is
+     (if    This in Client_Callback       then (Client,       Node, Client_Callback (This))
+      elsif This in Service_Callback      then (Service,      Node, Service_Callback (This))
+      elsif This in Subscription_Callback then (Subscription, Node, Subscription_Callback (This))
+      elsif This in Timer_Callback        then (Timer,        Node, Timer_Callback (This))
+      else raise Program_Error with "Unknown callback");
+
 end RCL.Impl.Callbacks;
