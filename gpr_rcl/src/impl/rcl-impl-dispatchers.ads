@@ -119,23 +119,53 @@ package RCL.Impl.Dispatchers is
       Callback  :         Timers.Callback;
    end record;
    
-   function "=" (L, R : Timer_Dispatcher) return Boolean;
-   
    procedure Dispatch (This : Timer_Dispatcher);
    
    procedure Finalize (This : in out Timer_Dispatcher);
    
    function To_Handle (This : Timer_Dispatcher) return Handle;
    
+   --  Horrible klunkyness to avoid dynamic allocation while preserving
+   --  finalization. Bounded_Holders would have been ideal but it obviously
+   --  doesn't work with Controlled components or types
+   --  Basically we're manually dispatching, so this could have been the
+   --  whole dispatcher from the beginning. On the bright side, this way
+   --  dispatcher implementations are a bit more isolated.
+   
+   type Node_Ptr is access all Nodes.Node'Class with Storage_Size => 0;
+   
+   type Kinds is (Invalid, Client, Service, Subscription, Timer);
+   
+   type Definite_Dispatcher (Kind : Kinds    := Invalid; 
+                             Node : Node_Ptr := null) is private;
+   
+   function To_Definite (This : Dispatcher'Class;
+                         Node : Node_Ptr) return Definite_Dispatcher;
+   
+   procedure Dispatch (This : Definite_Dispatcher);
+   procedure Finalize (This : in out Definite_Dispatcher);
+   function To_Handle (This : Definite_Dispatcher) return Handle;
+   function Reference (This : aliased in out Definite_Dispatcher) return access Dispatcher'Class;
+   
 private
+   
+   type Definite_Dispatcher (Kind : Kinds    := Invalid; 
+                             Node : Node_Ptr := null) is 
+      record
+         case Kind is 
+            when Client       => Client       : aliased Client_Dispatcher (Node);
+            when Service      => Service      : aliased Service_Dispatcher (Node);
+            when Subscription => Subscription : aliased Subscription_Dispatcher (Node);
+            when Timer        => Timer        : aliased Timer_Dispatcher (Node);
+            when Invalid      => null;
+         end case;
+      end record;
    
    use Rcl_Node_H;
    
    use all type Timers.Timer;
    
-   function "+" (Addr : System.Address) return Handle is (Handle (Addr));
-   
-   function "=" (L, R : Timer_Dispatcher) return Boolean is (L.Timer = R.Timer);
+   function "+" (Addr : System.Address) return Handle is (Handle (Addr));  
    
    function C_Node (This : Dispatcher'Class) return access Rcl_Node_T;
    

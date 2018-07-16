@@ -222,4 +222,72 @@ package body RCL.Impl.Dispatchers is
       return Num;
    end Num_Timers;
 
+   --  DEFINITES  --
+
+   --------------
+   -- Dispatch --
+   --------------
+
+   procedure Dispatch (This : Definite_Dispatcher) is
+   begin
+      case This.Kind is
+         when Client       => This.Client.Dispatch;
+         when Service      => This.Service.Dispatch;
+         when Subscription => This.Subscription.Dispatch;
+         when Timer        => This.Timer.Dispatch;
+         when others       => raise Program_Error;
+      end case;
+   end Dispatch;
+
+   --------------
+   -- Finalize --
+   --------------
+
+   procedure Finalize (This : in out Definite_Dispatcher) is
+   begin
+      case This.Kind is
+         when Client       => This.Client.Finalize;
+         when Service      => This.Service.Finalize;
+         when Subscription => This.Subscription.Finalize;
+         when Timer        => This.Timer.Finalize;
+         when others       => raise Program_Error;
+      end case;
+   end Finalize;
+
+   ---------------
+   -- To_Handle --
+   ---------------
+
+   function To_Handle (This : Definite_Dispatcher) return Handle is
+     (case This.Kind is
+         when Client       => This.Client.To_Handle,
+         when Service      => This.Service.To_Handle,
+         when Subscription => This.Subscription.To_Handle,
+         when Timer        => This.Timer.To_Handle,
+         when others       => raise Program_Error);
+
+   ---------------
+   -- Reference --
+   ---------------
+
+   function Reference (This : aliased in out Definite_Dispatcher) return access Dispatcher'Class is
+     (case This.Kind is
+         when Client       => This.Client'Unrestricted_Access,
+         when Service      => This.Service'Unrestricted_Access,
+         when Subscription => This.Subscription'Unrestricted_Access,
+         when Timer        => This.Timer'Unrestricted_Access,
+         when others       => raise Program_Error);
+
+   -----------------
+   -- To_Definite --
+   -----------------
+
+   function To_Definite (This : Dispatcher'Class;
+                         Node : Node_Ptr) return Definite_Dispatcher is
+     (if    This in Client_Dispatcher       then (Client,       Node, Client_Dispatcher (This))
+      elsif This in Service_Dispatcher      then (Service,      Node, Service_Dispatcher (This))
+      elsif This in Subscription_Dispatcher then (Subscription, Node, Subscription_Dispatcher (This))
+      elsif This in Timer_Dispatcher        then (Timer,        Node, Timer_Dispatcher (This))
+      else raise Program_Error with "Unknown dispatcher");
+
 end RCL.Impl.Dispatchers;
