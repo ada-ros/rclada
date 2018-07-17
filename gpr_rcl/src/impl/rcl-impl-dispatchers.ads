@@ -142,6 +142,7 @@ package RCL.Impl.Dispatchers is
    procedure Dispatch (This : Definite_Dispatcher);
    procedure Finalize (This : in out Definite_Dispatcher);
    function To_Handle (This : Definite_Dispatcher) return Handle;
+   function Element   (This : Definite_Dispatcher) return Dispatcher'Class;
    function Reference (This : aliased in out Definite_Dispatcher) return access Dispatcher'Class;         
    
 private      

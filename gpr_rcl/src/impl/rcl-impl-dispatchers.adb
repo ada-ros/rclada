@@ -206,6 +206,18 @@ package body RCL.Impl.Dispatchers is
          when Timer        => This.Timer.To_Handle,
          when others       => raise Program_Error);
 
+   -------------
+   -- Element --
+   -------------
+
+   function Element   (This : Definite_Dispatcher) return Dispatcher'Class is
+     (case This.Kind is
+         when Client       => This.Client,
+         when Service      => This.Service,
+         when Subscription => This.Subscription,
+         when Timer        => This.Timer,
+         when others       => raise Program_Error);
+
    ---------------
    -- Reference --
    ---------------

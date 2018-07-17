@@ -4,7 +4,7 @@ package body RCL.Impl.Dispatchers.Maps is
    -- Num_Clients --
    -----------------
 
-   function Num_Clients       (This : Set) return Natural is
+   function Num_Clients       (This : Map) return Natural is
       Num : Natural := 0;
    begin
       for D of This loop
@@ -19,7 +19,7 @@ package body RCL.Impl.Dispatchers.Maps is
    -- Num_Services --
    ------------------
 
-   function Num_Services      (This : Set) return Natural is
+   function Num_Services      (This : Map) return Natural is
       Num : Natural := 0;
    begin
       for D of This loop
@@ -34,7 +34,7 @@ package body RCL.Impl.Dispatchers.Maps is
    -- Num_Subscriptions --
    -----------------------
 
-   function Num_Subscriptions (This : Set) return Natural is
+   function Num_Subscriptions (This : Map) return Natural is
       Num : Natural := 0;
    begin
       for D of This loop
@@ -49,7 +49,7 @@ package body RCL.Impl.Dispatchers.Maps is
    -- Num_Timers --
    ----------------
 
-   function Num_Timers        (This : Set) return Natural is
+   function Num_Timers        (This : Map) return Natural is
       Num : Natural := 0;
    begin
       for D of This loop

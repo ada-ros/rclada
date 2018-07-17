@@ -215,7 +215,7 @@ package body RCL.Impl.Wait is
    ----------
 
    function Init (Allocator : Allocators.Handle;
-                  Callbacks : aliased in out RCL.Impl.Dispatchers.Maps.Set) return Set is
+                  Callbacks : aliased in out RCL.Impl.Dispatchers.Maps.Map) return Set is
    begin
       return S : Set := Init (Allocator         => Allocator,
                               Num_Clients       => Callbacks.Num_Clients,
@@ -224,23 +224,28 @@ package body RCL.Impl.Wait is
                               Num_Timers        => Callbacks.Num_Timers)
       do
          for CB of Callbacks loop
-            if CB in RCL.Impl.Dispatchers.Client_Dispatcher'Class then
-               S.Add (RCL.Impl.Dispatchers.Client_Dispatcher'Class (CB).Client);
+            declare
+               CBR : Impl.Dispatchers.Dispatcher'Class renames
+                       Impl.Dispatchers.Reference (CB).all;
+            begin
+               if CBR in RCL.Impl.Dispatchers.Client_Dispatcher'Class then
+                  S.Add (RCL.Impl.Dispatchers.Client_Dispatcher'Class (CBR).Client);
 
-            elsif CB in RCL.Impl.Dispatchers.Service_Dispatcher'Class then
-               S.Add (RCL.Impl.Dispatchers.Service_Dispatcher'Class (CB).Service);
+               elsif CBR in RCL.Impl.Dispatchers.Service_Dispatcher'Class then
+                  S.Add (RCL.Impl.Dispatchers.Service_Dispatcher'Class (CBR).Service);
 
-            elsif CB in RCL.Impl.Dispatchers.Subscription_Dispatcher'Class then
-               S.Add (RCL.Impl.Dispatchers.Subscription_Dispatcher'Class (CB).Subscription);
+               elsif CBR in RCL.Impl.Dispatchers.Subscription_Dispatcher'Class then
+                  S.Add (RCL.Impl.Dispatchers.Subscription_Dispatcher'Class (CBR).Subscription);
 
-            elsif CB in RCL.Impl.Dispatchers.Timer_Dispatcher'Class then
-               if not Timers.Is_Canceled (RCL.Impl.Dispatchers.Timer_Dispatcher'Class (CB).Timer) then
-                  S.Add (RCL.Impl.Dispatchers.Timer_Dispatcher'Class (CB).Timer);
+               elsif CBR in RCL.Impl.Dispatchers.Timer_Dispatcher'Class then
+                  if not Timers.Is_Canceled (RCL.Impl.Dispatchers.Timer_Dispatcher'Class (CBR).Timer) then
+                     S.Add (RCL.Impl.Dispatchers.Timer_Dispatcher'Class (CBR).Timer);
+                  end if;
+
+               else
+                  raise Program_Error with "Unknown callback";
                end if;
-
-            else
-               raise Program_Error with "Unknown callback";
-            end if;
+            end;
          end loop;
       end return;
    end Init;

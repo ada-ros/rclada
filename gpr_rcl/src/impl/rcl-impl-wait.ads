@@ -45,7 +45,7 @@ package RCL.Impl.Wait is
    --  At least one of these must be nonzero
    
    function Init (Allocator         : Allocators.Handle;
-                  Callbacks         : aliased in out RCL.Impl.Dispatchers.Maps.Set) return Set;
+                  Callbacks         : aliased in out RCL.Impl.Dispatchers.Maps.Map) return Set;
    --  Initializes and fills using the given set
    --  WARNING: the set keeps temporary pointers to the C structs in Callbacks
    --    That's why Callbacks are aliased, and that's why YOU, the caller,

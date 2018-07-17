@@ -21,7 +21,7 @@ package RCL.Nodes.Impl is
    
    function Current_Executor (This : in out Node'Class) return Executors.Handle;
    
-   procedure Get_Callbacks (This : in out Node'Class; Set : in out Dispatchers.Maps.Set);      
+   procedure Get_Callbacks (This : in out Node'Class; Set : in out Dispatchers.Maps.Map);      
    
    procedure Trigger (This : in out Node'Class; Dispatcher : Dispatchers.Handle);
    

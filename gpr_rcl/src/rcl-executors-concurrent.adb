@@ -1,5 +1,4 @@
 with Ada.Exceptions; use Ada.Exceptions;
---  with Ada.Unchecked_Deallocation;
 
 with RCL.Logging;
 

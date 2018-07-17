@@ -1,7 +1,9 @@
 with Ada.Calendar;
 with Ada.Exceptions;
 
-with RCL.Impl.Wait; use RCL.Impl;
+with RCL.Impl.Dispatchers.Maps;
+with RCL.Impl.Wait;
+use RCL.Impl;
 
 with RCL.Nodes;
 with RCL.Nodes.Impl;
@@ -85,8 +87,11 @@ package body RCL.Executors is
                        return Boolean
    is
       --  True if something was processed
-      CBs   : aliased Impl.Dispatchers.Set;
+      CBs   : aliased Impl.Dispatchers.Maps.Map (Default_Pending_Events_Per_Node);
+      --  TODO: get this size from the proper nodes?
       Nodes : Set (This.Max_Nodes);
+
+      use Impl.Dispatchers;
    begin
       This.Nodes.Get (Nodes);
 
@@ -115,7 +120,7 @@ package body RCL.Executors is
 
             when Impl.Wait.Triggered =>
                for Triggered of Set loop
-                  CBs.Element (Triggered.Handle).Dispatch;
+                  Element (CBs.Element (Triggered.Handle)).Dispatch;
                end loop;
                return True;
 

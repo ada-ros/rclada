@@ -537,7 +537,7 @@ package body RCL.Nodes is
       ---------
 
       function Get (CB : Impl.Dispatchers.Handle) return Dispatcher'Class is
-         (CBs.Element (CB));
+         (Element (CBs.Element (CB)));
 
       ------------
       -- Insert --
@@ -546,7 +546,7 @@ package body RCL.Nodes is
       procedure Insert (CB                 : Dispatcher'Class;
                         Is_Blocking_Client : Boolean := False) is
       begin
-         CBs.Insert (CB.To_Handle, CB);
+         CBs.Insert (CB.To_Handle, To_Definite (CB, CB.Node));
          if Is_Blocking_Client then
             Client := CB.To_Handle;
          end if;
@@ -563,10 +563,10 @@ package body RCL.Nodes is
       -- Union --
       -----------
 
-      procedure Union (Dst : in out Impl.Dispatchers.Set) is
+      procedure Union (Dst : in out Impl.Dispatchers.Maps.Map) is
       begin
          for CB of CBs loop
-            Dst.Insert (CB.To_Handle, CB);
+            Dst.Insert (Element (CB).To_Handle, CB);
          end loop;
       end Union;
 
@@ -575,7 +575,7 @@ package body RCL.Nodes is
       --------------------
 
       function Current_Client return Impl.Dispatchers.Client_Dispatcher'Class is
-         (Impl.Dispatchers.Client_Dispatcher'Class (CBs.Element (Client)));
+         (Impl.Dispatchers.Client_Dispatcher'Class (Element (CBs.Element (Client))));
 
       --------------------
       -- Client_Success --
@@ -586,7 +586,7 @@ package body RCL.Nodes is
                   Impl.Dispatchers.Client_Dispatcher'Class (Get (Client));
       begin
          Disp.Success := True;
-         CBs.Include (Disp.To_Handle, Disp);
+         CBs.Include (Disp.To_Handle, To_Definite (Disp, Disp.Node));
       end Client_Success;
 
       --------------
@@ -597,7 +597,7 @@ package body RCL.Nodes is
       begin
          for I in CBs.Iterate loop
             declare
-               Disp : Impl.Dispatchers.Dispatcher'Class := CBs (I);
+               Disp : Impl.Dispatchers.Dispatcher'Class := Element (CBs (I));
                --  Writable copy
             begin
                Disp.Finalize;

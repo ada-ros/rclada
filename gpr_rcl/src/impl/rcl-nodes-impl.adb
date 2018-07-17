@@ -13,7 +13,7 @@ package body RCL.Nodes.Impl is
    -- Get_Callbacks --
    -------------------
 
-   procedure Get_Callbacks (This : in out Node'Class; Set : in out Dispatchers.Set) is
+   procedure Get_Callbacks (This : in out Node'Class; Set : in out Dispatchers.Maps.Map) is
    begin
       This.Dispatchers.Union (Set);
    end Get_Callbacks;
