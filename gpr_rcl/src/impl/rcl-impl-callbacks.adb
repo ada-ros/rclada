@@ -80,10 +80,11 @@ package body RCL.Impl.Callbacks is
          when RCL_RET_TIMER_CANCELED =>
             Logging.Warn ("Attempt to call canceled timer");
             -- Happens once after canceling, not important
-         when Rmw_Ret_OK =>
-            This.User_Callback (This.Node.all,
-                                Temp, -- temporary timer for the callee
-                                Elapsed);
+         -- FIXME
+         -- when Rmw_Ret_OK =>
+         --    This.User_Callback (This.Node.all,
+         --                        Temp, -- temporary timer for the callee
+         --                        Elapsed);
          when others =>
             Check (Ret);
       end case;

@@ -12,12 +12,14 @@ package body RCL is
 
    procedure Generic_Check (I : Int) is
    begin
-      if I /= RMW_RET_OK then
-         raise ROS_Exception with "Code:" & I'Img;
-      else
-         null;
---           Put_Line ("CHECKED CALL: " & I'Img);
-      end if;
+      null;
+      --  FIXME
+--      if I /= RMW_RET_OK then
+--         raise ROS_Exception with "Code:" & I'Img;
+--      else
+--         null;
+-- --           Put_Line ("CHECKED CALL: " & I'Img);
+--      end if;
    end Generic_Check;
 
    -----------

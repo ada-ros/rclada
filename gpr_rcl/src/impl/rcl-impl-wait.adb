@@ -46,7 +46,8 @@ package body RCL.Impl.Wait is
    procedure Add (This : aliased in out Set;
                   Cli  : aliased in out Clients.Impl.C_Client) is
    begin
-      Check (Rcl_Wait_Set_Add_Client (This.Impl'Access, Cli.To_C));
+      null;
+      --  FIXME Check (Rcl_Wait_Set_Add_Client (This.Impl'Access, Cli.To_C));
    end Add;
 
    ---------
@@ -56,7 +57,8 @@ package body RCL.Impl.Wait is
    procedure Add (This : aliased in out Set;
                   Srv  : aliased in out Services.Impl.C_Service) is
    begin
-      Check (Rcl_Wait_Set_Add_Service (This.Impl'Access, Srv.To_C));
+      null;
+      --  FIXME Check (Rcl_Wait_Set_Add_Service (This.Impl'Access, Srv.To_C));
    end Add;
 
    ---------
@@ -66,7 +68,8 @@ package body RCL.Impl.Wait is
    procedure Add (This : aliased in out Set;
                   Sub  : Aliased in out Subscriptions.Impl.C_Subscription) is
    begin
-      Check (Rcl_Wait_Set_Add_Subscription (This.Impl'Access, Sub.Impl'Access));
+      null;
+      --  FIXME Check (Rcl_Wait_Set_Add_Subscription (This.Impl'Access, Sub.Impl'Access));
    end Add;
 
    ---------
@@ -77,7 +80,8 @@ package body RCL.Impl.Wait is
                   Timer : Aliased in out Timers.Timer)
    is
    begin
-      Check (Rcl_Wait_Set_Add_Timer (This.Impl'Access, Timers.Impl.To_C (Timer)));
+      null;
+      --  FIXME Check (Rcl_Wait_Set_Add_Timer (This.Impl'Access, Timers.Impl.To_C (Timer)));
    end Add;
 
 
@@ -291,15 +295,17 @@ package body RCL.Impl.Wait is
               Rcl_Wait (This.Impl'Access,
                         C.long (Timeout * 1_000_000_000.0)); -- Nanosecs
    begin
-      case Ret is
-         when RMW_RET_OK =>
-            return Triggered;
-         when RMW_RET_TIMEOUT =>
-            return Impl.Wait.Timeout;
-         when others =>
-            Logging.Warn ("Wait failed with code" & Ret'Img);
-            return Error;
-      end case;
+      return Triggered;
+   -- FIXME
+--      case Ret is
+--         when RMW_RET_OK =>
+--            return Triggered;
+--         when RMW_RET_TIMEOUT =>
+--            return Impl.Wait.Timeout;
+--         when others =>
+--            Logging.Warn ("Wait failed with code" & Ret'Img);
+--            return Error;
+--     end case;
    end Wait;
 
 end RCL.Impl.Wait;

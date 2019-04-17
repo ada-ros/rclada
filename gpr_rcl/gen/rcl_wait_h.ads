@@ -30,19 +30,19 @@ package rcl_wait_h is
   --/ Container for subscription's, guard condition's, etc to be waited on.
   --/ Storage for subscription pointers.
    type rcl_wait_set_t is record
-      subscriptions : System.Address;  -- /opt/ros/bouncy/include/rcl/wait.h:41
-      size_of_subscriptions : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/rcl/wait.h:42
-      guard_conditions : System.Address;  -- /opt/ros/bouncy/include/rcl/wait.h:44
-      size_of_guard_conditions : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/rcl/wait.h:45
-      timers : System.Address;  -- /opt/ros/bouncy/include/rcl/wait.h:47
-      size_of_timers : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/rcl/wait.h:48
-      clients : System.Address;  -- /opt/ros/bouncy/include/rcl/wait.h:50
-      size_of_clients : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/rcl/wait.h:51
-      services : System.Address;  -- /opt/ros/bouncy/include/rcl/wait.h:53
-      size_of_services : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/rcl/wait.h:54
-      impl : System.Address;  -- /opt/ros/bouncy/include/rcl/wait.h:56
+      subscriptions : System.Address;  -- /opt/ros/crystal/include/rcl/wait.h:41
+      size_of_subscriptions : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rcl/wait.h:42
+      guard_conditions : System.Address;  -- /opt/ros/crystal/include/rcl/wait.h:44
+      size_of_guard_conditions : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rcl/wait.h:45
+      timers : System.Address;  -- /opt/ros/crystal/include/rcl/wait.h:47
+      size_of_timers : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rcl/wait.h:48
+      clients : System.Address;  -- /opt/ros/crystal/include/rcl/wait.h:50
+      size_of_clients : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rcl/wait.h:51
+      services : System.Address;  -- /opt/ros/crystal/include/rcl/wait.h:53
+      size_of_services : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rcl/wait.h:54
+      impl : System.Address;  -- /opt/ros/crystal/include/rcl/wait.h:56
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_wait_set_t);  -- /opt/ros/bouncy/include/rcl/wait.h:38
+   pragma Convention (C_Pass_By_Copy, rcl_wait_set_t);  -- /opt/ros/crystal/include/rcl/wait.h:38
 
   --/ Storage for guard condition pointers.
   --/ Storage for timer pointers.
@@ -50,7 +50,7 @@ package rcl_wait_h is
   --/ Storage for service pointers.
   --/ Implementation specific storage.
   --/ Return a rcl_wait_set_t struct with members set to `NULL`.
-   function rcl_get_zero_initialized_wait_set return rcl_wait_set_t;  -- /opt/ros/bouncy/include/rcl/wait.h:63
+   function rcl_get_zero_initialized_wait_set return rcl_wait_set_t;  -- /opt/ros/crystal/include/rcl/wait.h:63
    pragma Import (C, rcl_get_zero_initialized_wait_set, "rcl_get_zero_initialized_wait_set");
 
   --/ Initialize a rcl wait set with space for items to be waited on.
@@ -111,7 +111,7 @@ package rcl_wait_h is
       number_of_timers : stddef_h.size_t;
       number_of_clients : stddef_h.size_t;
       number_of_services : stddef_h.size_t;
-      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:118
+      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/wait.h:118
    pragma Import (C, rcl_wait_set_init, "rcl_wait_set_init");
 
   --/ Finalize a rcl wait set.
@@ -140,7 +140,7 @@ package rcl_wait_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_wait_set_fini (wait_set : access rcl_wait_set_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:155
+   function rcl_wait_set_fini (wait_set : access rcl_wait_set_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/wait.h:155
    pragma Import (C, rcl_wait_set_fini, "rcl_wait_set_fini");
 
   --/ Retrieve the wait set's allocator.
@@ -163,7 +163,7 @@ package rcl_wait_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_wait_set_get_allocator (wait_set : access constant rcl_wait_set_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:179
+   function rcl_wait_set_get_allocator (wait_set : access constant rcl_wait_set_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/wait.h:179
    pragma Import (C, rcl_wait_set_get_allocator, "rcl_wait_set_get_allocator");
 
   --/ Store a pointer to the given subscription in the next empty spot in the set.
@@ -184,6 +184,8 @@ package rcl_wait_h is
   -- *
   -- * \param[inout] wait_set struct in which the subscription is to be stored
   -- * \param[in] subscription the subscription to be added to the wait set
+  -- * \param[out] index the index of the added subscription in the storage container.
+  -- *   This parameter is optional and can be set to `NULL` to be ignored.
   -- * \return `RCL_RET_OK` if added successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_WAIT_SET_INVALID` if the wait set is zero initialized, or
@@ -191,13 +193,16 @@ package rcl_wait_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_wait_set_add_subscription (wait_set : access rcl_wait_set_t; subscription : access constant rcl_subscription_h.rcl_subscription_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:208
+   function rcl_wait_set_add_subscription
+     (wait_set : access rcl_wait_set_t;
+      subscription : access constant rcl_subscription_h.rcl_subscription_t;
+      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/wait.h:210
    pragma Import (C, rcl_wait_set_add_subscription, "rcl_wait_set_add_subscription");
 
-  --/ Remove (sets to `NULL`) the subscriptions in the wait set.
+  --/ Remove (sets to `NULL`) all entities in the wait set.
   --*
   -- * This function should be used after passing using rcl_wait, but before
-  -- * adding new subscriptions to the set.
+  -- * adding new entities to the set.
   -- * Sets all of the entries in the underlying rmw array to `NULL`, and sets the
   -- * count in the rmw array to `0`.
   -- *
@@ -211,20 +216,19 @@ package rcl_wait_h is
   -- * Uses Atomics       | No
   -- * Lock-Free          | Yes
   -- *
-  -- * \param[inout] wait_set struct to have its subscriptions cleared
+  -- * \param[inout] wait_set struct to have its entities cleared
   -- * \return `RCL_RET_OK` if cleared successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_WAIT_SET_INVALID` if the wait set is zero initialized, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_wait_set_clear_subscriptions (wait_set : access rcl_wait_set_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:238
-   pragma Import (C, rcl_wait_set_clear_subscriptions, "rcl_wait_set_clear_subscriptions");
+   function rcl_wait_set_clear (wait_set : access rcl_wait_set_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/wait.h:241
+   pragma Import (C, rcl_wait_set_clear, "rcl_wait_set_clear");
 
-  --/ Reallocate space for the subscriptions in the wait set.
+  --/ Reallocate space for entities in the wait set.
   --*
-  -- * This function will deallocate and reallocate the memory for the
-  -- * subscriptions set.
+  -- * This function will deallocate and reallocate the memory for all entity sets.
   -- *
   -- * A size of 0 will just deallocate the memory and assign `NULL` to the array.
   -- *
@@ -232,7 +236,7 @@ package rcl_wait_h is
   -- * wait set's initialization.
   -- *
   -- * After calling this function all values in the set will be set to `NULL`,
-  -- * effectively the same as calling rcl_wait_set_clear_subscriptions().
+  -- * effectively the same as calling rcl_wait_set_clear().
   -- * Similarly, the underlying rmw representation is reallocated and reset:
   -- * all entries are set to `NULL` and the count is set to zero.
   -- *
@@ -248,16 +252,26 @@ package rcl_wait_h is
   -- * Uses Atomics       | No
   -- * Lock-Free          | Yes
   -- *
-  -- * \param[inout] wait_set struct to have its subscriptions cleared
-  -- * \param[in] size a size for the new set
+  -- * \param[inout] wait_set struct to be resized
+  -- * \param[in] subscriptions_size a size for the new subscriptions set
+  -- * \param[in] guard_conditions_size a size for the new guard conditions set
+  -- * \param[in] timers_size a size for the new timers set
+  -- * \param[in] clients_size a size for the new clients set
+  -- * \param[in] services_size a size for the new services set
   -- * \return `RCL_RET_OK` if resized successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_BAD_ALLOC` if allocating memory failed, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_wait_set_resize_subscriptions (wait_set : access rcl_wait_set_t; size : stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:277
-   pragma Import (C, rcl_wait_set_resize_subscriptions, "rcl_wait_set_resize_subscriptions");
+   function rcl_wait_set_resize
+     (wait_set : access rcl_wait_set_t;
+      subscriptions_size : stddef_h.size_t;
+      guard_conditions_size : stddef_h.size_t;
+      timers_size : stddef_h.size_t;
+      clients_size : stddef_h.size_t;
+      services_size : stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/wait.h:283
+   pragma Import (C, rcl_wait_set_resize, "rcl_wait_set_resize");
 
   --/ Store a pointer to the guard condition in the next empty spot in the set.
   --*
@@ -265,26 +279,11 @@ package rcl_wait_h is
   -- * \see rcl_wait_set_add_subscription
   --  
 
-   function rcl_wait_set_add_guard_condition (wait_set : access rcl_wait_set_t; guard_condition : access constant rcl_guard_condition_h.rcl_guard_condition_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:287
+   function rcl_wait_set_add_guard_condition
+     (wait_set : access rcl_wait_set_t;
+      guard_condition : access constant rcl_guard_condition_h.rcl_guard_condition_t;
+      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/wait.h:299
    pragma Import (C, rcl_wait_set_add_guard_condition, "rcl_wait_set_add_guard_condition");
-
-  --/ Remove (sets to `NULL`) the guard conditions in the wait set.
-  --*
-  -- * This function behaves exactly the same as for subscriptions.
-  -- * \see rcl_wait_set_clear_subscriptions
-  --  
-
-   function rcl_wait_set_clear_guard_conditions (wait_set : access rcl_wait_set_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:299
-   pragma Import (C, rcl_wait_set_clear_guard_conditions, "rcl_wait_set_clear_guard_conditions");
-
-  --/ Reallocate space for the guard conditions in the wait set.
-  --*
-  -- * This function behaves exactly the same as for subscriptions.
-  -- * \see rcl_wait_set_resize_subscriptions
-  --  
-
-   function rcl_wait_set_resize_guard_conditions (wait_set : access rcl_wait_set_t; size : stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:309
-   pragma Import (C, rcl_wait_set_resize_guard_conditions, "rcl_wait_set_resize_guard_conditions");
 
   --/ Store a pointer to the timer in the next empty spot in the set.
   --*
@@ -292,80 +291,35 @@ package rcl_wait_h is
   -- * \see rcl_wait_set_add_subscription
   --  
 
-   function rcl_wait_set_add_timer (wait_set : access rcl_wait_set_t; timer : access constant rcl_timer_h.rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:319
+   function rcl_wait_set_add_timer
+     (wait_set : access rcl_wait_set_t;
+      timer : access constant rcl_timer_h.rcl_timer_t;
+      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/wait.h:312
    pragma Import (C, rcl_wait_set_add_timer, "rcl_wait_set_add_timer");
 
-  --/ Remove (sets to `NULL`) the timers in the wait set.
-  --*
-  -- * This function behaves exactly the same as for subscriptions.
-  -- * \see rcl_wait_set_clear_subscriptions
-  --  
-
-   function rcl_wait_set_clear_timers (wait_set : access rcl_wait_set_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:331
-   pragma Import (C, rcl_wait_set_clear_timers, "rcl_wait_set_clear_timers");
-
-  --/ Reallocate space for the timers in the wait set.
-  --*
-  -- * This function behaves exactly the same as for subscriptions.
-  -- * \see rcl_wait_set_resize_subscriptions
-  --  
-
-   function rcl_wait_set_resize_timers (wait_set : access rcl_wait_set_t; size : stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:341
-   pragma Import (C, rcl_wait_set_resize_timers, "rcl_wait_set_resize_timers");
-
   --/ Store a pointer to the client in the next empty spot in the set.
   --*
   -- * This function behaves exactly the same as for subscriptions.
   -- * \see rcl_wait_set_add_subscription
   --  
 
-   function rcl_wait_set_add_client (wait_set : access rcl_wait_set_t; client : access constant rcl_client_h.rcl_client_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:351
+   function rcl_wait_set_add_client
+     (wait_set : access rcl_wait_set_t;
+      client : access constant rcl_client_h.rcl_client_t;
+      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/wait.h:325
    pragma Import (C, rcl_wait_set_add_client, "rcl_wait_set_add_client");
 
-  --/ Remove (sets to `NULL`) the clients in the wait set.
-  --*
-  -- * This function behaves exactly the same as for subscriptions.
-  -- * \see rcl_wait_set_clear_subscriptions
-  --  
-
-   function rcl_wait_set_clear_clients (wait_set : access rcl_wait_set_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:363
-   pragma Import (C, rcl_wait_set_clear_clients, "rcl_wait_set_clear_clients");
-
-  --/ Reallocate space for the clients in the wait set.
-  --*
-  -- * This function behaves exactly the same as for subscriptions.
-  -- * \see rcl_wait_set_resize_subscriptions
-  --  
-
-   function rcl_wait_set_resize_clients (wait_set : access rcl_wait_set_t; size : stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:373
-   pragma Import (C, rcl_wait_set_resize_clients, "rcl_wait_set_resize_clients");
-
-  --/ Store a pointer to the client in the next empty spot in the set.
+  --/ Store a pointer to the service in the next empty spot in the set.
   --*
   -- * This function behaves exactly the same as for subscriptions.
   -- * \see rcl_wait_set_add_subscription
   --  
 
-   function rcl_wait_set_add_service (wait_set : access rcl_wait_set_t; service : access constant rcl_service_h.rcl_service_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:383
+   function rcl_wait_set_add_service
+     (wait_set : access rcl_wait_set_t;
+      service : access constant rcl_service_h.rcl_service_t;
+      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/wait.h:338
    pragma Import (C, rcl_wait_set_add_service, "rcl_wait_set_add_service");
-
-  --/ Remove (sets to `NULL`) the services in the wait set.
-  --*
-  -- * This function behaves exactly the same as for subscriptions.
-  -- * \see rcl_wait_set_clear_subscriptions
-  --  
-
-   function rcl_wait_set_clear_services (wait_set : access rcl_wait_set_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:395
-   pragma Import (C, rcl_wait_set_clear_services, "rcl_wait_set_clear_services");
-
-  --/ Reallocate space for the services in the wait set.
-  --*
-  -- * This function behaves exactly the same as for subscriptions.
-  -- * \see rcl_wait_set_resize_subscriptions
-  --  
-
-   function rcl_wait_set_resize_services (wait_set : access rcl_wait_set_t; size : stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:405
-   pragma Import (C, rcl_wait_set_resize_services, "rcl_wait_set_resize_services");
 
   --/ Block until the wait set is ready or until the timeout has been exceeded.
   --*
@@ -376,7 +330,9 @@ package rcl_wait_h is
   -- * this function returns.
   -- * Items that are not `NULL` are ready, where ready means different things based
   -- * on the type of the item.
-  -- * For subscriptions this means there are messages that can be taken.
+  -- * For subscriptions this means there may be messages that can be taken, or
+  -- * perhaps that the state of the subscriptions has changed, in which case
+  -- * rcl_take may succeed but return with taken == false.
   -- * For guard conditions this means the guard condition was triggered.
   -- *
   -- * Expected usage:
@@ -393,9 +349,7 @@ package rcl_wait_h is
   -- * rcl_ret_t ret = rcl_wait_set_init(&wait_set, 2, 1, 0, 0, 0, rcl_get_default_allocator());
   -- * // ... error handling
   -- * do {
-  -- *   ret = rcl_wait_set_clear_subscriptions(&wait_set);
-  -- *   // ... error handling
-  -- *   ret = rcl_wait_set_clear_guard_conditions(&wait_set);
+  -- *   ret = rcl_wait_set_clear(&wait_set);
   -- *   // ... error handling
   -- *   ret = rcl_wait_set_add_subscription(&wait_set, &sub1);
   -- *   // ... error handling
@@ -460,7 +414,7 @@ package rcl_wait_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_wait (wait_set : access rcl_wait_set_t; timeout : x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/wait.h:502
+   function rcl_wait (wait_set : access rcl_wait_set_t; timeout : x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/wait.h:438
    pragma Import (C, rcl_wait, "rcl_wait");
 
 end rcl_wait_h;

@@ -6,6 +6,8 @@ with Interfaces.C; use Interfaces.C;
 package rcl_macros_h is
 
    --  unsupported macro: RCL_WARN_UNUSED __attribute__((warn_unused_result))
+   --  arg-macro: function RCL_UNUSED (x)
+   --    return void)(x;
   -- Copyright 2015 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
   -- you may not use this file except in compliance with the License.

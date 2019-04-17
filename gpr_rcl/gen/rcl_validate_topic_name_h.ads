@@ -8,16 +8,16 @@ with rcl_types_h;
 
 package rcl_validate_topic_name_h is
 
-   RCL_TOPIC_NAME_VALID : constant := 0;  --  /opt/ros/bouncy/include/rcl/validate_topic_name.h:27
-   RCL_TOPIC_NAME_INVALID_IS_EMPTY_STRING : constant := 1;  --  /opt/ros/bouncy/include/rcl/validate_topic_name.h:28
-   RCL_TOPIC_NAME_INVALID_ENDS_WITH_FORWARD_SLASH : constant := 2;  --  /opt/ros/bouncy/include/rcl/validate_topic_name.h:29
-   RCL_TOPIC_NAME_INVALID_CONTAINS_UNALLOWED_CHARACTERS : constant := 3;  --  /opt/ros/bouncy/include/rcl/validate_topic_name.h:30
-   RCL_TOPIC_NAME_INVALID_NAME_TOKEN_STARTS_WITH_NUMBER : constant := 4;  --  /opt/ros/bouncy/include/rcl/validate_topic_name.h:31
-   RCL_TOPIC_NAME_INVALID_UNMATCHED_CURLY_BRACE : constant := 5;  --  /opt/ros/bouncy/include/rcl/validate_topic_name.h:32
-   RCL_TOPIC_NAME_INVALID_MISPLACED_TILDE : constant := 6;  --  /opt/ros/bouncy/include/rcl/validate_topic_name.h:33
-   RCL_TOPIC_NAME_INVALID_TILDE_NOT_FOLLOWED_BY_FORWARD_SLASH : constant := 7;  --  /opt/ros/bouncy/include/rcl/validate_topic_name.h:34
-   RCL_TOPIC_NAME_INVALID_SUBSTITUTION_CONTAINS_UNALLOWED_CHARACTERS : constant := 8;  --  /opt/ros/bouncy/include/rcl/validate_topic_name.h:35
-   RCL_TOPIC_NAME_INVALID_SUBSTITUTION_STARTS_WITH_NUMBER : constant := 9;  --  /opt/ros/bouncy/include/rcl/validate_topic_name.h:36
+   RCL_TOPIC_NAME_VALID : constant := 0;  --  /opt/ros/crystal/include/rcl/validate_topic_name.h:27
+   RCL_TOPIC_NAME_INVALID_IS_EMPTY_STRING : constant := 1;  --  /opt/ros/crystal/include/rcl/validate_topic_name.h:28
+   RCL_TOPIC_NAME_INVALID_ENDS_WITH_FORWARD_SLASH : constant := 2;  --  /opt/ros/crystal/include/rcl/validate_topic_name.h:29
+   RCL_TOPIC_NAME_INVALID_CONTAINS_UNALLOWED_CHARACTERS : constant := 3;  --  /opt/ros/crystal/include/rcl/validate_topic_name.h:30
+   RCL_TOPIC_NAME_INVALID_NAME_TOKEN_STARTS_WITH_NUMBER : constant := 4;  --  /opt/ros/crystal/include/rcl/validate_topic_name.h:31
+   RCL_TOPIC_NAME_INVALID_UNMATCHED_CURLY_BRACE : constant := 5;  --  /opt/ros/crystal/include/rcl/validate_topic_name.h:32
+   RCL_TOPIC_NAME_INVALID_MISPLACED_TILDE : constant := 6;  --  /opt/ros/crystal/include/rcl/validate_topic_name.h:33
+   RCL_TOPIC_NAME_INVALID_TILDE_NOT_FOLLOWED_BY_FORWARD_SLASH : constant := 7;  --  /opt/ros/crystal/include/rcl/validate_topic_name.h:34
+   RCL_TOPIC_NAME_INVALID_SUBSTITUTION_CONTAINS_UNALLOWED_CHARACTERS : constant := 8;  --  /opt/ros/crystal/include/rcl/validate_topic_name.h:35
+   RCL_TOPIC_NAME_INVALID_SUBSTITUTION_STARTS_WITH_NUMBER : constant := 9;  --  /opt/ros/crystal/include/rcl/validate_topic_name.h:36
 
   -- Copyright 2017 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
@@ -84,7 +84,7 @@ package rcl_validate_topic_name_h is
    function rcl_validate_topic_name
      (topic_name : Interfaces.C.Strings.chars_ptr;
       validation_result : access int;
-      invalid_index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/validate_topic_name.h:92
+      invalid_index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/validate_topic_name.h:92
    pragma Import (C, rcl_validate_topic_name, "rcl_validate_topic_name");
 
   --/ Validate a given topic name.
@@ -99,11 +99,11 @@ package rcl_validate_topic_name_h is
      (topic_name : Interfaces.C.Strings.chars_ptr;
       topic_name_length : stddef_h.size_t;
       validation_result : access int;
-      invalid_index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/validate_topic_name.h:107
+      invalid_index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/validate_topic_name.h:107
    pragma Import (C, rcl_validate_topic_name_with_size, "rcl_validate_topic_name_with_size");
 
   --/ Return a validation result description, or NULL if unknown or RCL_TOPIC_NAME_VALID.
-   function rcl_topic_name_validation_result_string (validation_result : int) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcl/validate_topic_name.h:117
+   function rcl_topic_name_validation_result_string (validation_result : int) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rcl/validate_topic_name.h:117
    pragma Import (C, rcl_topic_name_validation_result_string, "rcl_topic_name_validation_result_string");
 
 end rcl_validate_topic_name_h;

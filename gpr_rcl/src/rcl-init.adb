@@ -30,10 +30,11 @@ package body RCL.Init is
       if Users = 0 then
          Rcutils_Reset_Error;
 
-         Check (Rcl_Init
-                (Argc      => Gnat_Argc,
-                 Argv      => Gnat_Argv,
-                 Allocator => Allocators.Impl.To_C (Allocator.all)));
+--  FIXME
+--         Check (Rcl_Init
+--                (Argc      => Gnat_Argc,
+--                 Argv      => Gnat_Argv,
+--                 Allocator => Allocators.Impl.To_C (Allocator.all)));
       elsif Assurance = Ensure_First then
          raise Program_Error with "Initialization happened too late";
       end if;
@@ -54,7 +55,7 @@ package body RCL.Init is
    begin
       if Decrement (Users) then
          Logging.Shutdown;
-         Check (Rcl_Shutdown);
+-- FIXME         Check (Rcl_Shutdown);
       end if;
 --        Logging.Warn ("USER COUNT--:" & Users'Img);
    exception

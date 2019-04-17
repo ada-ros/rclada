@@ -62,7 +62,7 @@ package body RCL.Calendar is
       C_Time : aliased Rcl_Time_Point_T;
    begin
       if This.Inited then 
-         Check (Rcl_Clock_Get_Now (This.Impl'Access, C_Time'Access));
+         null; -- FIXME Check (Rcl_Clock_Get_Now (This.Impl'Access, C_Time'Access));
       else
          raise Constraint_Error with "Using uninitialized clock";
       end if;

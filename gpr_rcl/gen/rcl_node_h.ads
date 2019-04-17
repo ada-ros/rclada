@@ -2,6 +2,7 @@ pragma Ada_2005;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
+limited with rcl_context_h;
 with System;
 with stddef_h;
 with rcl_allocator_h;
@@ -31,12 +32,14 @@ package rcl_node_h is
    --  skipped empty struct rcl_node_impl_t
 
   --/ Structure which encapsulates a ROS Node.
-  --/ Private implementation pointer.
+  --/ Context associated with this node.
    type rcl_node_t is record
-      impl : System.Address;  -- /opt/ros/bouncy/include/rcl/node.h:41
+      context : access rcl_context_h.rcl_context_t;  -- /opt/ros/crystal/include/rcl/node.h:42
+      impl : System.Address;  -- /opt/ros/crystal/include/rcl/node.h:45
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_node_t);  -- /opt/ros/bouncy/include/rcl/node.h:38
+   pragma Convention (C_Pass_By_Copy, rcl_node_t);  -- /opt/ros/crystal/include/rcl/node.h:39
 
+  --/ Private implementation pointer.
   --/ Structure which encapsulates the options for creating a rcl_node_t.
   -- bool anonymous_name;
   -- rmw_qos_profile_t parameter_qos;
@@ -55,18 +58,31 @@ package rcl_node_h is
   --    
 
    type rcl_node_options_t is record
-      domain_id : aliased stddef_h.size_t;  -- /opt/ros/bouncy/include/rcl/node.h:65
-      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/bouncy/include/rcl/node.h:68
-      use_global_arguments : aliased Extensions.bool;  -- /opt/ros/bouncy/include/rcl/node.h:71
-      arguments : aliased rcl_arguments_h.rcl_arguments_t;  -- /opt/ros/bouncy/include/rcl/node.h:74
+      domain_id : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rcl/node.h:69
+      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/crystal/include/rcl/node.h:72
+      use_global_arguments : aliased Extensions.bool;  -- /opt/ros/crystal/include/rcl/node.h:75
+      arguments : aliased rcl_arguments_h.rcl_arguments_t;  -- /opt/ros/crystal/include/rcl/node.h:78
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_node_options_t);  -- /opt/ros/bouncy/include/rcl/node.h:45
+   pragma Convention (C_Pass_By_Copy, rcl_node_options_t);  -- /opt/ros/crystal/include/rcl/node.h:49
 
   --/ Custom allocator used for internal allocations.
   --/ If false then only use arguments in this struct, otherwise use global arguments also.
   --/ Command line arguments that apply only to this node.
+  --/ Return the default node options in a rcl_node_options_t.
+  --*
+  -- * The default values are:
+  -- *
+  -- * - domain_id = RCL_NODE_OPTIONS_DEFAULT_DOMAIN_ID
+  -- * - allocator = rcl_get_default_allocator()
+  -- * - use_global_arguments = true
+  -- * - arguments = rcl_get_zero_initialized_arguments()
+  --  
+
+   function rcl_node_get_default_options return rcl_node_options_t;  -- /opt/ros/crystal/include/rcl/node.h:92
+   pragma Import (C, rcl_node_get_default_options, "rcl_node_get_default_options");
+
   --/ Return a rcl_node_t struct with members initialized to `NULL`.
-   function rcl_get_zero_initialized_node return rcl_node_t;  -- /opt/ros/bouncy/include/rcl/node.h:81
+   function rcl_get_zero_initialized_node return rcl_node_t;  -- /opt/ros/crystal/include/rcl/node.h:98
    pragma Import (C, rcl_get_zero_initialized_node, "rcl_get_zero_initialized_node");
 
   --/ Initialize a ROS node.
@@ -141,9 +157,12 @@ package rcl_node_h is
   -- * \param[inout] node a preallocated rcl_node_t
   -- * \param[in] name the name of the node, must be a valid c-string
   -- * \param[in] namespace_ the namespace of the node, must be a valid c-string
+  -- * \param[in] context the context instance with which the node should be
+  -- *   associated
   -- * \param[in] options the node options.
-  -- *  The options are deep copied into the node.
-  -- *  The caller is always responsible for freeing memory used options they pass in.
+  -- *   The options are deep copied into the node.
+  -- *   The caller is always responsible for freeing memory used options they
+  -- *   pass in.
   -- * \return `RCL_RET_OK` if the node was initialized successfully, or
   -- * \return `RCL_RET_ALREADY_INIT` if the node has already be initialized, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
@@ -157,10 +176,11 @@ package rcl_node_h is
      (node : access rcl_node_t;
       name : Interfaces.C.Strings.chars_ptr;
       namespace_u : Interfaces.C.Strings.chars_ptr;
-      options : access constant rcl_node_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/node.h:169
+      context : access rcl_context_h.rcl_context_t;
+      options : access constant rcl_node_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/node.h:189
    pragma Import (C, rcl_node_init, "rcl_node_init");
 
-  --/ Finalized a rcl_node_t.
+  --/ Finalize a rcl_node_t.
   --*
   -- * Destroys any automatically created infrastructure and deallocates memory.
   -- * After calling, the rcl_node_t can be safely deallocated.
@@ -178,24 +198,14 @@ package rcl_node_h is
   -- * <i>[1] if `atomic_is_lock_free()` returns true for `atomic_uint_least64_t`</i>
   -- *
   -- * \param[in] node rcl_node_t to be finalized
+  -- * \param[in] context the context originally used to init the node
   -- * \return `RCL_RET_OK` if node was finalized successfully, or
-  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_NODE_INVALID` if the node pointer is null, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_node_fini (node : access rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/node.h:200
+   function rcl_node_fini (node : access rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/node.h:222
    pragma Import (C, rcl_node_fini, "rcl_node_fini");
-
-  --/ Return the default node options in a rcl_node_options_t.
-  --*
-  -- * The default values are:
-  -- *
-  -- * - domain_id = RCL_NODE_OPTIONS_DEFAULT_DOMAIN_ID
-  -- * - allocator = rcl_get_default_allocator()
-  --  
-
-   function rcl_node_get_default_options return rcl_node_options_t;  -- /opt/ros/bouncy/include/rcl/node.h:211
-   pragma Import (C, rcl_node_get_default_options, "rcl_node_get_default_options");
 
   --/ Copy one options structure into another.
   --*
@@ -207,10 +217,8 @@ package rcl_node_h is
   -- * Uses Atomics       | No
   -- * Lock-Free          | Yes
   -- *
-  -- * \param[in] error_alloc an alocator to use if an error occurs.
-  -- *  This allocator is not used to allocate the output.
   -- * \param[in] options The structure to be copied.
-  -- *  Its allocator is used to copy memory into the new structure.
+  -- *   Its allocator is used to copy memory into the new structure.
   -- * \param[out] options_out An options structure containing default values.
   -- * \return `RCL_RET_OK` if the structure was copied successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any function arguments are invalid, or
@@ -218,19 +226,12 @@ package rcl_node_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_node_options_copy
-     (error_alloc : rcl_allocator_h.rcl_allocator_t;
-      options : access constant rcl_node_options_t;
-      options_out : access rcl_node_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/node.h:236
+   function rcl_node_options_copy (options : access constant rcl_node_options_t; options_out : access rcl_node_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/node.h:245
    pragma Import (C, rcl_node_options_copy, "rcl_node_options_copy");
 
   --/ Return `true` if the node is valid, else `false`.
   --*
   -- * Also return `false` if the node pointer is `NULL` or the allocator is invalid.
-  -- *
-  -- * The allocator needs to either be a valid allocator or `NULL`, in which case
-  -- * the default allocator will be used.
-  -- * The allocator is used when allocation is needed for an error message.
   -- *
   -- * A node is invalid if:
   -- *   - the implementation is `NULL` (rcl_node_init not called or failed)
@@ -242,7 +243,7 @@ package rcl_node_h is
   -- * Consider:
   -- *
   -- * ```c
-  -- * assert(rcl_node_is_valid(node, NULL));  // <-- thread 1
+  -- * assert(rcl_node_is_valid(node));  // <-- thread 1
   -- * rcl_shutdown();                   // <-- thread 2
   -- * // use node as if valid           // <-- thread 1
   -- * ```
@@ -261,12 +262,24 @@ package rcl_node_h is
   -- * <i>[1] if `atomic_is_lock_free()` returns true for `atomic_uint_least64_t`</i>
   -- *
   -- * \param[in] node rcl_node_t to be validated
-  -- * \param[in] error_msg_allocator a valid allocator or `NULL`
   -- * \return `true` if the node and allocator are valid, otherwise `false`.
   --  
 
-   function rcl_node_is_valid (node : access constant rcl_node_t; error_msg_allocator : access rcl_allocator_h.rcl_allocator_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rcl/node.h:283
+   function rcl_node_is_valid (node : access constant rcl_node_t) return Extensions.bool;  -- /opt/ros/crystal/include/rcl/node.h:286
    pragma Import (C, rcl_node_is_valid, "rcl_node_is_valid");
+
+  --/ Return true if node is valid, except for the context being valid.
+  --*
+  -- * This is used in clean up functions that need to access the node, but do not
+  -- * need use any functions with the context.
+  -- *
+  -- * It is identical to rcl_node_is_valid except it ignores the state of the
+  -- * context associated with the node.
+  -- * \sa rcl_node_is_valid()
+  --  
+
+   function rcl_node_is_valid_except_context (node : access constant rcl_node_t) return Extensions.bool;  -- /opt/ros/crystal/include/rcl/node.h:299
+   pragma Import (C, rcl_node_is_valid_except_context, "rcl_node_is_valid_except_context");
 
   --/ Return the name of the node.
   --*
@@ -291,7 +304,7 @@ package rcl_node_h is
   -- * \return name string if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcl/node.h:310
+   function rcl_node_get_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rcl/node.h:326
    pragma Import (C, rcl_node_get_name, "rcl_node_get_name");
 
   --/ Return the namespace of the node.
@@ -317,7 +330,7 @@ package rcl_node_h is
   -- * \return name string if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_namespace (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcl/node.h:337
+   function rcl_node_get_namespace (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rcl/node.h:353
    pragma Import (C, rcl_node_get_namespace, "rcl_node_get_namespace");
 
   --/ Return the rcl node options.
@@ -343,7 +356,7 @@ package rcl_node_h is
   -- * \return options struct if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_options (node : access constant rcl_node_t) return access constant rcl_node_options_t;  -- /opt/ros/bouncy/include/rcl/node.h:364
+   function rcl_node_get_options (node : access constant rcl_node_t) return access constant rcl_node_options_t;  -- /opt/ros/crystal/include/rcl/node.h:380
    pragma Import (C, rcl_node_get_options, "rcl_node_get_options");
 
   --/ Return the ROS domain ID that the node is using.
@@ -375,7 +388,7 @@ package rcl_node_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_node_get_domain_id (node : access constant rcl_node_t; domain_id : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/node.h:397
+   function rcl_node_get_domain_id (node : access constant rcl_node_t; domain_id : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/node.h:413
    pragma Import (C, rcl_node_get_domain_id, "rcl_node_get_domain_id");
 
   --/ Return the rmw node handle.
@@ -405,7 +418,7 @@ package rcl_node_h is
   -- * \return rmw node handle if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_rmw_handle (node : access constant rcl_node_t) return access rmw_types_h.rmw_node_t;  -- /opt/ros/bouncy/include/rcl/node.h:428
+   function rcl_node_get_rmw_handle (node : access constant rcl_node_t) return access rmw_types_h.rmw_node_t;  -- /opt/ros/crystal/include/rcl/node.h:444
    pragma Import (C, rcl_node_get_rmw_handle, "rcl_node_get_rmw_handle");
 
   --/ Return the associated rcl instance id.
@@ -433,7 +446,7 @@ package rcl_node_h is
   -- * \return rcl instance id captured during node init or `0` on error
   --  
 
-   function rcl_node_get_rcl_instance_id (node : access constant rcl_node_t) return x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/bouncy/include/rcl/node.h:457
+   function rcl_node_get_rcl_instance_id (node : access constant rcl_node_t) return x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/crystal/include/rcl/node.h:473
    pragma Import (C, rcl_node_get_rcl_instance_id, "rcl_node_get_rcl_instance_id");
 
   --/ Return a guard condition which is triggered when the ROS graph changes.
@@ -465,7 +478,7 @@ package rcl_node_h is
   -- * \return rcl guard condition handle if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_graph_guard_condition (node : access constant rcl_node_t) return System.Address;  -- /opt/ros/bouncy/include/rcl/node.h:490
+   function rcl_node_get_graph_guard_condition (node : access constant rcl_node_t) return System.Address;  -- /opt/ros/crystal/include/rcl/node.h:506
    pragma Import (C, rcl_node_get_graph_guard_condition, "rcl_node_get_graph_guard_condition");
 
   --/ Return the logger name of the node.
@@ -491,7 +504,7 @@ package rcl_node_h is
   -- * \return logger_name string if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_logger_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcl/node.h:517
+   function rcl_node_get_logger_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rcl/node.h:533
    pragma Import (C, rcl_node_get_logger_name, "rcl_node_get_logger_name");
 
 end rcl_node_h;

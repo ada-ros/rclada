@@ -43,8 +43,9 @@ package body RCL.Publishers is
    --------------
 
    function Is_Valid (This : Publisher) return Boolean is
-    (To_Boolean
-        (Rcl_Publisher_Is_Valid (This.Impl'Access, null)));
+   (True); -- FIXME
+--    (To_Boolean
+--        (Rcl_Publisher_Is_Valid (This.Impl'Access, null)));
 
    -------------
    -- Publish --

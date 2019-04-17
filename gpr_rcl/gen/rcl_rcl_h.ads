@@ -2,11 +2,6 @@ pragma Ada_2005;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
-with System;
-with rcl_allocator_h;
-with rcl_types_h;
-with x86_64_linux_gnu_bits_stdint_uintn_h;
-with Interfaces.C.Extensions;
 
 package rcl_rcl_h is
 
@@ -48,8 +43,8 @@ package rcl_rcl_h is
   -- *
   -- * It also has some machinery that is necessary to wait on and act on these concepts:
   -- *
-  -- * - Initialization and shutdown management (global for now)
-  -- *   - rcl/rcl.h
+  -- * - Initialization and shutdown management
+  -- *   - rcl/init.h
   -- * - Wait sets for waiting on messages/service requests and responses/timers to be ready
   -- *   - rcl/wait.h
   -- * - Guard conditions for waking up wait sets asynchronously
@@ -59,7 +54,7 @@ package rcl_rcl_h is
   -- *
   -- * Further still there are some useful abstractions and utilities:
   -- *
-  -- * - Allocator concept, which can used to control allocation in `rcl_*` functions
+  -- * - Allocator concept, which can be used to control allocation in `rcl_*` functions
   -- *   - rcl/allocator.h
   -- * - Concept of ROS Time and access to steady and system wall time
   -- *   - rcl/time.h
@@ -72,116 +67,5 @@ package rcl_rcl_h is
   -- * - Macros for controlling symbol visibility on the library
   -- *   - rcl/visibility_control.h
   --  
-
-  --/ Global initialization of rcl.
-  --*
-  -- * Unless otherwise noted, this must be called before using any rcl functions.
-  -- *
-  -- * This function can only be run once after starting the program, and once
-  -- * after each call to rcl_shutdown().
-  -- * Repeated calls will fail with `RCL_RET_ALREADY_INIT`.
-  -- *
-  -- * This function can be called any time after rcl_shutdown() is called, but it
-  -- * cannot be called from within a callback being executed by an rcl executor.
-  -- * For example, you can call rcl_shutdown() from within a timer callback, but
-  -- * you have to return from the callback, and therefore exit any in-progress
-  -- * call to a spin function, before calling rcl_init() again.
-  -- *
-  -- * The `argc` and `argv` parameters can contain command line arguments for the
-  -- * program.
-  -- * rcl specific arguments will be parsed and removed, but other arguments will
-  -- * be ignored.
-  -- * If `argc` is `0` and `argv` is `NULL` no parameters will be parsed.
-  -- *
-  -- * <hr>
-  -- * Attribute          | Adherence
-  -- * ------------------ | -------------
-  -- * Allocates Memory   | Yes
-  -- * Thread-Safe        | No
-  -- * Uses Atomics       | Yes
-  -- * Lock-Free          | Yes [1]
-  -- * <i>[1] if `atomic_is_lock_free()` returns true for `atomic_uint_least64_t`</i>
-  -- *
-  -- * \param[in] argc number of strings in argv
-  -- * \param[in] argv command line arguments; rcl specific arguments are removed
-  -- * \param[in] allocator rcl_allocator_t used in rcl_init() and rcl_shutdown()
-  -- * \return `RCL_RET_OK` if initialization is successful, or
-  -- * \return `RCL_RET_ALREADY_INIT` if rcl_init has already been called, or
-  -- * \return `RCL_RET_BAD_ALLOC` if allocating memory failed, or
-  -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
-  --  
-
-   function rcl_init
-     (argc : int;
-      argv : System.Address;
-      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/rcl.h:124
-   pragma Import (C, rcl_init, "rcl_init");
-
-  --/ Signal global shutdown of rcl.
-  --*
-  -- * This function does not have to be called on exit, but does have to be called
-  -- * making a repeat call to rcl_init().
-  -- *
-  -- * This function can only be called once after each call to rcl_init().
-  -- * Repeated calls will fail with RCL_RET_NOT_INIT.
-  -- * This function is not thread safe.
-  -- *
-  -- * When this function is called:
-  -- *  - Any rcl objects created since the last call to rcl_init() are invalidated.
-  -- *  - Calls to rcl_ok() will return `false`.
-  -- *  - Any executors waiting for work (within a call to spin) are interrupted.
-  -- *  - No new work (executing callbacks) will be done in executors.
-  -- *  - Currently running work in executors will be finished.
-  -- *
-  -- * <hr>
-  -- * Attribute          | Adherence
-  -- * ------------------ | -------------
-  -- * Allocates Memory   | Yes
-  -- * Thread-Safe        | Yes [1]
-  -- * Uses Atomics       | Yes
-  -- * Lock-Free          | Yes [2]
-  -- * <i>[1] not thread-safe with rcl_init()</i>
-  -- * <i>[2] if `atomic_is_lock_free()` returns true for `atomic_uint_least64_t`</i>
-  -- *
-  -- * \return `RCL_RET_OK` if the shutdown was completed successfully, or
-  -- * \return `RCL_RET_NOT_INIT` if rcl is not currently initialized, or
-  -- * \return `RCL_RET_ERROR` if an unspecified error occur.
-  --  
-
-   function rcl_shutdown return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/rcl.h:159
-   pragma Import (C, rcl_shutdown, "rcl_shutdown");
-
-  --/ Returns an uint64_t number that is unique for the latest rcl_init call.
-  --*
-  -- * If called before rcl_init or after rcl_shutdown then 0 will be returned.
-  -- *
-  -- * <hr>
-  -- * Attribute          | Adherence
-  -- * ------------------ | -------------
-  -- * Allocates Memory   | No
-  -- * Thread-Safe        | Yes
-  -- * Uses Atomics       | Yes
-  -- * Lock-Free          | Yes [1]
-  -- * <i>[1] if `atomic_is_lock_free()` returns true for `atomic_uint_least64_t`</i>
-  -- *
-  -- * \return a unique id specific to this rcl instance, or `0` if not initialized.
-  --  
-
-   function rcl_get_instance_id return x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/bouncy/include/rcl/rcl.h:179
-   pragma Import (C, rcl_get_instance_id, "rcl_get_instance_id");
-
-  --/ Return `true` if rcl is currently initialized, otherwise `false`.
-  --*
-  -- * Attribute          | Adherence
-  -- * ------------------ | -------------
-  -- * Allocates Memory   | No
-  -- * Thread-Safe        | Yes
-  -- * Uses Atomics       | Yes
-  -- * Lock-Free          | Yes [1]
-  -- * <i>[1] if `atomic_is_lock_free()` returns true for `atomic_uint_least64_t`</i>
-  --  
-
-   function rcl_ok return Extensions.bool;  -- /opt/ros/bouncy/include/rcl/rcl.h:194
-   pragma Import (C, rcl_ok, "rcl_ok");
 
 end rcl_rcl_h;

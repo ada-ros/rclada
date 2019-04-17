@@ -28,17 +28,17 @@ package rcl_service_h is
 
   --/ Structure which encapsulates a ROS Service.
    type rcl_service_t is record
-      impl : System.Address;  -- /opt/ros/bouncy/include/rcl/service.h:35
+      impl : System.Address;  -- /opt/ros/crystal/include/rcl/service.h:35
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_service_t);  -- /opt/ros/bouncy/include/rcl/service.h:33
+   pragma Convention (C_Pass_By_Copy, rcl_service_t);  -- /opt/ros/crystal/include/rcl/service.h:33
 
   --/ Options available for a rcl service.
   --/ Middleware quality of service settings for the service.
    type rcl_service_options_t is record
-      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/bouncy/include/rcl/service.h:42
-      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/bouncy/include/rcl/service.h:45
+      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/crystal/include/rcl/service.h:42
+      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/crystal/include/rcl/service.h:45
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_service_options_t);  -- /opt/ros/bouncy/include/rcl/service.h:39
+   pragma Convention (C_Pass_By_Copy, rcl_service_options_t);  -- /opt/ros/crystal/include/rcl/service.h:39
 
   --/ Custom allocator for the service, used for incidental allocations.
   --* For default behavior (malloc/free), see: rcl_get_default_allocator()  
@@ -48,7 +48,7 @@ package rcl_service_h is
   -- * rcl_service_init().
   --  
 
-   function rcl_get_zero_initialized_service return rcl_service_t;  -- /opt/ros/bouncy/include/rcl/service.h:56
+   function rcl_get_zero_initialized_service return rcl_service_t;  -- /opt/ros/crystal/include/rcl/service.h:56
    pragma Import (C, rcl_get_zero_initialized_service, "rcl_get_zero_initialized_service");
 
   --/ Initialize a rcl service.
@@ -65,16 +65,17 @@ package rcl_service_h is
   -- * required rosidl_service_type_support_t object.
   -- * This object can be obtained using a language appropriate mechanism.
   -- * \todo TODO(wjwwood) write these instructions once and link to it instead
-  -- * For C a macro can be used (for example `example_interfaces/AddTwoInts`):
+  -- *
+  -- * For C, a macro can be used (for example `example_interfaces/AddTwoInts`):
   -- *
   -- * ```c
   -- * #include <rosidl_generator_c/service_type_support_struct.h>
   -- * #include <example_interfaces/srv/add_two_ints.h>
   -- * const rosidl_service_type_support_t * ts =
-  -- *   ROSIDL_GET_SRV_TYPE_SUPPORT(example_interfaces, AddTwoInts);
+  -- *   ROSIDL_GET_SRV_TYPE_SUPPORT(example_interfaces, srv, AddTwoInts);
   -- * ```
   -- *
-  -- * For C++ a template function is used:
+  -- * For C++, a template function is used:
   -- *
   -- * ```cpp
   -- * #include <rosidl_generator_cpp/service_type_support.hpp>
@@ -108,7 +109,7 @@ package rcl_service_h is
   -- * rcl_ret_t ret = rcl_node_init(&node, "node_name", "/my_namespace", &node_ops);
   -- * // ... error handling
   -- * const rosidl_service_type_support_t * ts =
-  -- *   ROSIDL_GET_SRV_TYPE_SUPPORT(example_interfaces, AddTwoInts);
+  -- *   ROSIDL_GET_SRV_TYPE_SUPPORT(example_interfaces, srv, AddTwoInts);
   -- * rcl_service_t service = rcl_get_zero_initialized_service();
   -- * rcl_service_options_t service_ops = rcl_service_get_default_options();
   -- * ret = rcl_service_init(&service, &node, ts, "add_two_ints", &service_ops);
@@ -145,7 +146,7 @@ package rcl_service_h is
       node : access constant rcl_node_h.rcl_node_t;
       type_support : access constant rosidl_generator_c_service_type_support_struct_h.rosidl_service_type_support_t;
       service_name : Interfaces.C.Strings.chars_ptr;
-      options : access constant rcl_service_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/service.h:149
+      options : access constant rcl_service_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/service.h:150
    pragma Import (C, rcl_service_init, "rcl_service_init");
 
   --/ Finalize a rcl_service_t.
@@ -170,11 +171,12 @@ package rcl_service_h is
   -- * \param[in] node handle to the node used to create the service
   -- * \return `RCL_RET_OK` if service was deinitialized successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_SERVICE_INVALID` if the service is invalid, or
   -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_service_fini (service : access rcl_service_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/service.h:184
+   function rcl_service_fini (service : access rcl_service_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/service.h:186
    pragma Import (C, rcl_service_fini, "rcl_service_fini");
 
   --/ Return the default service options in a rcl_service_options_t.
@@ -185,7 +187,7 @@ package rcl_service_h is
   -- * - allocator = rcl_get_default_allocator()
   --  
 
-   function rcl_service_get_default_options return rcl_service_options_t;  -- /opt/ros/bouncy/include/rcl/service.h:196
+   function rcl_service_get_default_options return rcl_service_options_t;  -- /opt/ros/crystal/include/rcl/service.h:198
    pragma Import (C, rcl_service_get_default_options, "rcl_service_get_default_options");
 
   --/ Take a pending ROS request using a rcl service.
@@ -237,7 +239,7 @@ package rcl_service_h is
    function rcl_take_request
      (service : access constant rcl_service_t;
       request_header : access rmw_types_h.rmw_request_id_t;
-      ros_request : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/service.h:246
+      ros_request : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/service.h:248
    pragma Import (C, rcl_take_request, "rcl_take_request");
 
   --/ Send a ROS response to a client using a service.
@@ -255,7 +257,7 @@ package rcl_service_h is
   -- * owned by the calling code, but should remain constant during
   -- * rcl_send_response().
   -- *
-  -- e This function is thread safe so long as access to both the service and the
+  -- * This function is thread safe so long as access to both the service and the
   -- * `ros_response` is synchronized.
   -- * That means that calling rcl_send_response() from multiple threads is
   -- * allowed, but calling rcl_send_response() at the same time as non-thread safe
@@ -289,7 +291,7 @@ package rcl_service_h is
    function rcl_send_response
      (service : access constant rcl_service_t;
       response_header : access rmw_types_h.rmw_request_id_t;
-      ros_response : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/service.h:299
+      ros_response : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/service.h:301
    pragma Import (C, rcl_send_response, "rcl_send_response");
 
   --/ Get the topic name for the service.
@@ -315,7 +317,7 @@ package rcl_service_h is
   -- * \return name string if successful, otherwise `NULL`
   --  
 
-   function rcl_service_get_service_name (service : access constant rcl_service_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcl/service.h:329
+   function rcl_service_get_service_name (service : access constant rcl_service_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rcl/service.h:331
    pragma Import (C, rcl_service_get_service_name, "rcl_service_get_service_name");
 
   --/ Return the rcl service options.
@@ -341,7 +343,7 @@ package rcl_service_h is
   -- * \return options struct if successful, otherwise `NULL`
   --  
 
-   function rcl_service_get_options (service : access constant rcl_service_t) return access constant rcl_service_options_t;  -- /opt/ros/bouncy/include/rcl/service.h:356
+   function rcl_service_get_options (service : access constant rcl_service_t) return access constant rcl_service_options_t;  -- /opt/ros/crystal/include/rcl/service.h:358
    pragma Import (C, rcl_service_get_options, "rcl_service_get_options");
 
   --/ Return the rmw service handle.
@@ -371,15 +373,14 @@ package rcl_service_h is
   -- * \return rmw service handle if successful, otherwise `NULL`
   --  
 
-   function rcl_service_get_rmw_handle (service : access constant rcl_service_t) return access rmw_types_h.rmw_service_t;  -- /opt/ros/bouncy/include/rcl/service.h:387
+   function rcl_service_get_rmw_handle (service : access constant rcl_service_t) return access rmw_types_h.rmw_service_t;  -- /opt/ros/crystal/include/rcl/service.h:389
    pragma Import (C, rcl_service_get_rmw_handle, "rcl_service_get_rmw_handle");
 
   --/ Check that the service is valid.
   --*
   -- * The bool returned is `false` if `service` is invalid.
   -- * The bool returned is `true` otherwise.
-  -- * In the case where `false` is to be returned, an
-  -- * error message is set.
+  -- * In the case where `false` is to be returned, an error message is set.
   -- * This function cannot fail.
   -- *
   -- * <hr>
@@ -391,11 +392,10 @@ package rcl_service_h is
   -- * Lock-Free          | Yes
   -- *
   -- * \param[in] service pointer to the rcl service
-  -- * \param[in] error_msg_allocator a valid allocator or `NULL`
   -- * \return `true` if `service` is valid, otherwise `false`
   --  
 
-   function rcl_service_is_valid (service : access constant rcl_service_t; error_msg_allocator : access rcl_allocator_h.rcl_allocator_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rcl/service.h:411
+   function rcl_service_is_valid (service : access constant rcl_service_t) return Extensions.bool;  -- /opt/ros/crystal/include/rcl/service.h:411
    pragma Import (C, rcl_service_is_valid, "rcl_service_is_valid");
 
 end rcl_service_h;

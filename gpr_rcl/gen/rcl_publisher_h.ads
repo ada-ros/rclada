@@ -9,7 +9,10 @@ limited with rcl_node_h;
 limited with rosidl_generator_c_message_type_support_struct_h;
 with Interfaces.C.Strings;
 with rcl_types_h;
+limited with rcl_context_h;
 with Interfaces.C.Extensions;
+with stddef_h;
+with rmw_ret_types_h;
 
 package rcl_publisher_h is
 
@@ -28,17 +31,17 @@ package rcl_publisher_h is
 
   --/ Structure which encapsulates a ROS Publisher.
    type rcl_publisher_t is record
-      impl : System.Address;  -- /opt/ros/bouncy/include/rcl/publisher.h:35
+      impl : System.Address;  -- /opt/ros/crystal/include/rcl/publisher.h:35
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_publisher_t);  -- /opt/ros/bouncy/include/rcl/publisher.h:33
+   pragma Convention (C_Pass_By_Copy, rcl_publisher_t);  -- /opt/ros/crystal/include/rcl/publisher.h:33
 
   --/ Options available for a rcl publisher.
   --/ Middleware quality of service settings for the publisher.
    type rcl_publisher_options_t is record
-      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:42
-      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:45
+      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/crystal/include/rcl/publisher.h:42
+      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/crystal/include/rcl/publisher.h:45
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_publisher_options_t);  -- /opt/ros/bouncy/include/rcl/publisher.h:39
+   pragma Convention (C_Pass_By_Copy, rcl_publisher_options_t);  -- /opt/ros/crystal/include/rcl/publisher.h:39
 
   --/ Custom allocator for the publisher, used for incidental allocations.
   --* For default behavior (malloc/free), use: rcl_get_default_allocator()  
@@ -48,7 +51,7 @@ package rcl_publisher_h is
   -- * rcl_publisher_init().
   --  
 
-   function rcl_get_zero_initialized_publisher return rcl_publisher_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:56
+   function rcl_get_zero_initialized_publisher return rcl_publisher_t;  -- /opt/ros/crystal/include/rcl/publisher.h:56
    pragma Import (C, rcl_get_zero_initialized_publisher, "rcl_get_zero_initialized_publisher");
 
   --/ Initialize a rcl publisher.
@@ -64,7 +67,8 @@ package rcl_publisher_h is
   -- * required rosidl_message_type_support_t object.
   -- * This object can be obtained using a language appropriate mechanism.
   -- * \todo TODO(wjwwood) write these instructions once and link to it instead
-  -- * For C a macro can be used (for example `std_msgs/String`):
+  -- *
+  -- * For C, a macro can be used (for example `std_msgs/String`):
   -- *
   -- * ```c
   -- * #include <rosidl_generator_c/message_type_support_struct.h>
@@ -73,7 +77,7 @@ package rcl_publisher_h is
   -- *   ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String);
   -- * ```
   -- *
-  -- * For C++ a template function is used:
+  -- * For C++, a template function is used:
   -- *
   -- * ```cpp
   -- * #include <rosidl_typesupport_cpp/message_type_support.hpp>
@@ -143,7 +147,7 @@ package rcl_publisher_h is
       node : access constant rcl_node_h.rcl_node_t;
       type_support : access constant rosidl_generator_c_message_type_support_struct_h.rosidl_message_type_support_t;
       topic_name : Interfaces.C.Strings.chars_ptr;
-      options : access constant rcl_publisher_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:147
+      options : access constant rcl_publisher_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/publisher.h:148
    pragma Import (C, rcl_publisher_init, "rcl_publisher_init");
 
   --/ Finalize a rcl_publisher_t.
@@ -166,11 +170,12 @@ package rcl_publisher_h is
   -- * \param[in] node handle to the node used to create the publisher
   -- * \return `RCL_RET_OK` if publisher was finalized successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_PUBLISHER_INVALID` if the publisher is invalid, or
   -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_publisher_fini (publisher : access rcl_publisher_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:180
+   function rcl_publisher_fini (publisher : access rcl_publisher_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/publisher.h:182
    pragma Import (C, rcl_publisher_fini, "rcl_publisher_fini");
 
   --/ Return the default publisher options in a rcl_publisher_options_t.
@@ -181,7 +186,7 @@ package rcl_publisher_h is
   -- * - allocator = rcl_get_default_allocator()
   --  
 
-   function rcl_publisher_get_default_options return rcl_publisher_options_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:192
+   function rcl_publisher_get_default_options return rcl_publisher_options_t;  -- /opt/ros/crystal/include/rcl/publisher.h:194
    pragma Import (C, rcl_publisher_get_default_options, "rcl_publisher_get_default_options");
 
   --/ Publish a ROS message on a topic using a publisher.
@@ -241,7 +246,7 @@ package rcl_publisher_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_publish (publisher : access constant rcl_publisher_t; ros_message : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:253
+   function rcl_publish (publisher : access constant rcl_publisher_t; ros_message : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/publisher.h:255
    pragma Import (C, rcl_publish, "rcl_publish");
 
   --/ Publish a serialized message on a topic using a publisher.
@@ -275,7 +280,7 @@ package rcl_publisher_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_publish_serialized_message (publisher : access constant rcl_publisher_t; serialized_message : access constant rcl_types_h.rcl_serialized_message_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:288
+   function rcl_publish_serialized_message (publisher : access constant rcl_publisher_t; serialized_message : access constant rcl_types_h.rcl_serialized_message_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/publisher.h:290
    pragma Import (C, rcl_publish_serialized_message, "rcl_publish_serialized_message");
 
   --/ Get the topic name for the publisher.
@@ -301,7 +306,7 @@ package rcl_publisher_h is
   -- * \return name string if successful, otherwise `NULL`
   --  
 
-   function rcl_publisher_get_topic_name (publisher : access constant rcl_publisher_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcl/publisher.h:316
+   function rcl_publisher_get_topic_name (publisher : access constant rcl_publisher_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rcl/publisher.h:318
    pragma Import (C, rcl_publisher_get_topic_name, "rcl_publisher_get_topic_name");
 
   --/ Return the rcl publisher options.
@@ -327,7 +332,7 @@ package rcl_publisher_h is
   -- * \return options struct if successful, otherwise `NULL`
   --  
 
-   function rcl_publisher_get_options (publisher : access constant rcl_publisher_t) return access constant rcl_publisher_options_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:343
+   function rcl_publisher_get_options (publisher : access constant rcl_publisher_t) return access constant rcl_publisher_options_t;  -- /opt/ros/crystal/include/rcl/publisher.h:345
    pragma Import (C, rcl_publisher_get_options, "rcl_publisher_get_options");
 
   --/ Return the rmw publisher handle.
@@ -357,15 +362,41 @@ package rcl_publisher_h is
   -- * \return rmw publisher handle if successful, otherwise `NULL`
   --  
 
-   function rcl_publisher_get_rmw_handle (publisher : access constant rcl_publisher_t) return access rmw_types_h.rmw_publisher_t;  -- /opt/ros/bouncy/include/rcl/publisher.h:374
+   function rcl_publisher_get_rmw_handle (publisher : access constant rcl_publisher_t) return access rmw_types_h.rmw_publisher_t;  -- /opt/ros/crystal/include/rcl/publisher.h:376
    pragma Import (C, rcl_publisher_get_rmw_handle, "rcl_publisher_get_rmw_handle");
 
-  --/ Check that the publisher is valid
+  --/ Return the context associated with this publisher.
+  --*
+  -- * This function can fail, and therefore return `NULL`, if the:
+  -- *   - publisher is `NULL`
+  -- *   - publisher is invalid (never called init, called fini, etc.)
+  -- *
+  -- * The returned context is made invalid if the publisher is finalized or if
+  -- * rcl_shutdown() is called.
+  -- * Therefore it is recommended to get the handle from the publisher using
+  -- * this function each time it is needed and avoid use of the handle
+  -- * concurrently with functions that might change it.
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | No
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Yes
+  -- *
+  -- * \param[in] publisher pointer to the rcl publisher
+  -- * \return context if successful, otherwise `NULL`
+  --  
+
+   function rcl_publisher_get_context (publisher : access constant rcl_publisher_t) return access rcl_context_h.rcl_context_t;  -- /opt/ros/crystal/include/rcl/publisher.h:404
+   pragma Import (C, rcl_publisher_get_context, "rcl_publisher_get_context");
+
+  --/ Return true if the publisher is valid, otherwise false.
   --*
   -- * The bool returned is `false` if `publisher` is invalid.
   -- * The bool returned is `true` otherwise.
-  -- * In the case where `false` is to be returned, an
-  -- * error message is set.
+  -- * In the case where `false` is to be returned, an error message is set.
   -- * This function cannot fail.
   -- *
   -- * <hr>
@@ -377,11 +408,47 @@ package rcl_publisher_h is
   -- * Lock-Free          | Yes
   -- *
   -- * \param[in] publisher pointer to the rcl publisher
-  -- * \param[in] error_msg_allocator a valid allocator or `NULL`
   -- * \return `true` if `publisher` is valid, otherwise `false`
   --  
 
-   function rcl_publisher_is_valid (publisher : access constant rcl_publisher_t; error_msg_allocator : access rcl_allocator_h.rcl_allocator_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rcl/publisher.h:398
+   function rcl_publisher_is_valid (publisher : access constant rcl_publisher_t) return Extensions.bool;  -- /opt/ros/crystal/include/rcl/publisher.h:426
    pragma Import (C, rcl_publisher_is_valid, "rcl_publisher_is_valid");
+
+  --/ Return true if the publisher is valid except the context, otherwise false.
+  --*
+  -- * This is used in clean up functions that need to access the publisher, but do
+  -- * not need use any functions with the context.
+  -- *
+  -- * It is identical to rcl_publisher_is_valid except it ignores the state of the
+  -- * context associated with the publisher.
+  -- * \sa rcl_publisher_is_valid()
+  --  
+
+   function rcl_publisher_is_valid_except_context (publisher : access constant rcl_publisher_t) return Extensions.bool;  -- /opt/ros/crystal/include/rcl/publisher.h:439
+   pragma Import (C, rcl_publisher_is_valid_except_context, "rcl_publisher_is_valid_except_context");
+
+  --/ Get the number of subscriptions matched to a publisher.
+  --*
+  -- * Used to get the internal count of subscriptions matched to a publisher.
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | No
+  -- * Thread-Safe        | Yes
+  -- * Uses Atomics       | Maybe [1]
+  -- * Lock-Free          | Maybe [1]
+  -- * <i>[1] only if the underlying rmw doesn't make use of this feature </i>
+  -- *
+  -- * \param[in] publisher pointer to the rcl publisher
+  -- * \param[out] subscription_count number of matched subscriptions
+  -- * \return `RCL_RET_OK` if the count was retrieved, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_SUBSCRIPTION_INVALID` if the subscription is invalid, or
+  -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
+  --  
+
+   function rcl_publisher_get_subscription_count (publisher : access constant rcl_publisher_t; subscription_count : access stddef_h.size_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/crystal/include/rcl/publisher.h:464
+   pragma Import (C, rcl_publisher_get_subscription_count, "rcl_publisher_get_subscription_count");
 
 end rcl_publisher_h;

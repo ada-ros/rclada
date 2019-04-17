@@ -2,7 +2,8 @@ pragma Ada_2005;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
-with rmw_types_h;
+with rmw_ret_types_h;
+with rcutils_types_uint8_array_h;
 
 package rcl_types_h is
 
@@ -11,53 +12,55 @@ package rcl_types_h is
    --  unsupported macro: RCL_RET_TIMEOUT RMW_RET_TIMEOUT
    --  unsupported macro: RCL_RET_BAD_ALLOC RMW_RET_BAD_ALLOC
    --  unsupported macro: RCL_RET_INVALID_ARGUMENT RMW_RET_INVALID_ARGUMENT
-   RCL_RET_ALREADY_INIT : constant := 100;  --  /opt/ros/bouncy/include/rcl/types.h:34
+   RCL_RET_ALREADY_INIT : constant := 100;  --  /opt/ros/crystal/include/rcl/types.h:34
 
-   RCL_RET_NOT_INIT : constant := 101;  --  /opt/ros/bouncy/include/rcl/types.h:36
+   RCL_RET_NOT_INIT : constant := 101;  --  /opt/ros/crystal/include/rcl/types.h:36
 
-   RCL_RET_MISMATCHED_RMW_ID : constant := 102;  --  /opt/ros/bouncy/include/rcl/types.h:38
+   RCL_RET_MISMATCHED_RMW_ID : constant := 102;  --  /opt/ros/crystal/include/rcl/types.h:38
 
-   RCL_RET_TOPIC_NAME_INVALID : constant := 103;  --  /opt/ros/bouncy/include/rcl/types.h:40
+   RCL_RET_TOPIC_NAME_INVALID : constant := 103;  --  /opt/ros/crystal/include/rcl/types.h:40
 
-   RCL_RET_SERVICE_NAME_INVALID : constant := 104;  --  /opt/ros/bouncy/include/rcl/types.h:42
+   RCL_RET_SERVICE_NAME_INVALID : constant := 104;  --  /opt/ros/crystal/include/rcl/types.h:42
 
-   RCL_RET_UNKNOWN_SUBSTITUTION : constant := 105;  --  /opt/ros/bouncy/include/rcl/types.h:44
+   RCL_RET_UNKNOWN_SUBSTITUTION : constant := 105;  --  /opt/ros/crystal/include/rcl/types.h:44
 
-   RCL_RET_NODE_INVALID : constant := 200;  --  /opt/ros/bouncy/include/rcl/types.h:48
-   RCL_RET_NODE_INVALID_NAME : constant := 201;  --  /opt/ros/bouncy/include/rcl/types.h:49
-   RCL_RET_NODE_INVALID_NAMESPACE : constant := 202;  --  /opt/ros/bouncy/include/rcl/types.h:50
+   RCL_RET_ALREADY_SHUTDOWN : constant := 106;  --  /opt/ros/crystal/include/rcl/types.h:46
 
-   RCL_RET_PUBLISHER_INVALID : constant := 300;  --  /opt/ros/bouncy/include/rcl/types.h:54
+   RCL_RET_NODE_INVALID : constant := 200;  --  /opt/ros/crystal/include/rcl/types.h:50
+   RCL_RET_NODE_INVALID_NAME : constant := 201;  --  /opt/ros/crystal/include/rcl/types.h:51
+   RCL_RET_NODE_INVALID_NAMESPACE : constant := 202;  --  /opt/ros/crystal/include/rcl/types.h:52
 
-   RCL_RET_SUBSCRIPTION_INVALID : constant := 400;  --  /opt/ros/bouncy/include/rcl/types.h:58
+   RCL_RET_PUBLISHER_INVALID : constant := 300;  --  /opt/ros/crystal/include/rcl/types.h:56
 
-   RCL_RET_SUBSCRIPTION_TAKE_FAILED : constant := 401;  --  /opt/ros/bouncy/include/rcl/types.h:60
+   RCL_RET_SUBSCRIPTION_INVALID : constant := 400;  --  /opt/ros/crystal/include/rcl/types.h:60
 
-   RCL_RET_CLIENT_INVALID : constant := 500;  --  /opt/ros/bouncy/include/rcl/types.h:64
+   RCL_RET_SUBSCRIPTION_TAKE_FAILED : constant := 401;  --  /opt/ros/crystal/include/rcl/types.h:62
 
-   RCL_RET_CLIENT_TAKE_FAILED : constant := 501;  --  /opt/ros/bouncy/include/rcl/types.h:66
+   RCL_RET_CLIENT_INVALID : constant := 500;  --  /opt/ros/crystal/include/rcl/types.h:66
 
-   RCL_RET_SERVICE_INVALID : constant := 600;  --  /opt/ros/bouncy/include/rcl/types.h:70
+   RCL_RET_CLIENT_TAKE_FAILED : constant := 501;  --  /opt/ros/crystal/include/rcl/types.h:68
 
-   RCL_RET_SERVICE_TAKE_FAILED : constant := 601;  --  /opt/ros/bouncy/include/rcl/types.h:72
+   RCL_RET_SERVICE_INVALID : constant := 600;  --  /opt/ros/crystal/include/rcl/types.h:72
 
-   RCL_RET_TIMER_INVALID : constant := 800;  --  /opt/ros/bouncy/include/rcl/types.h:78
+   RCL_RET_SERVICE_TAKE_FAILED : constant := 601;  --  /opt/ros/crystal/include/rcl/types.h:74
 
-   RCL_RET_TIMER_CANCELED : constant := 801;  --  /opt/ros/bouncy/include/rcl/types.h:80
+   RCL_RET_TIMER_INVALID : constant := 800;  --  /opt/ros/crystal/include/rcl/types.h:80
 
-   RCL_RET_WAIT_SET_INVALID : constant := 900;  --  /opt/ros/bouncy/include/rcl/types.h:84
+   RCL_RET_TIMER_CANCELED : constant := 801;  --  /opt/ros/crystal/include/rcl/types.h:82
 
-   RCL_RET_WAIT_SET_EMPTY : constant := 901;  --  /opt/ros/bouncy/include/rcl/types.h:86
+   RCL_RET_WAIT_SET_INVALID : constant := 900;  --  /opt/ros/crystal/include/rcl/types.h:86
 
-   RCL_RET_WAIT_SET_FULL : constant := 902;  --  /opt/ros/bouncy/include/rcl/types.h:88
+   RCL_RET_WAIT_SET_EMPTY : constant := 901;  --  /opt/ros/crystal/include/rcl/types.h:88
 
-   RCL_RET_INVALID_REMAP_RULE : constant := 1001;  --  /opt/ros/bouncy/include/rcl/types.h:92
+   RCL_RET_WAIT_SET_FULL : constant := 902;  --  /opt/ros/crystal/include/rcl/types.h:90
 
-   RCL_RET_WRONG_LEXEME : constant := 1002;  --  /opt/ros/bouncy/include/rcl/types.h:94
+   RCL_RET_INVALID_REMAP_RULE : constant := 1001;  --  /opt/ros/crystal/include/rcl/types.h:94
 
-   RCL_RET_INVALID_PARAM_RULE : constant := 1010;  --  /opt/ros/bouncy/include/rcl/types.h:96
+   RCL_RET_WRONG_LEXEME : constant := 1002;  --  /opt/ros/crystal/include/rcl/types.h:96
 
-   RCL_RET_INVALID_LOG_LEVEL_RULE : constant := 1020;  --  /opt/ros/bouncy/include/rcl/types.h:98
+   RCL_RET_INVALID_PARAM_RULE : constant := 1010;  --  /opt/ros/crystal/include/rcl/types.h:98
+
+   RCL_RET_INVALID_LOG_LEVEL_RULE : constant := 1020;  --  /opt/ros/crystal/include/rcl/types.h:100
 
   -- Copyright 2014 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,7 +72,7 @@ package rcl_types_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   subtype rcl_ret_t is rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rcl/types.h:20
+   subtype rcl_ret_t is rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/crystal/include/rcl/types.h:20
 
   --/ Success return code.
   --/ Unspecified error return code.
@@ -83,6 +86,7 @@ package rcl_types_h is
   --/ Topic name does not pass validation.
   --/ Service name (same as topic name) does not pass validation.
   --/ Topic name substitution is unknown.
+  --/ rcl_shutdown() already called return code.
   -- rcl node specific ret codes in 2XX
   --/ Invalid rcl_node_t given return code.
   -- rcl publisher specific ret codes in 3XX
@@ -110,6 +114,6 @@ package rcl_types_h is
   --/ Argument is not a valid parameter rule
   --/ Argument is not a valid log level rule
   --/ typedef for rmw_serialized_message_t;
-   subtype rcl_serialized_message_t is rmw_types_h.rmw_serialized_message_t;  -- /opt/ros/bouncy/include/rcl/types.h:101
+   subtype rcl_serialized_message_t is rcutils_types_uint8_array_h.rcutils_uint8_array_t;  -- /opt/ros/crystal/include/rcl/types.h:103
 
 end rcl_types_h;

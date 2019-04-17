@@ -29,9 +29,10 @@ ada_find_package_include_dir(_rosidl_typesupport_interface_include ${rosidl_type
 file(GLOB
         _headers
         "${_rcl_include}/rcl/*.h"
-        "${_rcutils_include}/rcutils/*.h"
-        "${_rcutils_include}/rcutils/types/*.h"
-        "${_rmw_include}/rmw/*.h")
+#        "${_rcutils_include}/rcutils/*.h"
+#        "${_rcutils_include}/rcutils/types/*.h"
+#        "${_rmw_include}/rmw/*.h"
+        )
 
 list(APPEND _includes
         ${_rcutils_include}
@@ -39,20 +40,35 @@ list(APPEND _includes
         ${_rcl_include}
         ${_rosidl_gen_c_include}
         ${_rosidl_typesupport_interface_include}
+        /usr/include
         )
 
 # Extra headers that we need
+# We don't use the glob tactic as for rcl/*.h because that brings in too much standard stuff, some of it not compilable
 set(_extra_headers
         ${_rcutils_include}/rcutils/allocator.h
         ${_rcutils_include}/rcutils/error_handling.h
         ${_rcutils_include}/rcutils/logging.h
         ${_rcutils_include}/rcutils/time.h
+        ${_rcutils_include}/rcutils/types/char_array.h
+        ${_rcutils_include}/rcutils/types/rcutils_ret.h
         ${_rcutils_include}/rcutils/types/string_array.h
         ${_rcutils_include}/rcutils/types/string_map.h
-        ${_rmw_include}/rmw/names_and_types.h
-        ${_rmw_include}/rmw/types.h)
+        ${_rcutils_include}/rcutils/types/uint8_array.h
 
-message(STATUS "HEADERS ${_includes}")
+        ${_rmw_include}/rmw/names_and_types.h
+        ${_rmw_include}/rmw/types.h
+
+        ${_rmw_include}/rmw/init.h
+        ${_rmw_include}/rmw/init_options.h
+        ${_rmw_include}/rmw/ret_types.h
+        )
+
+# Problematic headers not to process...
+list(FILTER _headers EXCLUDE REGEX ".*/rcutils/stdatomic_helper.*")
+
+message(STATUS "INCLUDES ${_includes}")
+message(STATUS "HEADERS ${_headers} ${_extra_headers}")
 
 ada_generate_binding(
         ada_binding_rcl

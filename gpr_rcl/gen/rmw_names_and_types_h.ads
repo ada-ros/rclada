@@ -3,7 +3,7 @@ pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
 with rcutils_types_string_array_h;
-with rmw_types_h;
+with rmw_ret_types_h;
 with stddef_h;
 limited with rcutils_allocator_h;
 
@@ -21,18 +21,18 @@ package rmw_names_and_types_h is
   -- limitations under the License.
   --/ Associative array of topic or service names and types.
    type rmw_names_and_types_t is record
-      names : aliased rcutils_types_string_array_h.rcutils_string_array_t;  -- /opt/ros/bouncy/include/rmw/names_and_types.h:34
-      types : access rcutils_types_string_array_h.rcutils_string_array_t;  -- /opt/ros/bouncy/include/rmw/names_and_types.h:36
+      names : aliased rcutils_types_string_array_h.rcutils_string_array_t;  -- /opt/ros/crystal/include/rmw/names_and_types.h:34
+      types : access rcutils_types_string_array_h.rcutils_string_array_t;  -- /opt/ros/crystal/include/rmw/names_and_types.h:36
    end record;
-   pragma Convention (C_Pass_By_Copy, rmw_names_and_types_t);  -- /opt/ros/bouncy/include/rmw/names_and_types.h:32
+   pragma Convention (C_Pass_By_Copy, rmw_names_and_types_t);  -- /opt/ros/crystal/include/rmw/names_and_types.h:32
 
   -- The length of this array is the same as names.size
   --/ Return a rmw_names_and_types_t struct with members initialized to `NULL`.
-   function rmw_get_zero_initialized_names_and_types return rmw_names_and_types_t;  -- /opt/ros/bouncy/include/rmw/names_and_types.h:43
+   function rmw_get_zero_initialized_names_and_types return rmw_names_and_types_t;  -- /opt/ros/crystal/include/rmw/names_and_types.h:43
    pragma Import (C, rmw_get_zero_initialized_names_and_types, "rmw_get_zero_initialized_names_and_types");
 
   --/ Check that a rmw_topic_names_and_types_t struct is zero initialized.
-   function rmw_names_and_types_check_zero (names_and_types : access rmw_names_and_types_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/names_and_types.h:49
+   function rmw_names_and_types_check_zero (names_and_types : access rmw_names_and_types_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/crystal/include/rmw/names_and_types.h:49
    pragma Import (C, rmw_names_and_types_check_zero, "rmw_names_and_types_check_zero");
 
   --/ Initialize a rmw_names_and_types_t object.
@@ -54,7 +54,7 @@ package rmw_names_and_types_h is
    function rmw_names_and_types_init
      (names_and_types : access rmw_names_and_types_t;
       size : stddef_h.size_t;
-      allocator : access rcutils_allocator_h.rcutils_allocator_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/names_and_types.h:69
+      allocator : access rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/crystal/include/rmw/names_and_types.h:69
    pragma Import (C, rmw_names_and_types_init, "rmw_names_and_types_init");
 
   --/ Finalize a rmw_names_and_types_t object.
@@ -74,7 +74,7 @@ package rmw_names_and_types_h is
   -- * \returns `RMW_RET_ERROR` when an unspecified error occurs.
   --  
 
-   function rmw_names_and_types_fini (names_and_types : access rmw_names_and_types_t) return rmw_types_h.rmw_ret_t;  -- /opt/ros/bouncy/include/rmw/names_and_types.h:93
+   function rmw_names_and_types_fini (names_and_types : access rmw_names_and_types_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/crystal/include/rmw/names_and_types.h:93
    pragma Import (C, rmw_names_and_types_fini, "rmw_names_and_types_fini");
 
 end rmw_names_and_types_h;

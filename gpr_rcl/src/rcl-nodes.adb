@@ -211,11 +211,12 @@ package body RCL.Nodes is
       This.C_Options   := To_C (Options);
       This.Allocator   := Options.Allocator;
 
-      Check (Rcl_Node_Init
-             (This.Impl'Access,
-                To_C (Name).To_Ptr,
-                To_C (Namespace).To_Ptr,
-                This.C_Options'Access));
+--  FIXME
+--      Check (Rcl_Node_Init
+--             (This.Impl'Access,
+--                To_C (Name).To_Ptr,
+--                To_C (Namespace).To_Ptr,
+--                This.C_Options'Access));
 
       This.Base_Init;
    end Init;
@@ -228,7 +229,7 @@ package body RCL.Nodes is
    begin
       This.Dispatchers.Finalize;
 
-      if To_Boolean (Rcl_Node_Is_Valid (This.Impl'Access, null)) then
+      if TRUE then -- FIXME To_Boolean (Rcl_Node_Is_Valid (This.Impl'Access, null)) then
          This.Current_Executor.Remove (This);
          Check (Rcl_Node_Fini (This.Impl'Access));
 
@@ -282,11 +283,12 @@ package body RCL.Nodes is
 
    begin
       return Arr : aliased Utils.String_Arrays.String_Array do
-         Check
-           (Rcl_Get_Node_Names
-              (This.Impl'Access,
-               Allocators.Impl.To_C (This.Options.Allocator.all),
-               Arr.To_C));
+         null; --  FIXME
+--         Check
+--           (Rcl_Get_Node_Names
+--              (This.Impl'Access,
+--               Allocators.Impl.To_C (This.Options.Allocator.all),
+--               Arr.To_C));
       end return;
    end Graph_Node_Names;
 

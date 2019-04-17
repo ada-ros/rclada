@@ -14,9 +14,9 @@ package RCL.Errors is
    Other_Value : constant := 9999;
    
    for Error use
-     (Ok          => RMW_RET_OK,
-      Unspecified => RMW_RET_ERROR,
-      Timeout     => RMW_RET_TIMEOUT,
+     (Ok          => 0, -- FIXME RMW_RET_OK,
+      Unspecified => 1, -- FIXME RMW_RET_ERROR,
+      Timeout     => 2, -- FIXME RMW_RET_TIMEOUT,
       Other       => Other_value);
    
    function To_Error (E : Integer) return Error;

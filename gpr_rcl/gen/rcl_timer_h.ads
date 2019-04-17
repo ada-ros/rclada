@@ -4,9 +4,12 @@ pragma Style_Checks (Off);
 with Interfaces.C; use Interfaces.C;
 with System;
 with x86_64_linux_gnu_bits_stdint_intn_h;
+limited with rcl_time_h;
+limited with rcl_context_h;
 with rcl_allocator_h;
 with rcl_types_h;
 with Interfaces.C.Extensions;
+limited with rcl_guard_condition_h;
 
 package rcl_timer_h is
 
@@ -25,9 +28,9 @@ package rcl_timer_h is
   --/ Structure which encapsulates a ROS Timer.
   --/ Private implementation pointer.
    type rcl_timer_t is record
-      impl : System.Address;  -- /opt/ros/bouncy/include/rcl/timer.h:37
+      impl : System.Address;  -- /opt/ros/crystal/include/rcl/timer.h:40
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_timer_t);  -- /opt/ros/bouncy/include/rcl/timer.h:34
+   pragma Convention (C_Pass_By_Copy, rcl_timer_t);  -- /opt/ros/crystal/include/rcl/timer.h:37
 
   --/ User callback signature for timers.
   --*
@@ -44,15 +47,15 @@ package rcl_timer_h is
   --  
 
    type rcl_timer_callback_t is access procedure (arg1 : access rcl_timer_t; arg2 : x86_64_linux_gnu_bits_stdint_intn_h.int64_t);
-   pragma Convention (C, rcl_timer_callback_t);  -- /opt/ros/bouncy/include/rcl/timer.h:53
+   pragma Convention (C, rcl_timer_callback_t);  -- /opt/ros/crystal/include/rcl/timer.h:56
 
   --/ Return a zero initialized timer.
-   function rcl_get_zero_initialized_timer return rcl_timer_t;  -- /opt/ros/bouncy/include/rcl/timer.h:59
+   function rcl_get_zero_initialized_timer return rcl_timer_t;  -- /opt/ros/crystal/include/rcl/timer.h:62
    pragma Import (C, rcl_get_zero_initialized_timer, "rcl_get_zero_initialized_timer");
 
   --/ Initialize a timer.
   --*
-  -- * A timer consists of a callback function and a period.
+  -- * A timer consists of a clock, a callback function and a period.
   -- * A timer can be added to a wait set and waited on, such that the wait set
   -- * will wake up when a timer is ready to be executed.
   -- *
@@ -69,7 +72,11 @@ package rcl_timer_h is
   -- * Calling this function on a timer struct which has been allocated but not
   -- * zero initialized is undefined behavior.
   -- *
-  -- * The period is a duration (rather an absolute time in the future).
+  -- * The clock handle must be a pointer to an initialized rcl_clock_t struct.
+  -- * The life time of the clock must exceed the life time of the timer.
+  -- *
+  -- * The period is a non-negative duration (rather an absolute time in the
+  -- * future).
   -- * If the period is `0` then it will always be ready.
   -- *
   -- * The callback is an optional argument.
@@ -93,9 +100,15 @@ package rcl_timer_h is
   -- *   // Optionally reconfigure, cancel, or reset the timer...
   -- * }
   -- *
+  -- * rcl_context_t * context;  // initialized previously by rcl_init()...
+  -- * rcl_clock_t clock;
+  -- * rcl_allocator_t allocator = rcl_get_default_allocator();
+  -- * rcl_ret_t ret = rcl_clock_init(RCL_STEADY_TIME, &clock, &allocator);
+  -- * // ... error handling
+  -- *
   -- * rcl_timer_t timer = rcl_get_zero_initialized_timer();
-  -- * rcl_ret_t ret = rcl_timer_init(
-  -- *   &timer, RCL_MS_TO_NS(100), my_timer_callback, rcl_get_default_allocator());
+  -- * ret = rcl_timer_init(
+  -- *   &timer, &clock, context, RCL_MS_TO_NS(100), my_timer_callback, allocator);
   -- * // ... error handling, use the timer with a wait set, or poll it manually, then cleanup
   -- * ret = rcl_timer_fini(&timer);
   -- * // ... error handling
@@ -115,6 +128,8 @@ package rcl_timer_h is
   -- * <i>[3] if `atomic_is_lock_free()` returns true for `atomic_bool`</i>
   -- *
   -- * \param[inout] timer the timer handle to be initialized
+  -- * \param[in] clock the clock providing the current time
+  -- * \param[in] context the context that this timer is to be associated with
   -- * \param[in] period the duration between calls to the callback in nanoseconds
   -- * \param[in] callback the user defined function to be called every period
   -- * \param[in] allocator the allocator to use for allocations
@@ -127,9 +142,11 @@ package rcl_timer_h is
 
    function rcl_timer_init
      (timer : access rcl_timer_t;
+      clock : access rcl_time_h.rcl_clock_t;
+      context : access rcl_context_h.rcl_context_t;
       period : x86_64_linux_gnu_bits_stdint_intn_h.int64_t;
       callback : rcl_timer_callback_t;
-      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:138
+      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/timer.h:153
    pragma Import (C, rcl_timer_init, "rcl_timer_init");
 
   --/ Finalize a timer.
@@ -159,7 +176,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_fini (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:173
+   function rcl_timer_fini (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/timer.h:190
    pragma Import (C, rcl_timer_fini, "rcl_timer_fini");
 
   --/ Call the timer's callback and set the last call time.
@@ -202,8 +219,33 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_call (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:217
+   function rcl_timer_call (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/timer.h:234
    pragma Import (C, rcl_timer_call, "rcl_timer_call");
+
+  --/ Retrieve the clock of the timer.
+  --*
+  -- * This function retrieves the clock pointer and copies it into the given variable.
+  -- *
+  -- * The clock argument must be a pointer to an already allocated rcl_clock_t *.
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | No
+  -- * Thread-Safe        | Yes
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Yes
+  -- *
+  -- * \param[in] timer the handle to the timer which is being queried
+  -- * \param[out] clock the rcl_clock_t * in which the clock is stored
+  -- * \return `RCL_RET_OK` if the period was retrieved successfully, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_TIMER_INVALID` if the timer is invalid, or
+  -- * \return `RCL_RET_ERROR` an unspecified error occur.
+  --  
+
+   function rcl_timer_clock (timer : access rcl_timer_t; clock : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/timer.h:260
+   pragma Import (C, rcl_timer_clock, "rcl_timer_clock");
 
   --/ Calculates whether or not the timer should be called.
   --*
@@ -231,7 +273,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_is_ready (timer : access constant rcl_timer_t; is_ready : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:247
+   function rcl_timer_is_ready (timer : access constant rcl_timer_t; is_ready : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/timer.h:290
    pragma Import (C, rcl_timer_is_ready, "rcl_timer_is_ready");
 
   --/ Calculate and retrieve the time until the next call in nanoseconds.
@@ -265,7 +307,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_get_time_until_next_call (timer : access constant rcl_timer_t; time_until_next_call : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:282
+   function rcl_timer_get_time_until_next_call (timer : access constant rcl_timer_t; time_until_next_call : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/timer.h:325
    pragma Import (C, rcl_timer_get_time_until_next_call, "rcl_timer_get_time_until_next_call");
 
   --/ Retrieve the time since the previous call to rcl_timer_call() occurred.
@@ -296,12 +338,12 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_get_time_since_last_call (timer : access constant rcl_timer_t; time_since_last_call : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:314
+   function rcl_timer_get_time_since_last_call (timer : access constant rcl_timer_t; time_since_last_call : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/timer.h:357
    pragma Import (C, rcl_timer_get_time_since_last_call, "rcl_timer_get_time_since_last_call");
 
   --/ Retrieve the period of the timer.
   --*
-  -- * This function retrieves the period and copies it into the give variable.
+  -- * This function retrieves the period and copies it into the given variable.
   -- *
   -- * The period argument must be a pointer to an already allocated int64_t.
   -- *
@@ -322,13 +364,13 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_get_period (timer : access constant rcl_timer_t; period : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:341
+   function rcl_timer_get_period (timer : access constant rcl_timer_t; period : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/timer.h:384
    pragma Import (C, rcl_timer_get_period, "rcl_timer_get_period");
 
   --/ Exchange the period of the timer and return the previous period.
   --*
   -- * This function exchanges the period in the timer and copies the old one into
-  -- * the give variable.
+  -- * the given variable.
   -- *
   -- * Exchanging (changing) the period will not affect already waiting wait sets.
   -- *
@@ -355,7 +397,7 @@ package rcl_timer_h is
    function rcl_timer_exchange_period
      (timer : access constant rcl_timer_t;
       new_period : x86_64_linux_gnu_bits_stdint_intn_h.int64_t;
-      old_period : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:372
+      old_period : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/timer.h:415
    pragma Import (C, rcl_timer_exchange_period, "rcl_timer_exchange_period");
 
   --/ Return the current timer callback.
@@ -377,7 +419,7 @@ package rcl_timer_h is
   -- * \return function pointer to the callback, or `NULL` if an error occurred
   --  
 
-   function rcl_timer_get_callback (timer : access constant rcl_timer_t) return rcl_timer_callback_t;  -- /opt/ros/bouncy/include/rcl/timer.h:395
+   function rcl_timer_get_callback (timer : access constant rcl_timer_t) return rcl_timer_callback_t;  -- /opt/ros/crystal/include/rcl/timer.h:438
    pragma Import (C, rcl_timer_get_callback, "rcl_timer_get_callback");
 
   --/ Exchange the current timer callback and return the current callback.
@@ -403,7 +445,7 @@ package rcl_timer_h is
   -- * \return function pointer to the old callback, or `NULL` if an error occurred
   --  
 
-   function rcl_timer_exchange_callback (timer : access rcl_timer_t; new_callback : rcl_timer_callback_t) return rcl_timer_callback_t;  -- /opt/ros/bouncy/include/rcl/timer.h:422
+   function rcl_timer_exchange_callback (timer : access rcl_timer_t; new_callback : rcl_timer_callback_t) return rcl_timer_callback_t;  -- /opt/ros/crystal/include/rcl/timer.h:465
    pragma Import (C, rcl_timer_exchange_callback, "rcl_timer_exchange_callback");
 
   --/ Cancel a timer.
@@ -430,7 +472,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_cancel (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:450
+   function rcl_timer_cancel (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/timer.h:493
    pragma Import (C, rcl_timer_cancel, "rcl_timer_cancel");
 
   --/ Retrieve the canceled state of a timer.
@@ -458,7 +500,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_is_canceled (timer : access constant rcl_timer_t; is_canceled : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:479
+   function rcl_timer_is_canceled (timer : access constant rcl_timer_t; is_canceled : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/timer.h:522
    pragma Import (C, rcl_timer_is_canceled, "rcl_timer_is_canceled");
 
   --/ Reset a timer.
@@ -483,7 +525,7 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_reset (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/timer.h:505
+   function rcl_timer_reset (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/timer.h:548
    pragma Import (C, rcl_timer_reset, "rcl_timer_reset");
 
   --/ Return the allocator for the timer.
@@ -506,7 +548,25 @@ package rcl_timer_h is
   -- * \return pointer to the allocator, or `NULL` if an error occurred
   --  
 
-   function rcl_timer_get_allocator (timer : access constant rcl_timer_t) return access constant rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/bouncy/include/rcl/timer.h:527
+   function rcl_timer_get_allocator (timer : access constant rcl_timer_t) return access constant rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/crystal/include/rcl/timer.h:570
    pragma Import (C, rcl_timer_get_allocator, "rcl_timer_get_allocator");
+
+  --/ Retrieve a guard condition used by the timer to wake the waitset when using ROSTime.
+  --*
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | No
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Yes
+  -- *
+  -- * \param[in] timer the timer to be queried
+  -- * \return `NULL` if the timer is invalid or does not have a guard condition, or
+  -- * \return a guard condition pointer.
+  --  
+
+   function rcl_timer_get_guard_condition (timer : access constant rcl_timer_t) return access rcl_guard_condition_h.rcl_guard_condition_t;  -- /opt/ros/crystal/include/rcl/timer.h:589
+   pragma Import (C, rcl_timer_get_guard_condition, "rcl_timer_get_guard_condition");
 
 end rcl_timer_h;

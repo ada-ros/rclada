@@ -26,9 +26,9 @@ package rcl_lexer_lookahead_h is
 
   --/ Track lexical analysis and allow looking ahead 2 lexemes.
    type rcl_lexer_lookahead2_t is record
-      impl : System.Address;  -- /opt/ros/bouncy/include/rcl/lexer_lookahead.h:37
+      impl : System.Address;  -- /opt/ros/crystal/include/rcl/lexer_lookahead.h:37
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_lexer_lookahead2_t);  -- /opt/ros/bouncy/include/rcl/lexer_lookahead.h:35
+   pragma Convention (C_Pass_By_Copy, rcl_lexer_lookahead2_t);  -- /opt/ros/crystal/include/rcl/lexer_lookahead.h:35
 
   --/ Get a zero initialized rcl_lexer_lookahead2_t instance.
   --*
@@ -44,7 +44,7 @@ package rcl_lexer_lookahead_h is
   -- * \return zero initialized lookahead2 buffer.
   --  
 
-   function rcl_get_zero_initialized_lexer_lookahead2 return rcl_lexer_lookahead2_t;  -- /opt/ros/bouncy/include/rcl/lexer_lookahead.h:56
+   function rcl_get_zero_initialized_lexer_lookahead2 return rcl_lexer_lookahead2_t;  -- /opt/ros/crystal/include/rcl/lexer_lookahead.h:56
    pragma Import (C, rcl_get_zero_initialized_lexer_lookahead2, "rcl_get_zero_initialized_lexer_lookahead2");
 
   --/ Initialize an rcl_lexer_lookahead2_t instance.
@@ -75,7 +75,7 @@ package rcl_lexer_lookahead_h is
    function rcl_lexer_lookahead2_init
      (buffer : access rcl_lexer_lookahead2_t;
       text : Interfaces.C.Strings.chars_ptr;
-      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/lexer_lookahead.h:85
+      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/lexer_lookahead.h:85
    pragma Import (C, rcl_lexer_lookahead2_init, "rcl_lexer_lookahead2_init");
 
   --/ Finalize an instance of an rcl_lexer_lookahead2_t structure.
@@ -97,7 +97,7 @@ package rcl_lexer_lookahead_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_lexer_lookahead2_fini (buffer : access rcl_lexer_lookahead2_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/lexer_lookahead.h:111
+   function rcl_lexer_lookahead2_fini (buffer : access rcl_lexer_lookahead2_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/lexer_lookahead.h:111
    pragma Import (C, rcl_lexer_lookahead2_fini, "rcl_lexer_lookahead2_fini");
 
   --/ Look ahead at the next lexeme in the string.
@@ -122,7 +122,7 @@ package rcl_lexer_lookahead_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_lexer_lookahead2_peek (buffer : access rcl_lexer_lookahead2_t; next_type : access rcl_lexer_h.rcl_lexeme_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/lexer_lookahead.h:138
+   function rcl_lexer_lookahead2_peek (buffer : access rcl_lexer_lookahead2_t; next_type : access rcl_lexer_h.rcl_lexeme_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/lexer_lookahead.h:138
    pragma Import (C, rcl_lexer_lookahead2_peek, "rcl_lexer_lookahead2_peek");
 
   --/ Look ahead at the next two lexemes in the string.
@@ -151,7 +151,7 @@ package rcl_lexer_lookahead_h is
    function rcl_lexer_lookahead2_peek2
      (buffer : access rcl_lexer_lookahead2_t;
       next_type1 : access rcl_lexer_h.rcl_lexeme_t;
-      next_type2 : access rcl_lexer_h.rcl_lexeme_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/lexer_lookahead.h:167
+      next_type2 : access rcl_lexer_h.rcl_lexeme_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/lexer_lookahead.h:167
    pragma Import (C, rcl_lexer_lookahead2_peek2, "rcl_lexer_lookahead2_peek2");
 
   --/ Accept a lexeme and advance analysis.
@@ -180,7 +180,7 @@ package rcl_lexer_lookahead_h is
    function rcl_lexer_lookahead2_accept
      (buffer : access rcl_lexer_lookahead2_t;
       lexeme_text : System.Address;
-      lexeme_text_length : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/lexer_lookahead.h:197
+      lexeme_text_length : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/lexer_lookahead.h:197
    pragma Import (C, rcl_lexer_lookahead2_accept, "rcl_lexer_lookahead2_accept");
 
   --/ Require the next lexeme to be a certain type and advance analysis.
@@ -213,7 +213,7 @@ package rcl_lexer_lookahead_h is
      (buffer : access rcl_lexer_lookahead2_t;
       c_type : rcl_lexer_h.rcl_lexeme_t;
       lexeme_text : System.Address;
-      lexeme_text_length : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/lexer_lookahead.h:230
+      lexeme_text_length : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/lexer_lookahead.h:230
    pragma Import (C, rcl_lexer_lookahead2_expect, "rcl_lexer_lookahead2_expect");
 
   --/ Get the text at the point where it is currently being analyzed.
@@ -232,7 +232,7 @@ package rcl_lexer_lookahead_h is
   -- * \return an undefined value if buffer is not initialized or has been finalized.
   --  
 
-   function rcl_lexer_lookahead2_get_text (buffer : access constant rcl_lexer_lookahead2_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/bouncy/include/rcl/lexer_lookahead.h:254
+   function rcl_lexer_lookahead2_get_text (buffer : access constant rcl_lexer_lookahead2_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rcl/lexer_lookahead.h:254
    pragma Import (C, rcl_lexer_lookahead2_get_text, "rcl_lexer_lookahead2_get_text");
 
 end rcl_lexer_lookahead_h;

@@ -22,6 +22,6 @@ package rcl_allocator_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   subtype rcl_allocator_t is rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/bouncy/include/rcl/allocator.h:25
+   subtype rcl_allocator_t is rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/crystal/include/rcl/allocator.h:25
 
 end rcl_allocator_h;

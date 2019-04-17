@@ -61,7 +61,7 @@ package body RCL.Subscriptions.Impl is
                                                   Buffer,
                                                   Impl_Info'Access);
    begin
-      if Ret = RMW_RET_OK then
+      if false then -- FIXME Ret = RMW_RET_OK then
          Info.Intra_Process := To_Boolean (Impl_Info.From_Intra_Process);
          return True;
       elsif Ret = RCL_RET_SUBSCRIPTION_TAKE_FAILED then

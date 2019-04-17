@@ -8,8 +8,12 @@ with rcl_types_h;
 
 package rcl_arguments_h is
 
-   RCL_LOG_LEVEL_ARG_RULE : aliased constant String := "__log_level:=" & ASCII.NUL;  --  /opt/ros/bouncy/include/rcl/arguments.h:37
-   RCL_PARAM_FILE_ARG_RULE : aliased constant String := "__params:=" & ASCII.NUL;  --  /opt/ros/bouncy/include/rcl/arguments.h:38
+   RCL_LOG_LEVEL_ARG_RULE : aliased constant String := "__log_level:=" & ASCII.NUL;  --  /opt/ros/crystal/include/rcl/arguments.h:37
+   RCL_EXTERNAL_LOG_CONFIG_ARG_RULE : aliased constant String := "__log_config_file:=" & ASCII.NUL;  --  /opt/ros/crystal/include/rcl/arguments.h:38
+   RCL_LOG_DISABLE_STDOUT_ARG_RULE : aliased constant String := "__log_disable_stdout:=" & ASCII.NUL;  --  /opt/ros/crystal/include/rcl/arguments.h:39
+   RCL_LOG_DISABLE_ROSOUT_ARG_RULE : aliased constant String := "__log_disable_rosout:=" & ASCII.NUL;  --  /opt/ros/crystal/include/rcl/arguments.h:40
+   RCL_LOG_DISABLE_EXT_LIB_ARG_RULE : aliased constant String := "__log_disable_external_lib:=" & ASCII.NUL;  --  /opt/ros/crystal/include/rcl/arguments.h:41
+   RCL_PARAM_FILE_ARG_RULE : aliased constant String := "__params:=" & ASCII.NUL;  --  /opt/ros/crystal/include/rcl/arguments.h:42
 
   -- Copyright 2018 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,12 +30,12 @@ package rcl_arguments_h is
   --/ Hold output of parsing command line arguments.
   --/ Private implementation pointer.
    type rcl_arguments_t is record
-      impl : System.Address;  -- /opt/ros/bouncy/include/rcl/arguments.h:34
+      impl : System.Address;  -- /opt/ros/crystal/include/rcl/arguments.h:34
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_arguments_t);  -- /opt/ros/bouncy/include/rcl/arguments.h:31
+   pragma Convention (C_Pass_By_Copy, rcl_arguments_t);  -- /opt/ros/crystal/include/rcl/arguments.h:31
 
   --/ Return a rcl_node_t struct with members initialized to `NULL`.
-   function rcl_get_zero_initialized_arguments return rcl_arguments_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:44
+   function rcl_get_zero_initialized_arguments return rcl_arguments_t;  -- /opt/ros/crystal/include/rcl/arguments.h:48
    pragma Import (C, rcl_get_zero_initialized_arguments, "rcl_get_zero_initialized_arguments");
 
   --/ Parse command line arguments into a structure usable by code.
@@ -80,7 +84,7 @@ package rcl_arguments_h is
      (argc : int;
       argv : System.Address;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      args_output : access rcl_arguments_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:90
+      args_output : access rcl_arguments_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/arguments.h:94
    pragma Import (C, rcl_parse_arguments, "rcl_parse_arguments");
 
   --/ Return the number of arguments that were not successfully parsed.
@@ -98,7 +102,7 @@ package rcl_arguments_h is
   -- * \return -1 if args is `NULL` or zero initialized.
   --  
 
-   function rcl_arguments_get_count_unparsed (args : access constant rcl_arguments_t) return int;  -- /opt/ros/bouncy/include/rcl/arguments.h:113
+   function rcl_arguments_get_count_unparsed (args : access constant rcl_arguments_t) return int;  -- /opt/ros/crystal/include/rcl/arguments.h:117
    pragma Import (C, rcl_arguments_get_count_unparsed, "rcl_arguments_get_count_unparsed");
 
   --/ Return a list of indexes that weren't successfully parsed.
@@ -130,7 +134,7 @@ package rcl_arguments_h is
    function rcl_arguments_get_unparsed
      (args : access constant rcl_arguments_t;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      output_unparsed_indices : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:144
+      output_unparsed_indices : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/arguments.h:148
    pragma Import (C, rcl_arguments_get_unparsed, "rcl_arguments_get_unparsed");
 
   --/ Return the number of parameter yaml files given in the arguments.
@@ -148,7 +152,7 @@ package rcl_arguments_h is
   -- * \return -1 if args is `NULL` or zero initialized.
   --  
 
-   function rcl_arguments_get_param_files_count (args : access constant rcl_arguments_t) return int;  -- /opt/ros/bouncy/include/rcl/arguments.h:166
+   function rcl_arguments_get_param_files_count (args : access constant rcl_arguments_t) return int;  -- /opt/ros/crystal/include/rcl/arguments.h:170
    pragma Import (C, rcl_arguments_get_param_files_count, "rcl_arguments_get_param_files_count");
 
   --/ Return a list of yaml parameter file paths specified on the command line.
@@ -175,7 +179,7 @@ package rcl_arguments_h is
    function rcl_arguments_get_param_files
      (arguments : access constant rcl_arguments_t;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      parameter_files : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:193
+      parameter_files : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/arguments.h:197
    pragma Import (C, rcl_arguments_get_param_files, "rcl_arguments_get_param_files");
 
   --/ Return a list of arguments with ROS-specific arguments removed.
@@ -211,7 +215,7 @@ package rcl_arguments_h is
       args : access constant rcl_arguments_t;
       allocator : rcl_allocator_h.rcl_allocator_t;
       nonros_argc : access int;
-      nonros_argv : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:228
+      nonros_argv : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/arguments.h:232
    pragma Import (C, rcl_remove_ros_arguments, "rcl_remove_ros_arguments");
 
   --/ Copy one arguments structure into another.
@@ -224,8 +228,6 @@ package rcl_arguments_h is
   -- * Uses Atomics       | No
   -- * Lock-Free          | Yes
   -- *
-  -- * \param[in] error_alloc an alocator to use if an error occurs.
-  -- *  This allocator is not used to allocate args_out.
   -- * \param[in] args The structure to be copied.
   -- *  Its allocator is used to copy memory into the new structure.
   -- * \param[out] args_out A zero-initialized arguments structure to be copied into.
@@ -235,10 +237,7 @@ package rcl_arguments_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_arguments_copy
-     (error_alloc : rcl_allocator_h.rcl_allocator_t;
-      args : access constant rcl_arguments_t;
-      args_out : access rcl_arguments_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:258
+   function rcl_arguments_copy (args : access constant rcl_arguments_t; args_out : access rcl_arguments_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/arguments.h:260
    pragma Import (C, rcl_arguments_copy, "rcl_arguments_copy");
 
   --/ Reclaim resources held inside rcl_arguments_t structure.
@@ -252,36 +251,12 @@ package rcl_arguments_h is
   -- * Lock-Free          | Yes
   -- *
   -- * \param[in] args The structure to be deallocated.
-  -- * \param[in] allocator A valid allocator.
   -- * \return `RCL_RET_OK` if the memory was successfully freed, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any function arguments are invalid, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_arguments_fini (args : access rcl_arguments_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:282
+   function rcl_arguments_fini (args : access rcl_arguments_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/arguments.h:282
    pragma Import (C, rcl_arguments_fini, "rcl_arguments_fini");
-
-  --/ Get a global instance of command line arguments.
-  --*
-  -- * \sa rcl_init(int, char **, rcl_allocator_t)
-  -- * \sa rcl_shutdown()
-  -- * This returns parsed command line arguments that were passed to `rcl_init()`.
-  -- * The value returned by this function is undefined before `rcl_init()` is called and after
-  -- * `rcl_shutdown()` is called.
-  -- * The return value must not be finalized.
-  -- *
-  -- * <hr>
-  -- * Attribute          | Adherence
-  -- * ------------------ | -------------
-  -- * Allocates Memory   | No
-  -- * Thread-Safe        | Yes
-  -- * Uses Atomics       | No
-  -- * Lock-Free          | Yes
-  -- *
-  -- * \return a global instance of parsed command line arguments.
-  --  
-
-   function rcl_get_global_arguments return access rcl_arguments_t;  -- /opt/ros/bouncy/include/rcl/arguments.h:307
-   pragma Import (C, rcl_get_global_arguments, "rcl_get_global_arguments");
 
 end rcl_arguments_h;

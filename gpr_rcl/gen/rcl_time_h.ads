@@ -3,10 +3,11 @@ pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
 with rcutils_time_h;
-with System;
-with rcl_types_h;
-limited with rcl_allocator_h;
 with Interfaces.C.Extensions;
+with System;
+with stddef_h;
+with rcl_types_h;
+with rcl_allocator_h;
 
 package rcl_time_h is
 
@@ -33,10 +34,10 @@ package rcl_time_h is
   --/ Convenience macro to convert nanoseconds to milliseconds.
   --/ Convenience macro to convert nanoseconds to microseconds.
   --/ A single point in time, measured in nanoseconds since the Unix epoch.
-   subtype rcl_time_point_value_t is rcutils_time_h.rcutils_time_point_value_t;  -- /opt/ros/bouncy/include/rcl/time.h:44
+   subtype rcl_time_point_value_t is rcutils_time_h.rcutils_time_point_value_t;  -- /opt/ros/crystal/include/rcl/time.h:44
 
   --/ A duration of time, measured in nanoseconds.
-   subtype rcl_duration_value_t is rcutils_time_h.rcutils_duration_value_t;  -- /opt/ros/bouncy/include/rcl/time.h:46
+   subtype rcl_duration_value_t is rcutils_time_h.rcutils_duration_value_t;  -- /opt/ros/crystal/include/rcl/time.h:46
 
   --/ Time source type, used to indicate the source of a time measurement.
    type rcl_clock_type_t is 
@@ -44,32 +45,86 @@ package rcl_time_h is
       RCL_ROS_TIME,
       RCL_SYSTEM_TIME,
       RCL_STEADY_TIME);
-   pragma Convention (C, rcl_clock_type_t);  -- /opt/ros/bouncy/include/rcl/time.h:49
-
-  --/ Encapsulation of a time source.
-   type rcl_clock_t is record
-      c_type : aliased rcl_clock_type_t;  -- /opt/ros/bouncy/include/rcl/time.h:60
-      pre_update : access procedure;  -- /opt/ros/bouncy/include/rcl/time.h:61
-      post_update : access procedure;  -- /opt/ros/bouncy/include/rcl/time.h:62
-      get_now : access function (arg1 : System.Address; arg2 : access rcl_time_point_value_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:63
-      data : System.Address;  -- /opt/ros/bouncy/include/rcl/time.h:65
-      allocator : access rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/bouncy/include/rcl/time.h:66
-   end record;
-   pragma Convention (C_Pass_By_Copy, rcl_clock_t);  -- /opt/ros/bouncy/include/rcl/time.h:58
-
-  -- void (*set_now) (rcl_time_point_value_t);
-  --/ A single point in time, measured in nanoseconds, the reference point is based on the source.
-   type rcl_time_point_t is record
-      nanoseconds : aliased rcl_time_point_value_t;  -- /opt/ros/bouncy/include/rcl/time.h:72
-      clock_type : aliased rcl_clock_type_t;  -- /opt/ros/bouncy/include/rcl/time.h:73
-   end record;
-   pragma Convention (C_Pass_By_Copy, rcl_time_point_t);  -- /opt/ros/bouncy/include/rcl/time.h:70
+   pragma Convention (C, rcl_clock_type_t);  -- /opt/ros/crystal/include/rcl/time.h:49
 
   --/ A duration of time, measured in nanoseconds and its source.
    type rcl_duration_t is record
-      nanoseconds : aliased rcl_duration_value_t;  -- /opt/ros/bouncy/include/rcl/time.h:79
+      nanoseconds : aliased rcl_duration_value_t;  -- /opt/ros/crystal/include/rcl/time.h:60
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_duration_t);  -- /opt/ros/bouncy/include/rcl/time.h:77
+   pragma Convention (C_Pass_By_Copy, rcl_duration_t);  -- /opt/ros/crystal/include/rcl/time.h:58
+
+  --/ Enumeration to describe the type of time jump.
+   subtype rcl_clock_change_t is unsigned;
+   RCL_ROS_TIME_NO_CHANGE : constant rcl_clock_change_t := 1;
+   RCL_ROS_TIME_ACTIVATED : constant rcl_clock_change_t := 2;
+   RCL_ROS_TIME_DEACTIVATED : constant rcl_clock_change_t := 3;
+   RCL_SYSTEM_TIME_NO_CHANGE : constant rcl_clock_change_t := 4;  -- /opt/ros/crystal/include/rcl/time.h:64
+
+  --/ The source before and after the jump is ROS_TIME.
+  --/ The source switched to ROS_TIME from SYSTEM_TIME.
+  --/ The source switched to SYSTEM_TIME from ROS_TIME.
+  --/ The source before and after the jump is SYSTEM_TIME.
+  --/ Struct to describe a jump in time.
+  --/ Indicate whether or not the source of time changed.
+   type rcl_time_jump_t is record
+      clock_change : aliased rcl_clock_change_t;  -- /opt/ros/crystal/include/rcl/time.h:80
+      c_delta : aliased rcl_duration_t;  -- /opt/ros/crystal/include/rcl/time.h:82
+   end record;
+   pragma Convention (C_Pass_By_Copy, rcl_time_jump_t);  -- /opt/ros/crystal/include/rcl/time.h:77
+
+  --/ The new time minus the last time before the jump.
+  --/ Signature of a time jump callback.
+  --/ \param[in] time_jump A description of the jump in time.
+  --/ \param[in] before_jump Every jump callback is called twice: once before the clock changes and
+  --/ once after. This is true the first call and false the second.
+  --/ \param[in] user_data A pointer given at callback registration which is passed to the callback.
+   type rcl_jump_callback_t is access procedure
+        (arg1 : access constant rcl_time_jump_t;
+         arg2 : Extensions.bool;
+         arg3 : System.Address);
+   pragma Convention (C, rcl_jump_callback_t);  -- /opt/ros/crystal/include/rcl/time.h:90
+
+  --/ Describe the prerequisites for calling a time jump callback.
+  --/ True to call callback when the clock type changes.
+   type rcl_jump_threshold_t is record
+      on_clock_change : aliased Extensions.bool;  -- /opt/ros/crystal/include/rcl/time.h:99
+      min_forward : aliased rcl_duration_t;  -- /opt/ros/crystal/include/rcl/time.h:102
+      min_backward : aliased rcl_duration_t;  -- /opt/ros/crystal/include/rcl/time.h:105
+   end record;
+   pragma Convention (C_Pass_By_Copy, rcl_jump_threshold_t);  -- /opt/ros/crystal/include/rcl/time.h:96
+
+  --/ A positive duration indicating the minimum jump forwards to be considered exceeded, or zero
+  --/ to disable.
+  --/ A negative duration indicating the minimum jump backwards to be considered exceeded, or zero
+  --/ to disable.
+  --/ Struct to describe an added callback.
+   type rcl_jump_callback_info_t is record
+      callback : rcl_jump_callback_t;  -- /opt/ros/crystal/include/rcl/time.h:111
+      threshold : aliased rcl_jump_threshold_t;  -- /opt/ros/crystal/include/rcl/time.h:112
+      user_data : System.Address;  -- /opt/ros/crystal/include/rcl/time.h:113
+   end record;
+   pragma Convention (C_Pass_By_Copy, rcl_jump_callback_info_t);  -- /opt/ros/crystal/include/rcl/time.h:109
+
+  --/ Encapsulation of a time source.
+   type rcl_clock_t is record
+      c_type : aliased rcl_clock_type_t;  -- /opt/ros/crystal/include/rcl/time.h:119
+      jump_callbacks : access rcl_jump_callback_info_t;  -- /opt/ros/crystal/include/rcl/time.h:121
+      num_jump_callbacks : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rcl/time.h:123
+      get_now : access function (arg1 : System.Address; arg2 : access rcl_time_point_value_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:124
+      data : System.Address;  -- /opt/ros/crystal/include/rcl/time.h:126
+      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/crystal/include/rcl/time.h:127
+   end record;
+   pragma Convention (C_Pass_By_Copy, rcl_clock_t);  -- /opt/ros/crystal/include/rcl/time.h:117
+
+  --/ An array of added jump callbacks.
+  --/ Number of callbacks in jump_callbacks.
+  -- void (*set_now) (rcl_time_point_value_t);
+  --/ A single point in time, measured in nanoseconds, the reference point is based on the source.
+   type rcl_time_point_t is record
+      nanoseconds : aliased rcl_time_point_value_t;  -- /opt/ros/crystal/include/rcl/time.h:133
+      clock_type : aliased rcl_clock_type_t;  -- /opt/ros/crystal/include/rcl/time.h:134
+   end record;
+   pragma Convention (C_Pass_By_Copy, rcl_time_point_t);  -- /opt/ros/crystal/include/rcl/time.h:131
 
   -- typedef struct rcl_rate_t
   -- {
@@ -89,7 +144,7 @@ package rcl_time_h is
   -- * \return true if the source is believed to be valid, otherwise return false.
   --  
 
-   function rcl_clock_valid (clock : access rcl_clock_t) return Extensions.bool;  -- /opt/ros/bouncy/include/rcl/time.h:103
+   function rcl_clock_valid (clock : access rcl_clock_t) return Extensions.bool;  -- /opt/ros/crystal/include/rcl/time.h:158
    pragma Import (C, rcl_clock_valid, "rcl_clock_valid");
 
   --/ Initialize a clock based on the passed type.
@@ -107,7 +162,7 @@ package rcl_time_h is
    function rcl_clock_init
      (clock_type : rcl_clock_type_t;
       clock : access rcl_clock_t;
-      allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:119
+      allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:174
    pragma Import (C, rcl_clock_init, "rcl_clock_init");
 
   --/ Finalize a clock.
@@ -124,7 +179,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:139
+   function rcl_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:194
    pragma Import (C, rcl_clock_fini, "rcl_clock_fini");
 
   --/ Initialize a clock as a RCL_ROS_TIME time source.
@@ -139,7 +194,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_ros_clock_init (clock : access rcl_clock_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:156
+   function rcl_ros_clock_init (clock : access rcl_clock_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:211
    pragma Import (C, rcl_ros_clock_init, "rcl_ros_clock_init");
 
   --/ Finalize a clock as a `RCL_ROS_TIME` time source.
@@ -154,7 +209,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_ros_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:174
+   function rcl_ros_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:229
    pragma Import (C, rcl_ros_clock_fini, "rcl_ros_clock_fini");
 
   --/ Initialize a clock as a `RCL_STEADY_TIME` time source.
@@ -169,7 +224,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_steady_clock_init (clock : access rcl_clock_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:191
+   function rcl_steady_clock_init (clock : access rcl_clock_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:246
    pragma Import (C, rcl_steady_clock_init, "rcl_steady_clock_init");
 
   --/ Finalize a clock as a `RCL_STEADY_TIME` time source.
@@ -186,7 +241,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_steady_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:211
+   function rcl_steady_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:266
    pragma Import (C, rcl_steady_clock_fini, "rcl_steady_clock_fini");
 
   --/ Initialize a clock as a `RCL_SYSTEM_TIME` time source.
@@ -203,7 +258,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_system_clock_init (clock : access rcl_clock_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:230
+   function rcl_system_clock_init (clock : access rcl_clock_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:285
    pragma Import (C, rcl_system_clock_init, "rcl_system_clock_init");
 
   --/ Finalize a clock as a `RCL_SYSTEM_TIME` time source.
@@ -220,7 +275,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_system_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:250
+   function rcl_system_clock_fini (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:305
    pragma Import (C, rcl_system_clock_fini, "rcl_system_clock_fini");
 
   --/ Compute the difference between two time points
@@ -243,21 +298,21 @@ package rcl_time_h is
    function rcl_difference_times
      (start : access rcl_time_point_t;
       finish : access rcl_time_point_t;
-      c_delta : access rcl_duration_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:272
+      c_delta : access rcl_duration_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:327
    pragma Import (C, rcl_difference_times, "rcl_difference_times");
 
-  --/ Fill the time point with the current value of the associated clock.
+  --/ Fill the time point value with the current value of the associated clock.
   --*
-  -- * This function will populate the data of the time_point object with the
+  -- * This function will populate the data of the time_point_value object with the
   -- * current value from it's associated time abstraction.
   -- * \param[in] clock The time source from which to set the value.
-  -- * \param[out] time_point The time_point to populate.
+  -- * \param[out] time_point_value The time_point value to populate.
   -- * \return `RCL_RET_OK` if the last call time was retrieved successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_clock_get_now (clock : access rcl_clock_t; time_point : access rcl_time_point_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:288
+   function rcl_clock_get_now (clock : access rcl_clock_t; time_point_value : access rcl_time_point_value_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:343
    pragma Import (C, rcl_clock_get_now, "rcl_clock_get_now");
 
   --/ Enable the ROS time abstraction override.
@@ -272,7 +327,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_enable_ros_time_override (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:305
+   function rcl_enable_ros_time_override (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:360
    pragma Import (C, rcl_enable_ros_time_override, "rcl_enable_ros_time_override");
 
   --/ Disable the ROS time abstraction override.
@@ -287,7 +342,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_disable_ros_time_override (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:321
+   function rcl_disable_ros_time_override (clock : access rcl_clock_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:376
    pragma Import (C, rcl_disable_ros_time_override, "rcl_disable_ros_time_override");
 
   --/ Check if the `RCL_ROS_TIME` time source has the override enabled.
@@ -303,7 +358,7 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_is_enabled_ros_time_override (clock : access rcl_clock_t; is_enabled : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:339
+   function rcl_is_enabled_ros_time_override (clock : access rcl_clock_t; is_enabled : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:394
    pragma Import (C, rcl_is_enabled_ros_time_override, "rcl_is_enabled_ros_time_override");
 
   --/ Set the current time for this `RCL_ROS_TIME` time source.
@@ -320,7 +375,47 @@ package rcl_time_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_set_ros_time_override (clock : access rcl_clock_t; time_value : rcl_time_point_value_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/time.h:358
+   function rcl_set_ros_time_override (clock : access rcl_clock_t; time_value : rcl_time_point_value_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:413
    pragma Import (C, rcl_set_ros_time_override, "rcl_set_ros_time_override");
+
+  --/ Add a callback to be called when a time jump exceeds a threshold.
+  --*
+  -- * The callback is called twice when the threshold is exceeded: once before the clock is
+  -- * updated, and once after.
+  -- * The user_data pointer is passed to the callback as the last argument.
+  -- * A callback and user_data pair must be unique among the callbacks added to a clock.
+  -- *
+  -- * \param[in] clock A clock to add a jump callback to.
+  -- * \param[in] threshold Criteria indicating when to call the callback.
+  -- * \param[in] callback A callback to call.
+  -- * \param[in] user_data A pointer to be passed to the callback.
+  -- * \return `RCL_RET_OK` if the callback was added successfully, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_ERROR` an unspecified error occurs.
+  --  
+
+   function rcl_clock_add_jump_callback
+     (clock : access rcl_clock_t;
+      threshold : rcl_jump_threshold_t;
+      callback : rcl_jump_callback_t;
+      user_data : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:434
+   pragma Import (C, rcl_clock_add_jump_callback, "rcl_clock_add_jump_callback");
+
+  --/ Remove a previously added time jump callback.
+  --*
+  -- * \param[in] clock The clock to remove a jump callback from.
+  -- * \param[in] threshold Criteria indicating when to call callback.
+  -- * \param[in] callback The callback to call.
+  -- * \param[in] user_data A pointer to be passed to the callback.
+  -- * \return `RCL_RET_OK` if the callback was added successfully, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_ERROR` the callback was not found or an unspecified error occurs.
+  --  
+
+   function rcl_clock_remove_jump_callback
+     (clock : access rcl_clock_t;
+      callback : rcl_jump_callback_t;
+      user_data : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/time.h:451
+   pragma Import (C, rcl_clock_remove_jump_callback, "rcl_clock_remove_jump_callback");
 
 end rcl_time_h;

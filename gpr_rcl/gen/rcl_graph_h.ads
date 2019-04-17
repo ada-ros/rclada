@@ -6,9 +6,9 @@ with rmw_names_and_types_h;
 limited with rcl_node_h;
 with rcl_allocator_h;
 with Interfaces.C.Extensions;
+with Interfaces.C.Strings;
 with rcl_types_h;
 limited with rcutils_types_string_array_h;
-with Interfaces.C.Strings;
 with stddef_h;
 limited with rcl_client_h;
 
@@ -25,7 +25,167 @@ package rcl_graph_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   subtype rcl_names_and_types_t is rmw_names_and_types_h.rmw_names_and_types_t;  -- /opt/ros/bouncy/include/rcl/graph.h:35
+   subtype rcl_names_and_types_t is rmw_names_and_types_h.rmw_names_and_types_t;  -- /opt/ros/crystal/include/rcl/graph.h:35
+
+  --/ Return a list of publisher topic names and their types per node.
+  --*
+  -- * This function returns a list of topic names in the ROS graph for param node_name and their types.
+  -- *
+  -- * The node parameter must not be `NULL`, and must point to a valid node.
+  -- *
+  -- * The topic_names_and_types parameter must be allocated and zero initialized.
+  -- * The topic_names_and_types is the output for this function, and contains
+  -- * allocated memory.
+  -- * Therefore, it should be passed to rcl_names_and_types_fini() when
+  -- * it is no longer needed.
+  -- * Failing to do so will result in leaked memory.
+  -- *
+  -- * There may be some demangling that occurs when listing the topics from the
+  -- * middleware implementation.
+  -- * If the no_demangle argument is true, then this will be avoided and the
+  -- * topics will be returned as they appear to the middleware.
+  -- *
+  -- * \see rmw_get_topic_names_and_types for more details on no_demangle
+  -- *
+  -- * The returned names are not automatically remapped by this function.
+  -- * Attempting to create publishers or subscribers using names returned by this function may not
+  -- * result in the desired topic name being used depending on the remap rules in use.
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | Yes
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Maybe [1]
+  -- * <i>[1] implementation may need to protect the data structure with a lock</i>
+  -- *
+  -- * \param[in] node the handle to the node being used to query the ROS graph
+  -- * \param[in] allocator allocator to be used when allocating space for strings
+  -- * \param[in] no_demangle if true, list all topics without any demangling
+  -- * \param[in] node_name of the node to look up topics
+  -- * \param[in] node_namespace of the node to look up topics
+  -- * \param[out] topic_names_and_types list of topic names and their types
+  -- * \return `RCL_RET_OK` if the query was successful, or
+  -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
+  --  
+
+   function rcl_get_publisher_names_and_types_by_node
+     (node : access constant rcl_node_h.rcl_node_t;
+      allocator : access rcl_allocator_h.rcl_allocator_t;
+      no_demangle : Extensions.bool;
+      node_name : Interfaces.C.Strings.chars_ptr;
+      node_namespace : Interfaces.C.Strings.chars_ptr;
+      topic_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/graph.h:86
+   pragma Import (C, rcl_get_publisher_names_and_types_by_node, "rcl_get_publisher_names_and_types_by_node");
+
+  --/ Return a list of subcriber topic names and their types per node.
+  --*
+  -- * This function returns a list of topic names in the ROS graph for param node_name and their types.
+  -- *
+  -- * The node parameter must not be `NULL`, and must point to a valid node.
+  -- *
+  -- * The topic_names_and_types parameter must be allocated and zero initialized.
+  -- * The topic_names_and_types is the output for this function, and contains
+  -- * allocated memory.
+  -- * Therefore, it should be passed to rcl_names_and_types_fini() when
+  -- * it is no longer needed.
+  -- * Failing to do so will result in leaked memory.
+  -- *
+  -- * There may be some demangling that occurs when listing the topics from the
+  -- * middleware implementation.
+  -- * If the no_demangle argument is true, then this will be avoided and the
+  -- * topics will be returned as they appear to the middleware.
+  -- *
+  -- * \see rmw_get_topic_names_and_types for more details on no_demangle
+  -- *
+  -- * The returned names are not automatically remapped by this function.
+  -- * Attempting to create publishers or subscribers using names returned by this function may not
+  -- * result in the desired topic name being used depending on the remap rules in use.
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | Yes
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Maybe [1]
+  -- * <i>[1] implementation may need to protect the data structure with a lock</i>
+  -- *
+  -- * \param[in] node the handle to the node being used to query the ROS graph
+  -- * \param[in] allocator allocator to be used when allocating space for strings
+  -- * \param[in] no_demangle if true, list all topics without any demangling
+  -- * \param[in] node_name of the node to look up topics
+  -- * \param[in] node_namespace of the node to look up topics
+  -- * \param[out] topic_names_and_types list of topic names and their types
+  -- * \return `RCL_RET_OK` if the query was successful, or
+  -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
+  --  
+
+   function rcl_get_subscriber_names_and_types_by_node
+     (node : access constant rcl_node_h.rcl_node_t;
+      allocator : access rcl_allocator_h.rcl_allocator_t;
+      no_demangle : Extensions.bool;
+      node_name : Interfaces.C.Strings.chars_ptr;
+      node_namespace : Interfaces.C.Strings.chars_ptr;
+      topic_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/graph.h:141
+   pragma Import (C, rcl_get_subscriber_names_and_types_by_node, "rcl_get_subscriber_names_and_types_by_node");
+
+  --/ Return a list of service names and their types per node.
+  --*
+  -- * This function returns a list of service names in the ROS graph for param node_name and their types.
+  -- *
+  -- * The node parameter must not be `NULL`, and must point to a valid node.
+  -- *
+  -- * The topic_names_and_types parameter must be allocated and zero initialized.
+  -- * The topic_names_and_types is the output for this function, and contains
+  -- * allocated memory.
+  -- * Therefore, it should be passed to rcl_names_and_types_fini() when
+  -- * it is no longer needed.
+  -- * Failing to do so will result in leaked memory.
+  -- *
+  -- * There may be some demangling that occurs when listing the topics from the
+  -- * middleware implementation.
+  -- * If the no_demangle argument is true, then this will be avoided and the
+  -- * topics will be returned as they appear to the middleware.
+  -- *
+  -- * \see rmw_get_topic_names_and_types for more details on no_demangle
+  -- *
+  -- * The returned names are not automatically remapped by this function.
+  -- * Attempting to create publishers or subscribers using names returned by this function may not
+  -- * result in the desired topic name being used depending on the remap rules in use.
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | Yes
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Maybe [1]
+  -- * <i>[1] implementation may need to protect the data structure with a lock</i>
+  -- *
+  -- * \param[in] node the handle to the node being used to query the ROS graph
+  -- * \param[in] allocator allocator to be used when allocating space for strings
+  -- * \param[in] node_name of the node to look up topics
+  -- * \param[in] node_namespace of the node to look up topics
+  -- * \param[out] service_names_and_types list of service names and their types
+  -- * \return `RCL_RET_OK` if the query was successful, or
+  -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
+  --  
+
+   function rcl_get_service_names_and_types_by_node
+     (node : access constant rcl_node_h.rcl_node_t;
+      allocator : access rcl_allocator_h.rcl_allocator_t;
+      node_name : Interfaces.C.Strings.chars_ptr;
+      node_namespace : Interfaces.C.Strings.chars_ptr;
+      service_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/graph.h:195
+   pragma Import (C, rcl_get_service_names_and_types_by_node, "rcl_get_service_names_and_types_by_node");
 
   --/ Return a list of topic names and their types.
   --*
@@ -74,7 +234,7 @@ package rcl_graph_h is
      (node : access constant rcl_node_h.rcl_node_t;
       allocator : access rcl_allocator_h.rcl_allocator_t;
       no_demangle : Extensions.bool;
-      topic_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:84
+      topic_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/graph.h:247
    pragma Import (C, rcl_get_topic_names_and_types, "rcl_get_topic_names_and_types");
 
   --/ Return a list of service names and their types.
@@ -115,7 +275,7 @@ package rcl_graph_h is
    function rcl_get_service_names_and_types
      (node : access constant rcl_node_h.rcl_node_t;
       allocator : access rcl_allocator_h.rcl_allocator_t;
-      service_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:127
+      service_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/graph.h:290
    pragma Import (C, rcl_get_service_names_and_types, "rcl_get_service_names_and_types");
 
   --/ Finalize a rcl_names_and_types_t object.
@@ -142,7 +302,7 @@ package rcl_graph_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_names_and_types_fini (names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:158
+   function rcl_names_and_types_fini (names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/graph.h:321
    pragma Import (C, rcl_names_and_types_fini, "rcl_names_and_types_fini");
 
   --/ Return a list of available nodes in the ROS graph.
@@ -189,6 +349,7 @@ package rcl_graph_h is
   -- * \param[in] node the handle to the node being used to query the ROS graph
   -- * \param[in] allocator used to control allocation and deallocation of names
   -- * \param[out] node_names struct storing discovered node names.
+  -- * \param[out] node_namesspaces struct storing discovered node namespaces.
   -- * \return `RCL_RET_OK` if the query was successful, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
@@ -196,7 +357,8 @@ package rcl_graph_h is
    function rcl_get_node_names
      (node : access constant rcl_node_h.rcl_node_t;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      node_names : access rcutils_types_string_array_h.rcutils_string_array_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:210
+      node_names : access rcutils_types_string_array_h.rcutils_string_array_t;
+      node_namespaces : access rcutils_types_string_array_h.rcutils_string_array_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/graph.h:374
    pragma Import (C, rcl_get_node_names, "rcl_get_node_names");
 
   --/ Return the number of publishers on a given topic.
@@ -242,7 +404,7 @@ package rcl_graph_h is
    function rcl_count_publishers
      (node : access constant rcl_node_h.rcl_node_t;
       topic_name : Interfaces.C.Strings.chars_ptr;
-      count : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:257
+      count : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/graph.h:422
    pragma Import (C, rcl_count_publishers, "rcl_count_publishers");
 
   --/ Return the number of subscriptions on a given topic.
@@ -288,7 +450,7 @@ package rcl_graph_h is
    function rcl_count_subscribers
      (node : access constant rcl_node_h.rcl_node_t;
       topic_name : Interfaces.C.Strings.chars_ptr;
-      count : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:304
+      count : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/graph.h:469
    pragma Import (C, rcl_count_subscribers, "rcl_count_subscribers");
 
   --/ Check if a service server is available for the given service client.
@@ -330,7 +492,7 @@ package rcl_graph_h is
    function rcl_service_server_is_available
      (node : access constant rcl_node_h.rcl_node_t;
       client : access constant rcl_client_h.rcl_client_t;
-      is_available : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/bouncy/include/rcl/graph.h:347
+      is_available : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/graph.h:512
    pragma Import (C, rcl_service_server_is_available, "rcl_service_server_is_available");
 
 end rcl_graph_h;
