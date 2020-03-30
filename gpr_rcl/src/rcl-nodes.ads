@@ -13,13 +13,12 @@ with RCL.Timers.Impl;
 with RCL.Utils.Names_And_Types;
 with RCL.Utils.String_Arrays;
 
+with Rcl_Allocator_H;    use Rcl_Allocator_H;
 with Rcl_Node_H;         use Rcl_Node_H;
 with Rcl_Node_Options_H;
 
 with ROSIDL.Dynamic;
 with ROSIDL.Typesupport;
-
-private with RCL.Allocators.Impl;
 
 package RCL.Nodes is
 
@@ -182,6 +181,7 @@ package RCL.Nodes is
 
    -------------------
    --  Misc access  --
+   -------------------
 
    function Allocator (This : Node) return Allocators.Handle;
 
@@ -237,8 +237,8 @@ private
 
    procedure Base_Init (This : in out Node'Class);
 
-   function C_Allocator (This : Node) return Allocators.Impl.Allocator_Reference is
-     (Allocators.Impl.To_C (This.Allocator.all));
+   function C_Allocator (This : Node) return access Rcl_Allocator_T is
+     (This.Allocator.To_C);
 
    procedure Client_Free (This : in out Node;
                           Ptr  :        Dispatchers.Handle);

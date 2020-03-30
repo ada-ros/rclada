@@ -206,18 +206,19 @@ package body RCL.Nodes is
                    Options   : Node_Options := Default_Options)
    is
    begin
-      RCL.Init.Initialize (Options.Allocator, RCL.Init.Dont_Care);
+      RCL.Init.Initialize (This.Context);
 
       This.Options     := Options;
       This.C_Options   := To_C (Options);
       This.Allocator   := Options.Allocator;
 
---  FIXME
---      Check (Rcl_Node_Init
---             (This.Impl'Access,
---                To_C (Name).To_Ptr,
---                To_C (Namespace).To_Ptr,
---                This.C_Options'Access));
+      Check
+        (Rcl_Node_Init
+           (Node        => This.Impl'Access,
+            Name        => To_C (Name).To_Ptr,
+            Namespace_U => To_C (Namespace).To_Ptr,
+            Context     => This.Context.To_C,
+            Options     => This.C_Options'Access));
 
       This.Base_Init;
    end Init;
@@ -234,7 +235,7 @@ package body RCL.Nodes is
          This.Current_Executor.Remove (This);
          Check (Rcl_Node_Fini (This.Impl'Access));
 
-         RCL.Init.Finalize;
+         RCL.Init.Shutdown (This.Context);
       else
          Logging.Warn ("Attempt to finalize already finalized node");
       end if;
@@ -284,12 +285,13 @@ package body RCL.Nodes is
 
    begin
       return Arr : aliased Utils.String_Arrays.String_Array do
-         null; --  FIXME
---         Check
---           (Rcl_Get_Node_Names
---              (This.Impl'Access,
---               Allocators.Impl.To_C (This.Options.Allocator.all),
---               Arr.To_C));
+       Check
+         (Rcl_Get_Node_Names
+            (node            => This.Impl'Access,
+             allocator       => This.Options.Allocator.To_C.all,
+             node_names      => Arr.To_C,
+             node_namespaces => null));
+         --  TODO: return also namespaces
       end return;
    end Graph_Node_Names;
 
@@ -303,7 +305,7 @@ package body RCL.Nodes is
          Check
            (Rcl_Get_Service_Names_And_Types
               (This.Impl'Access,
-               This.C_Allocator.Impl,
+               This.Allocator.To_C,
                Arr.To_C));
       end return;
    end Graph_Services;
@@ -319,7 +321,7 @@ package body RCL.Nodes is
          Check
            (Rcl_Get_Topic_Names_And_Types
               (This.Impl'Access,
-               This.C_Allocator.Impl,
+               This.Allocator.To_C,
                (if Demangle then Bool_False else Bool_True), -- Note: in C side is No_Demangle (bool)
                Arr.To_C));
       end return;
@@ -508,8 +510,8 @@ package body RCL.Nodes is
       Defaults : constant Rcl_Node_Options_T := Rcl_Node_Get_Default_Options;
    begin
       return Rcl_Node_Options_T'(Domain_Id            => Defaults.Domain_Id,
-                                 allocator            => Allocators.Impl.To_C (Options.Allocator.all),
-                                 use_global_arguments => Defaults.use_global_arguments,
+                                 Allocator            => Options.Allocator.To_C.all,
+                                 Use_Global_Arguments => Defaults.Use_Global_Arguments,
                                  Arguments            => Defaults.Arguments);
    end To_C;
 

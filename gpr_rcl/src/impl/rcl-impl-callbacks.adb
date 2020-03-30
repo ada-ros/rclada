@@ -2,6 +2,8 @@ with Rcl_Service_H; use Rcl_Service_H;
 with Rcl_Timer_H;   use Rcl_Timer_H;
 with Rcl_Types_H;   use Rcl_Types_H;
 
+with Rmw_Ret_Types_H; use Rmw_Ret_Types_H;
+
 with RCL.Logging;
 with RCL.Timers.Impl;
 
@@ -79,12 +81,11 @@ package body RCL.Impl.Callbacks is
       case Ret is
          when RCL_RET_TIMER_CANCELED =>
             Logging.Warn ("Attempt to call canceled timer");
-            -- Happens once after canceling, not important
-         -- FIXME
-         -- when Rmw_Ret_OK =>
-         --    This.User_Callback (This.Node.all,
-         --                        Temp, -- temporary timer for the callee
-         --                        Elapsed);
+            -- Happens once after cancelling, not important
+         when RMW_RET_OK => -- Should be RCL_RET_OK but generator chokes with unsupported renaming
+           This.User_Callback (This.Node.all,
+                               Temp, -- temporary timer for the callee
+                               Elapsed);
          when others =>
             Check (Ret);
       end case;

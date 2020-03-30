@@ -1,4 +1,4 @@
-with Rmw_Types_H; use Rmw_Types_H;
+with Rmw_Ret_Types_H; use Rmw_Ret_Types_H;
 
 package body RCL is
 
@@ -12,14 +12,12 @@ package body RCL is
 
    procedure Generic_Check (I : Int) is
    begin
-      null;
-      --  FIXME
---      if I /= RMW_RET_OK then
---         raise ROS_Exception with "Code:" & I'Img;
---      else
---         null;
--- --           Put_Line ("CHECKED CALL: " & I'Img);
---      end if;
+    if I /= RMW_RET_OK then
+       raise ROS_Exception with "Code:" & I'Img;
+    else
+       null;
+--           Put_Line ("CHECKED CALL: " & I'Img);
+    end if;
    end Generic_Check;
 
    -----------

@@ -1,7 +1,9 @@
-with RCL.Allocators.Impl;
-with RCL.Init;
+with RCL.Calendar;
+with RCL.Nodes; -- Full view
 
 package body RCL.Timers.Impl is
+
+   Default_Clock: Calendar.Clock;
 
    --------------
    -- Finalize --
@@ -10,7 +12,6 @@ package body RCL.Timers.Impl is
    procedure Finalize (This : in out Timer) is
    begin
       Check (Rcl_Timer_Fini (This.Impl'Access));
-      RCL.Init.Finalize;
    end Finalize;
 
    ----------
@@ -22,20 +23,21 @@ package body RCL.Timers.Impl is
                   Allocator : Allocators.Handle) return Timer
    is
    begin
-      RCL.Init.Initialize (Allocator, RCL.Init.Dont_Care);
-
       return This : Timer (Node) do
          This.Impl     := Rcl_Get_Zero_Initialized_Timer;
-         --  FIXME: this is broken as long as uncommented
---           Check
---             (Rcl_Timer_Init
---                (timer     => This.Impl'Access,
---                 clock     => ,
---                 context   => ,
---                 Period    => To_Nanoseconds (Period),
---                 callback  => null,
---                 allocator => Allocators.Impl.To_C (Allocator.all)));
+
+         --  TODO: allow using a clock not the global/default one hidden here
+         Check
+           (Rcl_Timer_Init
+              (Timer     => This.Impl'Access,
+               Clock     => Default_Clock.To_C,
+               Context   => Node.Context.To_C,
+               Period    => To_Nanoseconds (Period),
+               Callback  => null,
+               Allocator => Allocator.To_C.all));
       end return;
    end Init;
 
+begin
+   Calendar.Init (Default_Clock);
 end RCL.Timers.Impl;

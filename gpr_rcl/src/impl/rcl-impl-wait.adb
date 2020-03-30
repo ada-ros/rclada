@@ -1,11 +1,8 @@
-with RCL.Allocators.Impl;
-with RCL.Contexts.Impl;
 with RCL.Logging;
 with RCL.Subscriptions;
-with RCL.Timers.Impl;
 
 with Rcl_Types_H;
-with Rmw_Types_H;
+with Rmw_Ret_Types_H; use Rmw_Ret_Types_H;
 
 package body RCL.Impl.Wait is
 
@@ -213,10 +210,10 @@ package body RCL.Impl.Wait is
                Number_Of_Subscriptions    => C.Size_T (Num_Subscriptions),
                Number_Of_Timers           => C.Size_T (Num_Timers),
                number_of_events           => 0,
-               Context                    => Contexts.Impl.To_C (Context),
-               Allocator                  => Allocators.Impl.To_C (Allocator.all)
+               Context                    => Context.To_C,
+               Allocator                  => Allocator.To_C.all
               ));
-         --  FIXME: guards and events are UNIMPLEMENTED
+         --  TODO: guards and events are UNIMPLEMENTED
       end return;
    end Init;
 
@@ -297,23 +294,20 @@ package body RCL.Impl.Wait is
                   Timeout : ROS2_Duration := Forever) return Wait_Outcomes
    is
       use Rcl_Types_H;
-      use Rmw_Types_H;
 
       Ret : constant Rcl_Ret_T :=
               Rcl_Wait (This.Impl'Access,
                         C.long (Timeout * 1_000_000_000.0)); -- Nanosecs
    begin
-      return Triggered;
-   -- FIXME
---      case Ret is
---         when RMW_RET_OK =>
---            return Triggered;
---         when RMW_RET_TIMEOUT =>
---            return Impl.Wait.Timeout;
---         when others =>
---            Logging.Warn ("Wait failed with code" & Ret'Img);
---            return Error;
---     end case;
+      case Ret is
+         when RMW_RET_OK =>
+            return Triggered;
+         when RMW_RET_TIMEOUT =>
+            return Impl.Wait.Timeout;
+         when others =>
+            Logging.Warn ("Wait failed with code" & Ret'Img);
+            return Error;
+      end case;
    end Wait;
 
 end RCL.Impl.Wait;

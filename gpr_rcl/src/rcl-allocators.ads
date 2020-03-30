@@ -42,6 +42,13 @@ package RCL.Allocators is
 
    procedure Set_Global_Allocator (Alloc : Handle);
 
+   ---------------
+   -- Low level --
+   ---------------
+
+   function To_C (This : aliased in out Allocator)
+                  return access Rcl_Allocator_T;
+
 private
 
    function Get_Default_C_Allocator return Rcl_Allocator_T with
@@ -60,5 +67,9 @@ private
      (if This.Deferred_Pool /= null
       then This.Deferred_Pool
       else This.Pool);
+
+   function To_C (This : aliased in out Allocator)
+               return access Rcl_Allocator_T
+   is (This.Impl'Access);
 
 end RCL.Allocators;
