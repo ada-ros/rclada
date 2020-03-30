@@ -42,7 +42,7 @@ package rcl_lexer_h is
       RCL_LEXEME_FORWARD_SLASH,
       RCL_LEXEME_WILD_ONE,
       RCL_LEXEME_WILD_MULTI);
-   pragma Convention (C, rcl_lexeme_t);  -- /opt/ros/crystal/include/rcl/lexer.h:31
+   pragma Convention (C, rcl_lexeme_t);  -- /opt/ros/dashing/include/rcl/lexer.h:31
 
   --/ Indicates no valid lexeme was found (end of input not reached)
   --/ Indicates end of input has been reached
@@ -92,7 +92,7 @@ package rcl_lexer_h is
    function rcl_lexer_analyze
      (text : Interfaces.C.Strings.chars_ptr;
       lexeme : access rcl_lexeme_t;
-      length : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/lexer.h:105
+      length : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/lexer.h:105
    pragma Import (C, rcl_lexer_analyze, "rcl_lexer_analyze");
 
 end rcl_lexer_h;

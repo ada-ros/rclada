@@ -30,17 +30,17 @@ package rmw_init_h is
   --/ Initialization context structure which is used to store init specific information.
   --/ Locally (process local) unique ID that represents this init/shutdown cycle.
    type rmw_context_t is record
-      instance_id : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/crystal/include/rmw/init.h:40
-      implementation_identifier : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rmw/init.h:42
-      impl : System.Address;  -- /opt/ros/crystal/include/rmw/init.h:45
+      instance_id : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/dashing/include/rmw/init.h:40
+      implementation_identifier : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rmw/init.h:42
+      impl : System.Address;  -- /opt/ros/dashing/include/rmw/init.h:45
    end record;
-   pragma Convention (C_Pass_By_Copy, rmw_context_t);  -- /opt/ros/crystal/include/rmw/init.h:37
+   pragma Convention (C_Pass_By_Copy, rmw_context_t);  -- /opt/ros/dashing/include/rmw/init.h:37
 
   --/ Implementation identifier, used to ensure two different implementations are not being mixed.
   --/ Implementation defined context information.
   --* May be NULL if there is no implementation defined context information.  
   --/ Return a zero initialized context structure.
-   function rmw_get_zero_initialized_context return rmw_context_t;  -- /opt/ros/crystal/include/rmw/init.h:52
+   function rmw_get_zero_initialized_context return rmw_context_t;  -- /opt/ros/dashing/include/rmw/init.h:52
    pragma Import (C, rmw_get_zero_initialized_context, "rmw_get_zero_initialized_context");
 
   --/ Initialize the middleware with the given options, and yielding an context.
@@ -69,7 +69,7 @@ package rmw_init_h is
   -- * \return `RMW_RET_ERROR` if an unexpected error occurs.
   --  
 
-   function rmw_init (options : access constant rmw_init_options_h.rmw_init_options_t; context : access rmw_context_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/crystal/include/rmw/init.h:82
+   function rmw_init (options : access constant rmw_init_options_h.rmw_init_options_t; context : access rmw_context_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/init.h:82
    pragma Import (C, rmw_init, "rmw_init");
 
   --/ Shutdown the middleware for a given context.
@@ -95,7 +95,33 @@ package rmw_init_h is
   -- * \return `RMW_RET_ERROR` if an unexpected error occurs.
   --  
 
-   function rmw_shutdown (context : access rmw_context_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/crystal/include/rmw/init.h:109
+   function rmw_shutdown (context : access rmw_context_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/init.h:109
    pragma Import (C, rmw_shutdown, "rmw_shutdown");
+
+  --/ Finalize a context.
+  --*
+  -- * The context to be finalized must have been previously initialized with
+  -- * `rmw_init()`, and then later invalidated with `rmw_shutdown()`.
+  -- * If context is `NULL`, then `RMW_RET_INVALID_ARGUMENT` is returned.
+  -- * If context is zero-initialized, then `RMW_RET_INVALID_ARGUMENT` is returned.
+  -- * If context is initialized and valid (`rmw_shutdown()` was not called on it),
+  -- * then `RMW_RET_INVALID_ARGUMENT` is returned.
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | Yes
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | Yes
+  -- * Lock-Free          | Yes [1]
+  -- * <i>[1] if `atomic_is_lock_free()` returns true for `atomic_uint_least64_t`</i>
+  -- *
+  -- * \return `RMW_RET_OK` if the shutdown was completed successfully, or
+  -- * \return `RMW_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RMW_RET_ERROR` if an unspecified error occur.
+  --  
+
+   function rmw_context_fini (context : access rmw_context_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/init.h:136
+   pragma Import (C, rmw_context_fini, "rmw_context_fini");
 
 end rmw_init_h;

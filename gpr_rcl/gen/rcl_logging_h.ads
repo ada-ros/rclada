@@ -38,7 +38,7 @@ package rcl_logging_h is
   -- * \return `RCL_RET_ERR` if a general error occurs
   --  
 
-   function rcl_logging_configure (global_args : access constant rcl_arguments_h.rcl_arguments_t; allocator : access constant rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/logging.h:52
+   function rcl_logging_configure (global_args : access constant rcl_arguments_h.rcl_arguments_t; allocator : access constant rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/logging.h:52
    pragma Import (C, rcl_logging_configure, "rcl_logging_configure");
 
   --*
@@ -56,7 +56,7 @@ package rcl_logging_h is
   -- * \return `RCL_RET_ERR` if a general error occurs
   --  
 
-   function rcl_logging_fini return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/logging.h:72
+   function rcl_logging_fini return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/logging.h:72
    pragma Import (C, rcl_logging_fini, "rcl_logging_fini");
 
 end rcl_logging_h;

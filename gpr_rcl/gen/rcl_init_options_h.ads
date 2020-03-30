@@ -24,12 +24,12 @@ package rcl_init_options_h is
   --/ Encapsulation of init options and implementation defined init options.
   --/ Implementation specific pointer.
    type rcl_init_options_t is record
-      impl : System.Address;  -- /opt/ros/crystal/include/rcl/init_options.h:36
+      impl : System.Address;  -- /opt/ros/dashing/include/rcl/init_options.h:36
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_init_options_t);  -- /opt/ros/crystal/include/rcl/init_options.h:33
+   pragma Convention (C_Pass_By_Copy, rcl_init_options_t);  -- /opt/ros/dashing/include/rcl/init_options.h:33
 
   --/ Return a zero initialized rcl_init_options_t struct.
-   function rcl_get_zero_initialized_init_options return rcl_init_options_t;  -- /opt/ros/crystal/include/rcl/init_options.h:43
+   function rcl_get_zero_initialized_init_options return rcl_init_options_t;  -- /opt/ros/dashing/include/rcl/init_options.h:43
    pragma Import (C, rcl_get_zero_initialized_init_options, "rcl_get_zero_initialized_init_options");
 
   --/ Initialize given init_options with the default values and implementation specific values.
@@ -58,7 +58,7 @@ package rcl_init_options_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_init_options_init (init_options : access rcl_init_options_t; allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/init_options.h:73
+   function rcl_init_options_init (init_options : access rcl_init_options_t; allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/init_options.h:73
    pragma Import (C, rcl_init_options_init, "rcl_init_options_init");
 
   --/ Copy the given source init_options to the destination init_options.
@@ -89,7 +89,7 @@ package rcl_init_options_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_init_options_copy (src : access constant rcl_init_options_t; dst : access rcl_init_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/init_options.h:105
+   function rcl_init_options_copy (src : access constant rcl_init_options_t; dst : access rcl_init_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/init_options.h:105
    pragma Import (C, rcl_init_options_copy, "rcl_init_options_copy");
 
   --/ Finalize the given init_options.
@@ -111,7 +111,7 @@ package rcl_init_options_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_init_options_fini (init_options : access rcl_init_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/init_options.h:128
+   function rcl_init_options_fini (init_options : access rcl_init_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/init_options.h:128
    pragma Import (C, rcl_init_options_fini, "rcl_init_options_fini");
 
   --/ Return the rmw init options which are stored internally.
@@ -135,7 +135,7 @@ package rcl_init_options_h is
   -- * \return `NULL` if there was an error
   --  
 
-   function rcl_init_options_get_rmw_init_options (init_options : access rcl_init_options_t) return access rmw_init_options_h.rmw_init_options_t;  -- /opt/ros/crystal/include/rcl/init_options.h:153
+   function rcl_init_options_get_rmw_init_options (init_options : access rcl_init_options_t) return access rmw_init_options_h.rmw_init_options_t;  -- /opt/ros/dashing/include/rcl/init_options.h:153
    pragma Import (C, rcl_init_options_get_rmw_init_options, "rcl_init_options_get_rmw_init_options");
 
 end rcl_init_options_h;

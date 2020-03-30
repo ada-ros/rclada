@@ -20,19 +20,19 @@ package rcutils_types_uint8_array_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
    type rcutils_uint8_array_t is record
-      buffer : access x86_64_linux_gnu_bits_stdint_uintn_h.uint8_t;  -- /opt/ros/crystal/include/rcutils/types/uint8_array.h:31
-      buffer_length : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rcutils/types/uint8_array.h:32
-      buffer_capacity : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rcutils/types/uint8_array.h:33
-      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/crystal/include/rcutils/types/uint8_array.h:34
+      buffer : access x86_64_linux_gnu_bits_stdint_uintn_h.uint8_t;  -- /opt/ros/dashing/include/rcutils/types/uint8_array.h:31
+      buffer_length : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rcutils/types/uint8_array.h:32
+      buffer_capacity : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rcutils/types/uint8_array.h:33
+      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/dashing/include/rcutils/types/uint8_array.h:34
    end record;
-   pragma Convention (C_Pass_By_Copy, rcutils_uint8_array_t);  -- /opt/ros/crystal/include/rcutils/types/uint8_array.h:29
+   pragma Convention (C_Pass_By_Copy, rcutils_uint8_array_t);  -- /opt/ros/dashing/include/rcutils/types/uint8_array.h:29
 
   --/ Return a zero initialized uint8 array struct.
   --*
   -- * \return rcutils_uint8_array_t a zero initialized uint8 array struct
   --  
 
-   function rcutils_get_zero_initialized_uint8_array return rcutils_uint8_array_t;  -- /opt/ros/crystal/include/rcutils/types/uint8_array.h:44
+   function rcutils_get_zero_initialized_uint8_array return rcutils_uint8_array_t;  -- /opt/ros/dashing/include/rcutils/types/uint8_array.h:44
    pragma Import (C, rcutils_get_zero_initialized_uint8_array, "rcutils_get_zero_initialized_uint8_array");
 
   --/ Initialize a zero initialized uint8 array struct.
@@ -53,7 +53,7 @@ package rcutils_types_uint8_array_h is
    function rcutils_uint8_array_init
      (uint8_array : access rcutils_uint8_array_t;
       buffer_capacity : stddef_h.size_t;
-      allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/uint8_array.h:63
+      allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/uint8_array.h:63
    pragma Import (C, rcutils_uint8_array_init, "rcutils_uint8_array_init");
 
   --/ Finalize a uint8 array struct.
@@ -70,7 +70,7 @@ package rcutils_types_uint8_array_h is
   -- * \return `RCUTILS_RET_ERROR` if an unexpected error occurs
   --  
 
-   function rcutils_uint8_array_fini (uint8_array : access rcutils_uint8_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/uint8_array.h:84
+   function rcutils_uint8_array_fini (uint8_array : access rcutils_uint8_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/uint8_array.h:84
    pragma Import (C, rcutils_uint8_array_fini, "rcutils_uint8_array_fini");
 
   --/ Resize the internal buffer of the uint8 array.
@@ -89,7 +89,7 @@ package rcutils_types_uint8_array_h is
   -- * \return `RCUTILS_RET_ERROR` if an unexpected error occurs
   --  
 
-   function rcutils_uint8_array_resize (uint8_array : access rcutils_uint8_array_t; new_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/uint8_array.h:104
+   function rcutils_uint8_array_resize (uint8_array : access rcutils_uint8_array_t; new_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/uint8_array.h:104
    pragma Import (C, rcutils_uint8_array_resize, "rcutils_uint8_array_resize");
 
 end rcutils_types_uint8_array_h;

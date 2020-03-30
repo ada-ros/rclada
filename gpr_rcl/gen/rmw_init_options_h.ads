@@ -36,12 +36,12 @@ package rmw_init_options_h is
   --    
 
    type rmw_init_options_t is record
-      instance_id : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/crystal/include/rmw/init_options.h:45
-      implementation_identifier : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rmw/init_options.h:47
-      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/crystal/include/rmw/init_options.h:50
-      impl : System.Address;  -- /opt/ros/crystal/include/rmw/init_options.h:53
+      instance_id : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/dashing/include/rmw/init_options.h:45
+      implementation_identifier : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rmw/init_options.h:47
+      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/dashing/include/rmw/init_options.h:50
+      impl : System.Address;  -- /opt/ros/dashing/include/rmw/init_options.h:53
    end record;
-   pragma Convention (C_Pass_By_Copy, rmw_init_options_t);  -- /opt/ros/crystal/include/rmw/init_options.h:37
+   pragma Convention (C_Pass_By_Copy, rmw_init_options_t);  -- /opt/ros/dashing/include/rmw/init_options.h:37
 
   --/ Implementation identifier, used to ensure two different implementations are not being mixed.
   -- TODO(wjwwood): replace with rmw_allocator_t when that refactor happens
@@ -49,7 +49,7 @@ package rmw_init_options_h is
   --/ Implementation defined init options.
   --* May be NULL if there are no implementation defined options.  
   --/ Return a zero initialized init options structure.
-   function rmw_get_zero_initialized_init_options return rmw_init_options_t;  -- /opt/ros/crystal/include/rmw/init_options.h:60
+   function rmw_get_zero_initialized_init_options return rmw_init_options_t;  -- /opt/ros/dashing/include/rmw/init_options.h:60
    pragma Import (C, rmw_get_zero_initialized_init_options, "rmw_get_zero_initialized_init_options");
 
   --/ Initialize given init_options with the default values and implementation specific values.
@@ -80,7 +80,7 @@ package rmw_init_options_h is
   -- * \return `RMW_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rmw_init_options_init (init_options : access rmw_init_options_t; allocator : rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/crystal/include/rmw/init_options.h:92
+   function rmw_init_options_init (init_options : access rmw_init_options_t; allocator : rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/init_options.h:92
    pragma Import (C, rmw_init_options_init, "rmw_init_options_init");
 
   --/ Copy the given source init options to the destination init options.
@@ -115,7 +115,7 @@ package rmw_init_options_h is
   -- * \return `RMW_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rmw_init_options_copy (src : access constant rmw_init_options_t; dst : access rmw_init_options_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/crystal/include/rmw/init_options.h:128
+   function rmw_init_options_copy (src : access constant rmw_init_options_t; dst : access rmw_init_options_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/init_options.h:128
    pragma Import (C, rmw_init_options_copy, "rmw_init_options_copy");
 
   --/ Finalize the given init_options.
@@ -139,7 +139,7 @@ package rmw_init_options_h is
   -- * \return `RMW_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rmw_init_options_fini (init_options : access rmw_init_options_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/crystal/include/rmw/init_options.h:153
+   function rmw_init_options_fini (init_options : access rmw_init_options_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/init_options.h:153
    pragma Import (C, rmw_init_options_fini, "rmw_init_options_fini");
 
 end rmw_init_options_h;

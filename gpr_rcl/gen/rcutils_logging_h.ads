@@ -13,8 +13,8 @@ limited with rcutils_types_char_array_h;
 
 package rcutils_logging_h is
 
-   RCUTILS_LOGGING_SEPARATOR_CHAR : aliased constant Character := '.';  --  /opt/ros/crystal/include/rcutils/logging.h:33
-   RCUTILS_LOGGING_SEPARATOR_STRING : aliased constant String := "." & ASCII.NUL;  --  /opt/ros/crystal/include/rcutils/logging.h:34
+   RCUTILS_LOGGING_SEPARATOR_CHAR : aliased constant Character := '.';  --  /opt/ros/dashing/include/rcutils/logging.h:33
+   RCUTILS_LOGGING_SEPARATOR_STRING : aliased constant String := "." & ASCII.NUL;  --  /opt/ros/dashing/include/rcutils/logging.h:34
    --  unsupported macro: RCUTILS_DEFAULT_LOGGER_DEFAULT_LEVEL RCUTILS_LOG_SEVERITY_INFO
    --  arg-macro: procedure RCUTILS_LIKELY (x)
    --    __builtin_expect((x), 1)
@@ -38,7 +38,7 @@ package rcutils_logging_h is
   --  
 
   --/ The flag if the logging system has been initialized.
-   g_rcutils_logging_initialized : aliased Extensions.bool;  -- /opt/ros/crystal/include/rcutils/logging.h:44
+   g_rcutils_logging_initialized : aliased Extensions.bool;  -- /opt/ros/dashing/include/rcutils/logging.h:44
    pragma Import (C, g_rcutils_logging_initialized, "g_rcutils_logging_initialized");
 
   --/ Initialize the logging system using the specified allocator.
@@ -66,6 +66,13 @@ package rcutils_logging_h is
   -- *   - `time`, the timestamp of log message in floating point seconds
   -- *   - `time_as_nanoseconds`, the timestamp of log message in integer nanoseconds
   -- *
+  -- * The `RCUTILS_COLORIZED_OUTPUT` environment variable allows configuring if colours
+  -- * are used or not. Available values are:
+  -- *  - `1`: Force using colours.
+  -- *  - `0`: Don't use colours.
+  -- * If it is unset, colours are used depending if the target stream is a terminal or not.
+  -- * See `isatty` documentation.
+  -- *
   -- * The format string can use these tokens by referencing them in curly brackets,
   -- * e.g. `"[{severity}] [{name}]: {message} ({function_name}() at {file_name}:{line_number})"`.
   -- * Any number of tokens can be used.
@@ -91,7 +98,7 @@ package rcutils_logging_h is
   -- *   levels will not be configurable.
   --  
 
-   function rcutils_logging_initialize_with_allocator (allocator : rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/logging.h:97
+   function rcutils_logging_initialize_with_allocator (allocator : rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/logging.h:104
    pragma Import (C, rcutils_logging_initialize_with_allocator, "rcutils_logging_initialize_with_allocator");
 
   --/ Initialize the logging system.
@@ -116,7 +123,7 @@ package rcutils_logging_h is
   -- *   will not be configurable.
   --  
 
-   function rcutils_logging_initialize return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/logging.h:122
+   function rcutils_logging_initialize return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/logging.h:129
    pragma Import (C, rcutils_logging_initialize, "rcutils_logging_initialize");
 
   --/ Shutdown the logging system.
@@ -137,17 +144,17 @@ package rcutils_logging_h is
   -- *   severity level map cannot be finalized.
   --  
 
-   function rcutils_logging_shutdown return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/logging.h:143
+   function rcutils_logging_shutdown return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/logging.h:150
    pragma Import (C, rcutils_logging_shutdown, "rcutils_logging_shutdown");
 
   --/ The structure identifying the caller location in the source code.
   --/ The name of the function containing the log call.
    type rcutils_log_location_t is record
-      function_name : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rcutils/logging.h:149
-      file_name : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rcutils/logging.h:151
-      line_number : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rcutils/logging.h:153
+      function_name : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rcutils/logging.h:156
+      file_name : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rcutils/logging.h:158
+      line_number : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rcutils/logging.h:160
    end record;
-   pragma Convention (C_Pass_By_Copy, rcutils_log_location_t);  -- /opt/ros/crystal/include/rcutils/logging.h:146
+   pragma Convention (C_Pass_By_Copy, rcutils_log_location_t);  -- /opt/ros/dashing/include/rcutils/logging.h:153
 
   --/ The name of the source file containing the log call.
   --/ The line number containing the log call.
@@ -158,7 +165,7 @@ package rcutils_logging_h is
    RCUTILS_LOG_SEVERITY_INFO : constant RCUTILS_LOG_SEVERITY := 20;
    RCUTILS_LOG_SEVERITY_WARN : constant RCUTILS_LOG_SEVERITY := 30;
    RCUTILS_LOG_SEVERITY_ERROR : constant RCUTILS_LOG_SEVERITY := 40;
-   RCUTILS_LOG_SEVERITY_FATAL : constant RCUTILS_LOG_SEVERITY := 50;  -- /opt/ros/crystal/include/rcutils/logging.h:157
+   RCUTILS_LOG_SEVERITY_FATAL : constant RCUTILS_LOG_SEVERITY := 50;  -- /opt/ros/dashing/include/rcutils/logging.h:164
 
   --/< The unset log level
   --/< The debug log level
@@ -167,7 +174,7 @@ package rcutils_logging_h is
   --/< The error log level
   --/< The fatal log level
   --/ The names of severity levels.
-   g_rcutils_log_severity_names : array (0 .. 50) of Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rcutils/logging.h:168
+   g_rcutils_log_severity_names : array (0 .. 50) of Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rcutils/logging.h:175
    pragma Import (C, g_rcutils_log_severity_names, "g_rcutils_log_severity_names");
 
   --/ Get a severity value from its string representation (e.g. DEBUG).
@@ -191,7 +198,7 @@ package rcutils_logging_h is
    function rcutils_logging_severity_level_from_string
      (severity_string : Interfaces.C.Strings.chars_ptr;
       allocator : rcutils_allocator_h.rcutils_allocator_t;
-      severity : access int) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/logging.h:190
+      severity : access int) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/logging.h:197
    pragma Import (C, rcutils_logging_severity_level_from_string, "rcutils_logging_severity_level_from_string");
 
   --/ The function signature to log messages.
@@ -211,7 +218,7 @@ package rcutils_logging_h is
          arg4 : rcutils_time_h.rcutils_time_point_value_t;
          arg5 : Interfaces.C.Strings.chars_ptr;
          arg6 : access stdarg_h.va_list);
-   pragma Convention (C, rcutils_logging_output_handler_t);  -- /opt/ros/crystal/include/rcutils/logging.h:202
+   pragma Convention (C, rcutils_logging_output_handler_t);  -- /opt/ros/dashing/include/rcutils/logging.h:209
 
   -- location
   -- severity
@@ -220,7 +227,7 @@ package rcutils_logging_h is
   -- format
   -- args
   --/ The function pointer of the current output handler.
-   g_rcutils_logging_output_handler : rcutils_logging_output_handler_t;  -- /opt/ros/crystal/include/rcutils/logging.h:213
+   g_rcutils_logging_output_handler : rcutils_logging_output_handler_t;  -- /opt/ros/dashing/include/rcutils/logging.h:220
    pragma Import (C, g_rcutils_logging_output_handler, "g_rcutils_logging_output_handler");
 
   --/ Get the current output handler.
@@ -236,7 +243,7 @@ package rcutils_logging_h is
   -- * \return The function pointer of the current output handler.
   --  
 
-   function rcutils_logging_get_output_handler return rcutils_logging_output_handler_t;  -- /opt/ros/crystal/include/rcutils/logging.h:229
+   function rcutils_logging_get_output_handler return rcutils_logging_output_handler_t;  -- /opt/ros/dashing/include/rcutils/logging.h:236
    pragma Import (C, rcutils_logging_get_output_handler, "rcutils_logging_get_output_handler");
 
   --/ Set the current output handler.
@@ -252,7 +259,7 @@ package rcutils_logging_h is
   -- * \param function The function pointer of the output handler to be used.
   --  
 
-   procedure rcutils_logging_set_output_handler (c_function : rcutils_logging_output_handler_t);  -- /opt/ros/crystal/include/rcutils/logging.h:244
+   procedure rcutils_logging_set_output_handler (c_function : rcutils_logging_output_handler_t);  -- /opt/ros/dashing/include/rcutils/logging.h:251
    pragma Import (C, rcutils_logging_set_output_handler, "rcutils_logging_set_output_handler");
 
   --/ Formats a log message according to RCUTILS_CONSOLE_OUTPUT_FORMAT
@@ -285,7 +292,7 @@ package rcutils_logging_h is
       name : Interfaces.C.Strings.chars_ptr;
       timestamp : rcutils_time_h.rcutils_time_point_value_t;
       msg : Interfaces.C.Strings.chars_ptr;
-      logging_output : access rcutils_types_char_array_h.rcutils_char_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/logging.h:271
+      logging_output : access rcutils_types_char_array_h.rcutils_char_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/logging.h:278
    pragma Import (C, rcutils_logging_format_message, "rcutils_logging_format_message");
 
   --/ The default severity level for loggers.
@@ -296,7 +303,7 @@ package rcutils_logging_h is
   -- * \see rcutils_logging_get_logger_effective_level()
   --  
 
-   g_rcutils_logging_default_logger_level : aliased int;  -- /opt/ros/crystal/include/rcutils/logging.h:284
+   g_rcutils_logging_default_logger_level : aliased int;  -- /opt/ros/dashing/include/rcutils/logging.h:291
    pragma Import (C, g_rcutils_logging_default_logger_level, "g_rcutils_logging_default_logger_level");
 
   --/ Get the default level for loggers.
@@ -312,7 +319,7 @@ package rcutils_logging_h is
   -- * \return The level.
   --  
 
-   function rcutils_logging_get_default_logger_level return int;  -- /opt/ros/crystal/include/rcutils/logging.h:300
+   function rcutils_logging_get_default_logger_level return int;  -- /opt/ros/dashing/include/rcutils/logging.h:307
    pragma Import (C, rcutils_logging_get_default_logger_level, "rcutils_logging_get_default_logger_level");
 
   --/ Set the default severity level for loggers.
@@ -332,7 +339,7 @@ package rcutils_logging_h is
   -- * \param level The level to be used.
   --  
 
-   procedure rcutils_logging_set_default_logger_level (level : int);  -- /opt/ros/crystal/include/rcutils/logging.h:319
+   procedure rcutils_logging_set_default_logger_level (level : int);  -- /opt/ros/dashing/include/rcutils/logging.h:326
    pragma Import (C, rcutils_logging_set_default_logger_level, "rcutils_logging_set_default_logger_level");
 
   --/ Get the severity level for a logger.
@@ -357,7 +364,7 @@ package rcutils_logging_h is
   -- * \return -1 if an error occurred
   --  
 
-   function rcutils_logging_get_logger_level (name : Interfaces.C.Strings.chars_ptr) return int;  -- /opt/ros/crystal/include/rcutils/logging.h:344
+   function rcutils_logging_get_logger_level (name : Interfaces.C.Strings.chars_ptr) return int;  -- /opt/ros/dashing/include/rcutils/logging.h:351
    pragma Import (C, rcutils_logging_get_logger_level, "rcutils_logging_get_logger_level");
 
   --/ Get the level for a logger and its name length.
@@ -382,7 +389,7 @@ package rcutils_logging_h is
   -- * \return -1 if an error occurred
   --  
 
-   function rcutils_logging_get_logger_leveln (name : Interfaces.C.Strings.chars_ptr; name_length : stddef_h.size_t) return int;  -- /opt/ros/crystal/include/rcutils/logging.h:369
+   function rcutils_logging_get_logger_leveln (name : Interfaces.C.Strings.chars_ptr; name_length : stddef_h.size_t) return int;  -- /opt/ros/dashing/include/rcutils/logging.h:376
    pragma Import (C, rcutils_logging_get_logger_leveln, "rcutils_logging_get_logger_leveln");
 
   --/ Set the severity level for a logger.
@@ -406,7 +413,7 @@ package rcutils_logging_h is
   -- * \return `RCUTILS_RET_ERROR` if an unspecified error occured
   --  
 
-   function rcutils_logging_set_logger_level (name : Interfaces.C.Strings.chars_ptr; level : int) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/logging.h:393
+   function rcutils_logging_set_logger_level (name : Interfaces.C.Strings.chars_ptr; level : int) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/logging.h:400
    pragma Import (C, rcutils_logging_set_logger_level, "rcutils_logging_set_logger_level");
 
   --/ Determine if a logger is enabled for a severity level.
@@ -425,7 +432,7 @@ package rcutils_logging_h is
   -- * \return true if the logger is enabled for the level; false otherwise.
   --  
 
-   function rcutils_logging_logger_is_enabled_for (name : Interfaces.C.Strings.chars_ptr; severity : int) return Extensions.bool;  -- /opt/ros/crystal/include/rcutils/logging.h:412
+   function rcutils_logging_logger_is_enabled_for (name : Interfaces.C.Strings.chars_ptr; severity : int) return Extensions.bool;  -- /opt/ros/dashing/include/rcutils/logging.h:419
    pragma Import (C, rcutils_logging_logger_is_enabled_for, "rcutils_logging_logger_is_enabled_for");
 
   --/ Determine the effective level for a logger.
@@ -454,7 +461,7 @@ package rcutils_logging_h is
   -- * \return -1 if an error occurred.
   --  
 
-   function rcutils_logging_get_logger_effective_level (name : Interfaces.C.Strings.chars_ptr) return int;  -- /opt/ros/crystal/include/rcutils/logging.h:441
+   function rcutils_logging_get_logger_effective_level (name : Interfaces.C.Strings.chars_ptr) return int;  -- /opt/ros/dashing/include/rcutils/logging.h:448
    pragma Import (C, rcutils_logging_get_logger_effective_level, "rcutils_logging_get_logger_effective_level");
 
   --/ Log a message.
@@ -483,7 +490,7 @@ package rcutils_logging_h is
       severity : int;
       name : Interfaces.C.Strings.chars_ptr;
       format : Interfaces.C.Strings.chars_ptr  -- , ...
-      );  -- /opt/ros/crystal/include/rcutils/logging.h:464
+      );  -- /opt/ros/dashing/include/rcutils/logging.h:471
    pragma Import (C, rcutils_log, "rcutils_log");
 
   --/ The default output handler outputs log messages to the standard streams.
@@ -494,6 +501,8 @@ package rcutils_logging_h is
   -- * The console output format of the logged message can be configured through
   -- * the `RCUTILS_CONSOLE_OUTPUT_FORMAT` environment variable: see
   -- * rcutils_logging_initialize_with_allocator() for details.
+  -- * For configuring if using colours or not, `RCUTILS_COLORIZED_OUTPUT` can be used:
+  -- * see rcutils_logging_initialize_with_allocator() for details.
   -- *
   -- * <hr>
   -- * Attribute          | Adherence
@@ -516,7 +525,7 @@ package rcutils_logging_h is
       name : Interfaces.C.Strings.chars_ptr;
       timestamp : rcutils_time_h.rcutils_time_point_value_t;
       format : Interfaces.C.Strings.chars_ptr;
-      args : access stdarg_h.va_list);  -- /opt/ros/crystal/include/rcutils/logging.h:495
+      args : access stdarg_h.va_list);  -- /opt/ros/dashing/include/rcutils/logging.h:505
    pragma Import (C, rcutils_logging_console_output_handler, "rcutils_logging_console_output_handler");
 
   -- Provide the compiler with branch prediction information

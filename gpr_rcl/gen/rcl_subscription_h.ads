@@ -30,18 +30,18 @@ package rcl_subscription_h is
 
   --/ Structure which encapsulates a ROS Subscription.
    type rcl_subscription_t is record
-      impl : System.Address;  -- /opt/ros/crystal/include/rcl/subscription.h:35
+      impl : System.Address;  -- /opt/ros/dashing/include/rcl/subscription.h:35
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_subscription_t);  -- /opt/ros/crystal/include/rcl/subscription.h:33
+   pragma Convention (C_Pass_By_Copy, rcl_subscription_t);  -- /opt/ros/dashing/include/rcl/subscription.h:33
 
   --/ Options available for a rcl subscription.
   --/ Middleware quality of service settings for the subscription.
    type rcl_subscription_options_t is record
-      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/crystal/include/rcl/subscription.h:42
-      ignore_local_publications : aliased Extensions.bool;  -- /opt/ros/crystal/include/rcl/subscription.h:44
-      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/crystal/include/rcl/subscription.h:47
+      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/dashing/include/rcl/subscription.h:42
+      ignore_local_publications : aliased Extensions.bool;  -- /opt/ros/dashing/include/rcl/subscription.h:44
+      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/dashing/include/rcl/subscription.h:47
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_subscription_options_t);  -- /opt/ros/crystal/include/rcl/subscription.h:39
+   pragma Convention (C_Pass_By_Copy, rcl_subscription_options_t);  -- /opt/ros/dashing/include/rcl/subscription.h:39
 
   --/ If true, messages published from within the same node are ignored.
   --/ Custom allocator for the subscription, used for incidental allocations.
@@ -52,7 +52,7 @@ package rcl_subscription_h is
   -- * rcl_subscription_init().
   --  
 
-   function rcl_get_zero_initialized_subscription return rcl_subscription_t;  -- /opt/ros/crystal/include/rcl/subscription.h:58
+   function rcl_get_zero_initialized_subscription return rcl_subscription_t;  -- /opt/ros/dashing/include/rcl/subscription.h:58
    pragma Import (C, rcl_get_zero_initialized_subscription, "rcl_get_zero_initialized_subscription");
 
   --/ Initialize a ROS subscription.
@@ -149,7 +149,7 @@ package rcl_subscription_h is
       node : access constant rcl_node_h.rcl_node_t;
       type_support : access constant rosidl_generator_c_message_type_support_struct_h.rosidl_message_type_support_t;
       topic_name : Interfaces.C.Strings.chars_ptr;
-      options : access constant rcl_subscription_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/subscription.h:151
+      options : access constant rcl_subscription_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/subscription.h:151
    pragma Import (C, rcl_subscription_init, "rcl_subscription_init");
 
   --/ Finalize a rcl_subscription_t.
@@ -179,7 +179,7 @@ package rcl_subscription_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_subscription_fini (subscription : access rcl_subscription_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/subscription.h:187
+   function rcl_subscription_fini (subscription : access rcl_subscription_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/subscription.h:188
    pragma Import (C, rcl_subscription_fini, "rcl_subscription_fini");
 
   --/ Return the default subscription options in a rcl_subscription_options_t.
@@ -191,7 +191,7 @@ package rcl_subscription_h is
   -- * - allocator = rcl_get_default_allocator()
   --  
 
-   function rcl_subscription_get_default_options return rcl_subscription_options_t;  -- /opt/ros/crystal/include/rcl/subscription.h:200
+   function rcl_subscription_get_default_options return rcl_subscription_options_t;  -- /opt/ros/dashing/include/rcl/subscription.h:201
    pragma Import (C, rcl_subscription_get_default_options, "rcl_subscription_get_default_options");
 
   --/ Take a ROS message from a topic using a rcl subscription.
@@ -241,6 +241,7 @@ package rcl_subscription_h is
   -- * \param[in] subscription the handle to the subscription from which to take
   -- * \param[inout] ros_message type-erased ptr to a allocated ROS message
   -- * \param[out] message_info rmw struct which contains meta-data for the message
+  -- * \param[in] allocation structure pointer used for memory preallocation (may be NULL)
   -- * \return `RCL_RET_OK` if the message was published, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_SUBSCRIPTION_INVALID` if the subscription is invalid, or
@@ -253,7 +254,8 @@ package rcl_subscription_h is
    function rcl_take
      (subscription : access constant rcl_subscription_t;
       ros_message : System.Address;
-      message_info : access rmw_types_h.rmw_message_info_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/subscription.h:260
+      message_info : access rmw_types_h.rmw_message_info_t;
+      allocation : access rmw_types_h.rmw_subscription_allocation_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/subscription.h:262
    pragma Import (C, rcl_take, "rcl_take");
 
   --/ Take a serialized raw message from a topic using a rcl subscription.
@@ -283,6 +285,7 @@ package rcl_subscription_h is
   -- * \param[in] subscription the handle to the subscription from which to take
   -- * \param[inout] serialized_message pointer to a (pre-allocated) serialized message.
   -- * \param[out] message_info rmw struct which contains meta-data for the message
+  -- * \param[in] allocation structure pointer used for memory preallocation (may be NULL)
   -- * \return `RCL_RET_OK` if the message was published, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_SUBSCRIPTION_INVALID` if the subscription is invalid, or
@@ -295,7 +298,8 @@ package rcl_subscription_h is
    function rcl_take_serialized_message
      (subscription : access constant rcl_subscription_t;
       serialized_message : access rcl_types_h.rcl_serialized_message_t;
-      message_info : access rmw_types_h.rmw_message_info_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/subscription.h:303
+      message_info : access rmw_types_h.rmw_message_info_t;
+      allocation : access rmw_types_h.rmw_subscription_allocation_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/subscription.h:308
    pragma Import (C, rcl_take_serialized_message, "rcl_take_serialized_message");
 
   --/ Get the topic name for the subscription.
@@ -321,7 +325,7 @@ package rcl_subscription_h is
   -- * \return name string if successful, otherwise `NULL`
   --  
 
-   function rcl_subscription_get_topic_name (subscription : access constant rcl_subscription_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rcl/subscription.h:333
+   function rcl_subscription_get_topic_name (subscription : access constant rcl_subscription_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rcl/subscription.h:339
    pragma Import (C, rcl_subscription_get_topic_name, "rcl_subscription_get_topic_name");
 
   --/ Return the rcl subscription options.
@@ -347,7 +351,7 @@ package rcl_subscription_h is
   -- * \return options struct if successful, otherwise `NULL`
   --  
 
-   function rcl_subscription_get_options (subscription : access constant rcl_subscription_t) return access constant rcl_subscription_options_t;  -- /opt/ros/crystal/include/rcl/subscription.h:360
+   function rcl_subscription_get_options (subscription : access constant rcl_subscription_t) return access constant rcl_subscription_options_t;  -- /opt/ros/dashing/include/rcl/subscription.h:366
    pragma Import (C, rcl_subscription_get_options, "rcl_subscription_get_options");
 
   --/ Return the rmw subscription handle.
@@ -377,7 +381,7 @@ package rcl_subscription_h is
   -- * \return rmw subscription handle if successful, otherwise `NULL`
   --  
 
-   function rcl_subscription_get_rmw_handle (subscription : access constant rcl_subscription_t) return access rmw_types_h.rmw_subscription_t;  -- /opt/ros/crystal/include/rcl/subscription.h:391
+   function rcl_subscription_get_rmw_handle (subscription : access constant rcl_subscription_t) return access rmw_types_h.rmw_subscription_t;  -- /opt/ros/dashing/include/rcl/subscription.h:397
    pragma Import (C, rcl_subscription_get_rmw_handle, "rcl_subscription_get_rmw_handle");
 
   --/ Check that the subscription is valid.
@@ -399,7 +403,7 @@ package rcl_subscription_h is
   -- * \return `true` if `subscription` is valid, otherwise `false`
   --  
 
-   function rcl_subscription_is_valid (subscription : access constant rcl_subscription_t) return Extensions.bool;  -- /opt/ros/crystal/include/rcl/subscription.h:413
+   function rcl_subscription_is_valid (subscription : access constant rcl_subscription_t) return Extensions.bool;  -- /opt/ros/dashing/include/rcl/subscription.h:419
    pragma Import (C, rcl_subscription_is_valid, "rcl_subscription_is_valid");
 
   --/ Get the number of publishers matched to a subscription.
@@ -423,7 +427,7 @@ package rcl_subscription_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_subscription_get_publisher_count (subscription : access constant rcl_subscription_t; publisher_count : access stddef_h.size_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/crystal/include/rcl/subscription.h:438
+   function rcl_subscription_get_publisher_count (subscription : access constant rcl_subscription_t; publisher_count : access stddef_h.size_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rcl/subscription.h:444
    pragma Import (C, rcl_subscription_get_publisher_count, "rcl_subscription_get_publisher_count");
 
 end rcl_subscription_h;

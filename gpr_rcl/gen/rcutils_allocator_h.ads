@@ -41,19 +41,19 @@ package rcutils_allocator_h is
   --/ Allocate memory, given a size and the `state` pointer.
   --* An error should be indicated by returning `NULL`.  
    type rcutils_allocator_t is record
-      allocate : access function (arg1 : stddef_h.size_t; arg2 : System.Address) return System.Address;  -- /opt/ros/crystal/include/rcutils/allocator.h:49
-      deallocate : access procedure (arg1 : System.Address; arg2 : System.Address);  -- /opt/ros/crystal/include/rcutils/allocator.h:52
+      allocate : access function (arg1 : stddef_h.size_t; arg2 : System.Address) return System.Address;  -- /opt/ros/dashing/include/rcutils/allocator.h:49
+      deallocate : access procedure (arg1 : System.Address; arg2 : System.Address);  -- /opt/ros/dashing/include/rcutils/allocator.h:52
       reallocate : access function
            (arg1 : System.Address;
             arg2 : stddef_h.size_t;
-            arg3 : System.Address) return System.Address;  -- /opt/ros/crystal/include/rcutils/allocator.h:64
+            arg3 : System.Address) return System.Address;  -- /opt/ros/dashing/include/rcutils/allocator.h:64
       zero_allocate : access function
            (arg1 : stddef_h.size_t;
             arg2 : stddef_h.size_t;
-            arg3 : System.Address) return System.Address;  -- /opt/ros/crystal/include/rcutils/allocator.h:67
-      state : System.Address;  -- /opt/ros/crystal/include/rcutils/allocator.h:74
+            arg3 : System.Address) return System.Address;  -- /opt/ros/dashing/include/rcutils/allocator.h:67
+      state : System.Address;  -- /opt/ros/dashing/include/rcutils/allocator.h:74
    end record;
-   pragma Convention (C_Pass_By_Copy, rcutils_allocator_t);  -- /opt/ros/crystal/include/rcutils/allocator.h:45
+   pragma Convention (C_Pass_By_Copy, rcutils_allocator_t);  -- /opt/ros/dashing/include/rcutils/allocator.h:45
 
   --/ Deallocate previously allocated memory, mimicking free().
   --* Also takes the `state` pointer.  
@@ -83,7 +83,7 @@ package rcutils_allocator_h is
   -- * Note that this is an invalid allocator and should only be used as a placeholder.
   --  
 
-   function rcutils_get_zero_initialized_allocator return rcutils_allocator_t;  -- /opt/ros/crystal/include/rcutils/allocator.h:84
+   function rcutils_get_zero_initialized_allocator return rcutils_allocator_t;  -- /opt/ros/dashing/include/rcutils/allocator.h:84
    pragma Import (C, rcutils_get_zero_initialized_allocator, "rcutils_get_zero_initialized_allocator");
 
   --/ Return a properly initialized rcutils_allocator_t with default values.
@@ -105,7 +105,7 @@ package rcutils_allocator_h is
   -- * Lock-Free          | Yes
   --  
 
-   function rcutils_get_default_allocator return rcutils_allocator_t;  -- /opt/ros/crystal/include/rcutils/allocator.h:107
+   function rcutils_get_default_allocator return rcutils_allocator_t;  -- /opt/ros/dashing/include/rcutils/allocator.h:107
    pragma Import (C, rcutils_get_default_allocator, "rcutils_get_default_allocator");
 
   --/ Return true if the given allocator has non-null function pointers.
@@ -113,7 +113,7 @@ package rcutils_allocator_h is
   -- * Will also return false if the allocator pointer is null.
   --  
 
-   function rcutils_allocator_is_valid (allocator : access constant rcutils_allocator_t) return Extensions.bool;  -- /opt/ros/crystal/include/rcutils/allocator.h:116
+   function rcutils_allocator_is_valid (allocator : access constant rcutils_allocator_t) return Extensions.bool;  -- /opt/ros/dashing/include/rcutils/allocator.h:116
    pragma Import (C, rcutils_allocator_is_valid, "rcutils_allocator_is_valid");
 
   --/ Emulate the behavior of [reallocf](https://linux.die.net/man/3/reallocf).
@@ -125,7 +125,7 @@ package rcutils_allocator_h is
    function rcutils_reallocf
      (pointer : System.Address;
       size : stddef_h.size_t;
-      allocator : access rcutils_allocator_t) return System.Address;  -- /opt/ros/crystal/include/rcutils/allocator.h:137
+      allocator : access rcutils_allocator_t) return System.Address;  -- /opt/ros/dashing/include/rcutils/allocator.h:137
    pragma Import (C, rcutils_reallocf, "rcutils_reallocf");
 
 end rcutils_allocator_h;

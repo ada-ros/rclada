@@ -42,7 +42,7 @@ package rcl_logging_rosout_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_logging_rosout_init (allocator : access constant rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/logging_rosout.h:51
+   function rcl_logging_rosout_init (allocator : access constant rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/logging_rosout.h:51
    pragma Import (C, rcl_logging_rosout_init, "rcl_logging_rosout_init");
 
   --/ Uninitializes the rcl_logging_rosout features
@@ -62,7 +62,7 @@ package rcl_logging_rosout_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_logging_rosout_fini return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/logging_rosout.h:73
+   function rcl_logging_rosout_fini return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/logging_rosout.h:73
    pragma Import (C, rcl_logging_rosout_fini, "rcl_logging_rosout_fini");
 
   --/ Creates a rosout publisher for a node and registers it to be used by the logging system
@@ -93,7 +93,7 @@ package rcl_logging_rosout_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_logging_rosout_init_publisher_for_node (node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/logging_rosout.h:105
+   function rcl_logging_rosout_init_publisher_for_node (node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/logging_rosout.h:105
    pragma Import (C, rcl_logging_rosout_init_publisher_for_node, "rcl_logging_rosout_init_publisher_for_node");
 
   --/ Deregisters a rosout publisher for a node and cleans up allocated resources
@@ -117,7 +117,7 @@ package rcl_logging_rosout_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_logging_rosout_fini_publisher_for_node (node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/logging_rosout.h:131
+   function rcl_logging_rosout_fini_publisher_for_node (node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/logging_rosout.h:131
    pragma Import (C, rcl_logging_rosout_fini_publisher_for_node, "rcl_logging_rosout_fini_publisher_for_node");
 
   --/ The output handler outputs log messages to rosout topics.
@@ -150,7 +150,7 @@ package rcl_logging_rosout_h is
       name : Interfaces.C.Strings.chars_ptr;
       timestamp : rcutils_time_h.rcutils_time_point_value_t;
       format : Interfaces.C.Strings.chars_ptr;
-      args : access stdio_h.va_list);  -- /opt/ros/crystal/include/rcl/logging_rosout.h:158
+      args : access stdio_h.va_list);  -- /opt/ros/dashing/include/rcl/logging_rosout.h:158
    pragma Import (C, rcl_logging_rosout_output_handler, "rcl_logging_rosout_output_handler");
 
 end rcl_logging_rosout_h;

@@ -108,7 +108,10 @@ package body RCL.Executors is
       end if;
 
       declare
-         Set : Impl.Wait.Set := Impl.Wait.Init (This.Allocator, CBs);
+         Set : Impl.Wait.Set :=
+                 Impl.Wait.Init (Allocator => This.Allocator,
+                                 Context   => Node.Context.all,
+                                 Callbacks => CBs);
       begin
          Logging.Debug ("Waiting on" & CBs.Length'Img & " callbacks");
          case Set.Wait (Timeout) is

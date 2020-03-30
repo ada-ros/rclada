@@ -20,11 +20,11 @@ package rcutils_types_string_array_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
    type rcutils_string_array_t is record
-      size : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rcutils/types/string_array.h:32
-      data : System.Address;  -- /opt/ros/crystal/include/rcutils/types/string_array.h:33
-      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/crystal/include/rcutils/types/string_array.h:34
+      size : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rcutils/types/string_array.h:32
+      data : System.Address;  -- /opt/ros/dashing/include/rcutils/types/string_array.h:33
+      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/dashing/include/rcutils/types/string_array.h:34
    end record;
-   pragma Convention (C_Pass_By_Copy, rcutils_string_array_t);  -- /opt/ros/crystal/include/rcutils/types/string_array.h:30
+   pragma Convention (C_Pass_By_Copy, rcutils_string_array_t);  -- /opt/ros/dashing/include/rcutils/types/string_array.h:30
 
   --/ Return an empty string array struct.
   --*
@@ -45,7 +45,7 @@ package rcutils_types_string_array_h is
   -- * ```
   --  
 
-   function rcutils_get_zero_initialized_string_array return rcutils_string_array_t;  -- /opt/ros/crystal/include/rcutils/types/string_array.h:57
+   function rcutils_get_zero_initialized_string_array return rcutils_string_array_t;  -- /opt/ros/dashing/include/rcutils/types/string_array.h:57
    pragma Import (C, rcutils_get_zero_initialized_string_array, "rcutils_get_zero_initialized_string_array");
 
   --/ Initialize a string array with a given size.
@@ -81,7 +81,7 @@ package rcutils_types_string_array_h is
    function rcutils_string_array_init
      (string_array : access rcutils_string_array_t;
       size : stddef_h.size_t;
-      allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/string_array.h:90
+      allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/string_array.h:91
    pragma Import (C, rcutils_string_array_init, "rcutils_string_array_init");
 
   --/ Finalize a string array, reclaiming all resources.
@@ -98,7 +98,28 @@ package rcutils_types_string_array_h is
   -- * \return `RCUTILS_RET_ERROR` if an unknown error occurs
   --  
 
-   function rcutils_string_array_fini (string_array : access rcutils_string_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/string_array.h:111
+   function rcutils_string_array_fini (string_array : access rcutils_string_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/string_array.h:112
    pragma Import (C, rcutils_string_array_fini, "rcutils_string_array_fini");
+
+  --/ Compare two string arrays.
+  --*
+  -- * The two string arrays are compared according to lexographical order.
+  -- *
+  -- * \param[in] sa0 The first string array.
+  -- * \param[in] sa1 The second string array.
+  -- * \param[out] res Negative value if `lhs` appears before `rhs` in lexographical order.
+  -- *   Zero if `lhs` and `rhs` are equal.
+  -- *   Positive value if `lhs` appears after `rhs in lexographical order.
+  -- * \return `RCUTILS_RET_OK` if successful, or
+  -- * \return `RCUTILS_RET_INVALID_ARGUMENT` if any argument is `NULL`, or
+  -- * \return `RCUTILS_RET_INVALID_ARGUMENT` if `lhs->data` or `rhs->data` is `NULL`, or
+  -- * \return `RCUTILS_RET_ERROR` if an unknown error occurs.
+  --  
+
+   function rcutils_string_array_cmp
+     (lhs : access constant rcutils_string_array_t;
+      rhs : access constant rcutils_string_array_t;
+      res : access int) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/string_array.h:131
+   pragma Import (C, rcutils_string_array_cmp, "rcutils_string_array_cmp");
 
 end rcutils_types_string_array_h;

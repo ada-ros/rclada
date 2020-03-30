@@ -13,12 +13,12 @@ package rcutils_error_handling_h is
 
    --  arg-macro: procedure RCUTILS_SAFE_FWRITE_TO_STDERR (msg)
    --    do {fwrite(msg, sizeof(char), strlen(msg), stderr);} while (0)
-   RCUTILS_ERROR_STATE_LINE_NUMBER_STR_MAX_LENGTH : constant := 20;  --  /opt/ros/crystal/include/rcutils/error_handling.h:53
-   RCUTILS_ERROR_FORMATTING_CHARACTERS : constant := 6;  --  /opt/ros/crystal/include/rcutils/error_handling.h:54
+   RCUTILS_ERROR_STATE_LINE_NUMBER_STR_MAX_LENGTH : constant := 20;  --  /opt/ros/dashing/include/rcutils/error_handling.h:53
+   RCUTILS_ERROR_FORMATTING_CHARACTERS : constant := 6;  --  /opt/ros/dashing/include/rcutils/error_handling.h:54
 
-   RCUTILS_ERROR_MESSAGE_MAX_LENGTH : constant := 1024;  --  /opt/ros/crystal/include/rcutils/error_handling.h:57
+   RCUTILS_ERROR_MESSAGE_MAX_LENGTH : constant := 1024;  --  /opt/ros/dashing/include/rcutils/error_handling.h:57
 
-   RCUTILS_ERROR_STATE_MESSAGE_MAX_LENGTH : constant := 768;  --  /opt/ros/crystal/include/rcutils/error_handling.h:62
+   RCUTILS_ERROR_STATE_MESSAGE_MAX_LENGTH : constant := 768;  --  /opt/ros/dashing/include/rcutils/error_handling.h:62
    --  unsupported macro: RCUTILS_ERROR_STATE_FILE_MAX_LENGTH ( RCUTILS_ERROR_MESSAGE_MAX_LENGTH - RCUTILS_ERROR_STATE_MESSAGE_MAX_LENGTH - RCUTILS_ERROR_STATE_LINE_NUMBER_STR_MAX_LENGTH - RCUTILS_ERROR_FORMATTING_CHARACTERS - 1)
    --  unsupported macro: RCUTILS_CHECK_ARGUMENT_FOR_NULL(argument,error_return_type) RCUTILS_CHECK_FOR_NULL_WITH_MSG(argument, #argument " argument is null", return error_return_type)
    --  arg-macro: procedure RCUTILS_CHECK_FOR_NULL_WITH_MSG (value, msg, error_statement)
@@ -49,20 +49,20 @@ package rcutils_error_handling_h is
   --/ Struct wrapping a fixed-size c string used for returning the formatted error string.
    subtype rcutils_error_string_t_str_array is Interfaces.C.char_array (0 .. 1023);
    type rcutils_error_string_t is record
-      str : aliased rcutils_error_string_t_str_array;  -- /opt/ros/crystal/include/rcutils/error_handling.h:74
+      str : aliased rcutils_error_string_t_str_array;  -- /opt/ros/dashing/include/rcutils/error_handling.h:74
    end record;
-   pragma Convention (C_Pass_By_Copy, rcutils_error_string_t);  -- /opt/ros/crystal/include/rcutils/error_handling.h:72
+   pragma Convention (C_Pass_By_Copy, rcutils_error_string_t);  -- /opt/ros/dashing/include/rcutils/error_handling.h:72
 
   --/ Struct which encapsulates the error state set by RCUTILS_SET_ERROR_MSG().
   --/ User message storage, limited to RCUTILS_ERROR_STATE_MESSAGE_MAX_LENGTH characters.
    subtype rcutils_error_state_t_message_array is Interfaces.C.char_array (0 .. 767);
    subtype rcutils_error_state_t_file_array is Interfaces.C.char_array (0 .. 228);
    type rcutils_error_state_t is record
-      message : aliased rcutils_error_state_t_message_array;  -- /opt/ros/crystal/include/rcutils/error_handling.h:81
-      file : aliased rcutils_error_state_t_file_array;  -- /opt/ros/crystal/include/rcutils/error_handling.h:84
-      line_number : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/crystal/include/rcutils/error_handling.h:86
+      message : aliased rcutils_error_state_t_message_array;  -- /opt/ros/dashing/include/rcutils/error_handling.h:81
+      file : aliased rcutils_error_state_t_file_array;  -- /opt/ros/dashing/include/rcutils/error_handling.h:84
+      line_number : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/dashing/include/rcutils/error_handling.h:86
    end record;
-   pragma Convention (C_Pass_By_Copy, rcutils_error_state_t);  -- /opt/ros/crystal/include/rcutils/error_handling.h:78
+   pragma Convention (C_Pass_By_Copy, rcutils_error_state_t);  -- /opt/ros/dashing/include/rcutils/error_handling.h:78
 
   --/ File name, limited to what's left from RCUTILS_ERROR_STATE_MAX_SIZE characters
   --/ after subtracting storage for others.
@@ -107,7 +107,7 @@ package rcutils_error_handling_h is
   -- * \return `RCUTILS_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcutils_initialize_error_handling_thread_local_storage (allocator : rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/error_handling.h:141
+   function rcutils_initialize_error_handling_thread_local_storage (allocator : rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/error_handling.h:141
    pragma Import (C, rcutils_initialize_error_handling_thread_local_storage, "rcutils_initialize_error_handling_thread_local_storage");
 
   --/ Set the error message, as well as the file and line on which it occurred.
@@ -128,7 +128,7 @@ package rcutils_error_handling_h is
    procedure rcutils_set_error_state
      (error_string : Interfaces.C.Strings.chars_ptr;
       file : Interfaces.C.Strings.chars_ptr;
-      line_number : stddef_h.size_t);  -- /opt/ros/crystal/include/rcutils/error_handling.h:159
+      line_number : stddef_h.size_t);  -- /opt/ros/dashing/include/rcutils/error_handling.h:159
    pragma Import (C, rcutils_set_error_state, "rcutils_set_error_state");
 
   --/ Check an argument for a null value.
@@ -172,7 +172,7 @@ package rcutils_error_handling_h is
   --  
 
   --/ Return `true` if the error is set, otherwise `false`.
-   function rcutils_error_is_set return Extensions.bool;  -- /opt/ros/crystal/include/rcutils/error_handling.h:227
+   function rcutils_error_is_set return Extensions.bool;  -- /opt/ros/dashing/include/rcutils/error_handling.h:227
    pragma Import (C, rcutils_error_is_set, "rcutils_error_is_set");
 
   --/ Return an rcutils_error_state_t which was set with rcutils_set_error_state().
@@ -185,7 +185,7 @@ package rcutils_error_handling_h is
   -- * \return A pointer to the current error state struct.
   --  
 
-   function rcutils_get_error_state return access constant rcutils_error_state_t;  -- /opt/ros/crystal/include/rcutils/error_handling.h:241
+   function rcutils_get_error_state return access constant rcutils_error_state_t;  -- /opt/ros/dashing/include/rcutils/error_handling.h:241
    pragma Import (C, rcutils_get_error_state, "rcutils_get_error_state");
 
   --/ Return the error message followed by `, at <file>:<line>` if set, else "error not set".
@@ -199,11 +199,11 @@ package rcutils_error_handling_h is
   -- * \return The current error string, with file and line number, or "error not set" if not set.
   --  
 
-   function rcutils_get_error_string return rcutils_error_string_t;  -- /opt/ros/crystal/include/rcutils/error_handling.h:256
+   function rcutils_get_error_string return rcutils_error_string_t;  -- /opt/ros/dashing/include/rcutils/error_handling.h:256
    pragma Import (C, rcutils_get_error_string, "rcutils_get_error_string");
 
   --/ Reset the error state by clearing any previously set error state.
-   procedure rcutils_reset_error;  -- /opt/ros/crystal/include/rcutils/error_handling.h:261
+   procedure rcutils_reset_error;  -- /opt/ros/dashing/include/rcutils/error_handling.h:261
    pragma Import (C, rcutils_reset_error, "rcutils_reset_error");
 
 end rcutils_error_handling_h;

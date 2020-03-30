@@ -55,7 +55,12 @@ package body RCL.Publishers is
                       Msg  : in out ROSIDL.Dynamic.Message)
    is
    begin
-      Check (Rcl_Publish (This.Impl'Access, Msg.To_Ptr));
+      Check
+        (Rcl_Publish
+           (publisher   => This.Impl'Access,
+            ros_message => Msg.To_Ptr,
+            Allocation  => null));
+      --  FIXME: what about Allocation (new in Crystal)?
    end Publish;
 
 end RCL.Publishers;

@@ -2,7 +2,7 @@ with RCL.Allocators.Impl;
 with RCL.Init;
 
 package body RCL.Timers.Impl is
-   
+
    --------------
    -- Finalize --
    --------------
@@ -12,7 +12,7 @@ package body RCL.Timers.Impl is
       Check (Rcl_Timer_Fini (This.Impl'Access));
       RCL.Init.Finalize;
    end Finalize;
-   
+
    ----------
    -- Init --
    ----------
@@ -26,13 +26,15 @@ package body RCL.Timers.Impl is
 
       return This : Timer (Node) do
          This.Impl     := Rcl_Get_Zero_Initialized_Timer;
-         --  FIXME
---         Check
---           (Rcl_Timer_Init
---              (This.Impl'Access,
---               To_Nanoseconds (Period),
---               null,
---               Allocators.Impl.To_C (Allocator.all)));
+         --  FIXME: this is broken as long as uncommented
+--           Check
+--             (Rcl_Timer_Init
+--                (timer     => This.Impl'Access,
+--                 clock     => ,
+--                 context   => ,
+--                 Period    => To_Nanoseconds (Period),
+--                 callback  => null,
+--                 allocator => Allocators.Impl.To_C (Allocator.all)));
       end return;
    end Init;
 

@@ -2,10 +2,10 @@ pragma Ada_2005;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
+with System;
 limited with rcl_arguments_h;
 with Interfaces.C.Strings;
 with rcl_allocator_h;
-with System;
 with rcl_types_h;
 
 package rcl_remap_h is
@@ -20,6 +20,19 @@ package rcl_remap_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
+   --  skipped empty struct rcl_remap_impl_t
+
+  --/ Hold remapping rules.
+  --/ Private implementation pointer.
+   type rcl_remap_t is record
+      impl : System.Address;  -- /opt/ros/dashing/include/rcl/remap.h:35
+   end record;
+   pragma Convention (C_Pass_By_Copy, rcl_remap_t);  -- /opt/ros/dashing/include/rcl/remap.h:32
+
+  --/ Return a rcl_remap_t struct with members initialized to `NULL`.
+   function rcl_get_zero_initialized_remap return rcl_remap_t;  -- /opt/ros/dashing/include/rcl/remap.h:42
+   pragma Import (C, rcl_get_zero_initialized_remap, "rcl_get_zero_initialized_remap");
+
   -- TODO(sloretz) add documentation about rostopic:// when it is supported
   --/ Remap a topic name based on given rules.
   --*
@@ -91,7 +104,7 @@ package rcl_remap_h is
       node_name : Interfaces.C.Strings.chars_ptr;
       node_namespace : Interfaces.C.Strings.chars_ptr;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      output_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/remap.h:95
+      output_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/remap.h:110
    pragma Import (C, rcl_remap_topic_name, "rcl_remap_topic_name");
 
   -- TODO(sloretz) add documentation about rosservice:// when it is supported
@@ -135,7 +148,7 @@ package rcl_remap_h is
       node_name : Interfaces.C.Strings.chars_ptr;
       node_namespace : Interfaces.C.Strings.chars_ptr;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      output_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/remap.h:140
+      output_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/remap.h:155
    pragma Import (C, rcl_remap_service_name, "rcl_remap_service_name");
 
   --/ Remap a node name based on given rules.
@@ -179,7 +192,7 @@ package rcl_remap_h is
       global_arguments : access constant rcl_arguments_h.rcl_arguments_t;
       node_name : Interfaces.C.Strings.chars_ptr;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      output_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/remap.h:187
+      output_name : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/remap.h:202
    pragma Import (C, rcl_remap_node_name, "rcl_remap_node_name");
 
   --/ Remap a namespace based on given rules.
@@ -219,7 +232,26 @@ package rcl_remap_h is
       global_arguments : access constant rcl_arguments_h.rcl_arguments_t;
       node_name : Interfaces.C.Strings.chars_ptr;
       allocator : rcl_allocator_h.rcl_allocator_t;
-      output_namespace : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/remap.h:228
+      output_namespace : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/remap.h:243
    pragma Import (C, rcl_remap_node_namespace, "rcl_remap_node_namespace");
+
+  --/ Reclaim resources held inside rcl_remap_t structure.
+  --*
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | No
+  -- * Thread-Safe        | Yes
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Yes
+  -- *
+  -- * \param[in] args The structure to be deallocated.
+  -- * \return `RCL_RET_OK` if the memory was successfully freed, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any function arguments are invalid, or
+  -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
+  --  
+
+   function rcl_remap_fini (remap : access rcl_remap_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/remap.h:268
+   pragma Import (C, rcl_remap_fini, "rcl_remap_fini");
 
 end rcl_remap_h;

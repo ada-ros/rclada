@@ -69,7 +69,7 @@ package rcl_init_h is
      (argc : int;
       argv : System.Address;
       options : access constant rcl_init_options_h.rcl_init_options_t;
-      context : access rcl_context_h.rcl_context_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/init.h:78
+      context : access rcl_context_h.rcl_context_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/init.h:78
    pragma Import (C, rcl_init, "rcl_init");
 
   --/ Shutdown a given rcl context.
@@ -97,7 +97,7 @@ package rcl_init_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occur.
   --  
 
-   function rcl_shutdown (context : access rcl_context_h.rcl_context_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/init.h:111
+   function rcl_shutdown (context : access rcl_context_h.rcl_context_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/init.h:111
    pragma Import (C, rcl_shutdown, "rcl_shutdown");
 
 end rcl_init_h;

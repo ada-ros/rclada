@@ -8,10 +8,11 @@ with RCL.Publishers.Impl;
 with RCL.Services.Impl;
 with RCL.Subscriptions.Impl;
 
-with Rcl_Client_H;  use Rcl_Client_H;
-with Rcl_Graph_H;   use Rcl_Graph_H;
-with Rcl_Service_H; use Rcl_Service_H;
-with Rcl_Timer_H;   use Rcl_Timer_H;
+with Rcl_Client_H;       use Rcl_Client_H;
+with Rcl_Graph_H;        use Rcl_Graph_H;
+with Rcl_Node_Options_H; use Rcl_Node_Options_H;
+with Rcl_Service_H;      use Rcl_Service_H;
+with Rcl_Timer_H;        use Rcl_Timer_H;
 
 with ROSIDL.Impl;
 

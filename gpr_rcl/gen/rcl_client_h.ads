@@ -29,17 +29,17 @@ package rcl_client_h is
 
   --/ Structure which encapsulates a ROS Client.
    type rcl_client_t is record
-      impl : System.Address;  -- /opt/ros/crystal/include/rcl/client.h:35
+      impl : System.Address;  -- /opt/ros/dashing/include/rcl/client.h:35
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_client_t);  -- /opt/ros/crystal/include/rcl/client.h:33
+   pragma Convention (C_Pass_By_Copy, rcl_client_t);  -- /opt/ros/dashing/include/rcl/client.h:33
 
   --/ Options available for a rcl_client_t.
   --/ Middleware quality of service settings for the client.
    type rcl_client_options_t is record
-      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/crystal/include/rcl/client.h:42
-      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/crystal/include/rcl/client.h:45
+      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/dashing/include/rcl/client.h:42
+      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/dashing/include/rcl/client.h:45
    end record;
-   pragma Convention (C_Pass_By_Copy, rcl_client_options_t);  -- /opt/ros/crystal/include/rcl/client.h:39
+   pragma Convention (C_Pass_By_Copy, rcl_client_options_t);  -- /opt/ros/dashing/include/rcl/client.h:39
 
   --/ Custom allocator for the client, used for incidental allocations.
   --* For default behavior (malloc/free), use: rcl_get_default_allocator()  
@@ -49,7 +49,7 @@ package rcl_client_h is
   -- * rcl_client_init().
   --  
 
-   function rcl_get_zero_initialized_client return rcl_client_t;  -- /opt/ros/crystal/include/rcl/client.h:56
+   function rcl_get_zero_initialized_client return rcl_client_t;  -- /opt/ros/dashing/include/rcl/client.h:56
    pragma Import (C, rcl_get_zero_initialized_client, "rcl_get_zero_initialized_client");
 
   --/ Initialize a rcl client.
@@ -152,7 +152,7 @@ package rcl_client_h is
       node : access constant rcl_node_h.rcl_node_t;
       type_support : access constant rosidl_generator_c_service_type_support_struct_h.rosidl_service_type_support_t;
       service_name : Interfaces.C.Strings.chars_ptr;
-      options : access constant rcl_client_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/client.h:155
+      options : access constant rcl_client_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/client.h:155
    pragma Import (C, rcl_client_init, "rcl_client_init");
 
   --/ Finalize a rcl_client_t.
@@ -177,7 +177,7 @@ package rcl_client_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_client_fini (client : access rcl_client_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/client.h:186
+   function rcl_client_fini (client : access rcl_client_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/client.h:186
    pragma Import (C, rcl_client_fini, "rcl_client_fini");
 
   --/ Return the default client options in a rcl_client_options_t.
@@ -188,7 +188,7 @@ package rcl_client_h is
   -- * - allocator = rcl_get_default_allocator()
   --  
 
-   function rcl_client_get_default_options return rcl_client_options_t;  -- /opt/ros/crystal/include/rcl/client.h:198
+   function rcl_client_get_default_options return rcl_client_options_t;  -- /opt/ros/dashing/include/rcl/client.h:198
    pragma Import (C, rcl_client_get_default_options, "rcl_client_get_default_options");
 
   --/ Send a ROS request using a client.
@@ -239,7 +239,7 @@ package rcl_client_h is
    function rcl_send_request
      (client : access constant rcl_client_t;
       ros_request : System.Address;
-      sequence_number : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/client.h:247
+      sequence_number : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/client.h:247
    pragma Import (C, rcl_send_request, "rcl_send_request");
 
   --/ Take a ROS response using a client
@@ -281,7 +281,7 @@ package rcl_client_h is
    function rcl_take_response
      (client : access constant rcl_client_t;
       request_header : access rmw_types_h.rmw_request_id_t;
-      ros_response : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/crystal/include/rcl/client.h:288
+      ros_response : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/client.h:288
    pragma Import (C, rcl_take_response, "rcl_take_response");
 
   --/ Get the name of the service that this client will request a response from.
@@ -307,7 +307,7 @@ package rcl_client_h is
   -- * \return name string if successful, otherwise `NULL`
   --  
 
-   function rcl_client_get_service_name (client : access constant rcl_client_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rcl/client.h:318
+   function rcl_client_get_service_name (client : access constant rcl_client_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rcl/client.h:318
    pragma Import (C, rcl_client_get_service_name, "rcl_client_get_service_name");
 
   --/ Return the rcl client options.
@@ -333,7 +333,7 @@ package rcl_client_h is
   -- * \return options struct if successful, otherwise `NULL`
   --  
 
-   function rcl_client_get_options (client : access constant rcl_client_t) return access constant rcl_client_options_t;  -- /opt/ros/crystal/include/rcl/client.h:345
+   function rcl_client_get_options (client : access constant rcl_client_t) return access constant rcl_client_options_t;  -- /opt/ros/dashing/include/rcl/client.h:345
    pragma Import (C, rcl_client_get_options, "rcl_client_get_options");
 
   --/ Return the rmw client handle.
@@ -363,7 +363,7 @@ package rcl_client_h is
   -- * \return rmw client handle if successful, otherwise `NULL`
   --  
 
-   function rcl_client_get_rmw_handle (client : access constant rcl_client_t) return access rmw_types_h.rmw_client_t;  -- /opt/ros/crystal/include/rcl/client.h:376
+   function rcl_client_get_rmw_handle (client : access constant rcl_client_t) return access rmw_types_h.rmw_client_t;  -- /opt/ros/dashing/include/rcl/client.h:376
    pragma Import (C, rcl_client_get_rmw_handle, "rcl_client_get_rmw_handle");
 
   --/ Check that the client is valid.
@@ -385,7 +385,7 @@ package rcl_client_h is
   -- * \return `true` if `client` is valid, otherwise `false`
   --  
 
-   function rcl_client_is_valid (client : access constant rcl_client_t) return Extensions.bool;  -- /opt/ros/crystal/include/rcl/client.h:398
+   function rcl_client_is_valid (client : access constant rcl_client_t) return Extensions.bool;  -- /opt/ros/dashing/include/rcl/client.h:398
    pragma Import (C, rcl_client_is_valid, "rcl_client_is_valid");
 
 end rcl_client_h;

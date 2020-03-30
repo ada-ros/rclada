@@ -1,4 +1,5 @@
 with RCL.Allocators.Impl;
+with RCL.Contexts.Impl;
 with RCL.Logging;
 with RCL.Subscriptions;
 with RCL.Timers.Impl;
@@ -192,6 +193,7 @@ package body RCL.Impl.Wait is
    ----------
 
    function Init (Allocator         : Allocators.Handle;
+                  Context           : aliased in out Contexts.Context;
                   Num_Clients       : Natural := 0;
                   Num_Services      : Natural := 0;
                   Num_Subscriptions : Natural := 0;
@@ -205,12 +207,16 @@ package body RCL.Impl.Wait is
          Check
            (Rcl_Wait_Set_Init
               (S.Impl'Access,
-               Allocator                  => Allocators.Impl.To_C (Allocator.all),
                Number_Of_Clients          => C.Size_T (Num_Clients),
                Number_Of_Guard_Conditions => 0,
                Number_Of_Services         => C.Size_T (Num_Services),
                Number_Of_Subscriptions    => C.Size_T (Num_Subscriptions),
-               Number_Of_Timers           => C.Size_T (Num_Timers)));
+               Number_Of_Timers           => C.Size_T (Num_Timers),
+               number_of_events           => 0,
+               Context                    => Contexts.Impl.To_C (Context),
+               Allocator                  => Allocators.Impl.To_C (Allocator.all)
+              ));
+         --  FIXME: guards and events are UNIMPLEMENTED
       end return;
    end Init;
 
@@ -219,9 +225,11 @@ package body RCL.Impl.Wait is
    ----------
 
    function Init (Allocator : Allocators.Handle;
+                  Context   : aliased in out Contexts.Context;
                   Callbacks : aliased in out RCL.Impl.Dispatchers.Maps.Map) return Set is
    begin
       return S : Set := Init (Allocator         => Allocator,
+                              Context           => Context,
                               Num_Clients       => Callbacks.Num_Clients,
                               Num_Services      => Callbacks.Num_Services,
                               Num_Subscriptions => Callbacks.Num_Subscriptions,

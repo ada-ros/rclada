@@ -22,13 +22,13 @@ package rcutils_types_char_array_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
    type rcutils_char_array_t is record
-      buffer : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:31
-      owns_buffer : aliased Extensions.bool;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:38
-      buffer_length : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:40
-      buffer_capacity : aliased stddef_h.size_t;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:41
-      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:42
+      buffer : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:31
+      owns_buffer : aliased Extensions.bool;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:38
+      buffer_length : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:40
+      buffer_capacity : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:41
+      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:42
    end record;
-   pragma Convention (C_Pass_By_Copy, rcutils_char_array_t);  -- /opt/ros/crystal/include/rcutils/types/char_array.h:29
+   pragma Convention (C_Pass_By_Copy, rcutils_char_array_t);  -- /opt/ros/dashing/include/rcutils/types/char_array.h:29
 
   --*
   --   * if this is true, we may safely free/realloc the buffer as needed;
@@ -41,7 +41,7 @@ package rcutils_types_char_array_h is
   -- * \return rcutils_char_array_t a zero initialized char array struct
   --  
 
-   function rcutils_get_zero_initialized_char_array return rcutils_char_array_t;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:52
+   function rcutils_get_zero_initialized_char_array return rcutils_char_array_t;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:52
    pragma Import (C, rcutils_get_zero_initialized_char_array, "rcutils_get_zero_initialized_char_array");
 
   --/ Initialize a zero initialized char array struct.
@@ -63,7 +63,7 @@ package rcutils_types_char_array_h is
    function rcutils_char_array_init
      (char_array : access rcutils_char_array_t;
       buffer_capacity : stddef_h.size_t;
-      allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:72
+      allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:72
    pragma Import (C, rcutils_char_array_init, "rcutils_char_array_init");
 
   --/ Finalize a char array struct.
@@ -82,7 +82,7 @@ package rcutils_types_char_array_h is
   -- * \return `RCUTILS_RET_ERROR` if an unexpected error occurs
   --  
 
-   function rcutils_char_array_fini (char_array : access rcutils_char_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:95
+   function rcutils_char_array_fini (char_array : access rcutils_char_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:95
    pragma Import (C, rcutils_char_array_fini, "rcutils_char_array_fini");
 
   --/ Resize the internal buffer of the char array.
@@ -106,7 +106,7 @@ package rcutils_types_char_array_h is
   -- * \return `RCUTILS_RET_ERROR` if an unexpected error occurs
   --  
 
-   function rcutils_char_array_resize (char_array : access rcutils_char_array_t; new_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:120
+   function rcutils_char_array_resize (char_array : access rcutils_char_array_t; new_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:120
    pragma Import (C, rcutils_char_array_resize, "rcutils_char_array_resize");
 
   --/ Expand the internal buffer of the char array.
@@ -123,7 +123,7 @@ package rcutils_types_char_array_h is
   -- * \return `RCUTILS_RET_ERROR` if an unexpected error occurs
   --  
 
-   function rcutils_char_array_expand_as_needed (char_array : access rcutils_char_array_t; new_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:138
+   function rcutils_char_array_expand_as_needed (char_array : access rcutils_char_array_t; new_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:138
    pragma Import (C, rcutils_char_array_expand_as_needed, "rcutils_char_array_expand_as_needed");
 
   --/ Produce output according to format and args.
@@ -145,7 +145,7 @@ package rcutils_types_char_array_h is
    function rcutils_char_array_vsprintf
      (char_array : access rcutils_char_array_t;
       format : Interfaces.C.Strings.chars_ptr;
-      args : access System.Address) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:158
+      args : access System.Address) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:158
    pragma Import (C, rcutils_char_array_vsprintf, "rcutils_char_array_vsprintf");
 
   --/ Append a string (or part of it) to the string in buffer.
@@ -166,7 +166,7 @@ package rcutils_types_char_array_h is
    function rcutils_char_array_strncat
      (char_array : access rcutils_char_array_t;
       src : Interfaces.C.Strings.chars_ptr;
-      n : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:177
+      n : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:177
    pragma Import (C, rcutils_char_array_strncat, "rcutils_char_array_strncat");
 
   --/ Append a string to the string in buffer.
@@ -183,7 +183,7 @@ package rcutils_types_char_array_h is
   -- * \return `RCUTILS_RET_ERROR` if an unexpected error occurs
   --  
 
-   function rcutils_char_array_strcat (char_array : access rcutils_char_array_t; src : Interfaces.C.Strings.chars_ptr) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:195
+   function rcutils_char_array_strcat (char_array : access rcutils_char_array_t; src : Interfaces.C.Strings.chars_ptr) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:195
    pragma Import (C, rcutils_char_array_strcat, "rcutils_char_array_strcat");
 
   --/ Copy memory to buffer.
@@ -202,7 +202,7 @@ package rcutils_types_char_array_h is
    function rcutils_char_array_memcpy
      (char_array : access rcutils_char_array_t;
       src : Interfaces.C.Strings.chars_ptr;
-      n : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:212
+      n : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:212
    pragma Import (C, rcutils_char_array_memcpy, "rcutils_char_array_memcpy");
 
   --/ Copy a string to buffer.
@@ -217,7 +217,7 @@ package rcutils_types_char_array_h is
   -- * \return `RCUTILS_RET_ERROR` if an unexpected error occurs
   --  
 
-   function rcutils_char_array_strcpy (char_array : access rcutils_char_array_t; src : Interfaces.C.Strings.chars_ptr) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/crystal/include/rcutils/types/char_array.h:228
+   function rcutils_char_array_strcpy (char_array : access rcutils_char_array_t; src : Interfaces.C.Strings.chars_ptr) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/types/char_array.h:228
    pragma Import (C, rcutils_char_array_strcpy, "rcutils_char_array_strcpy");
 
 end rcutils_types_char_array_h;
