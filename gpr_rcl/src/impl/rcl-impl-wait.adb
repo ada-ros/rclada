@@ -1,5 +1,6 @@
 with RCL.Logging;
 with RCL.Subscriptions;
+with RCL.Timers.Impl;
 
 with Rcl_Types_H;
 with Rmw_Ret_Types_H; use Rmw_Ret_Types_H;
@@ -44,8 +45,11 @@ package body RCL.Impl.Wait is
    procedure Add (This : aliased in out Set;
                   Cli  : aliased in out Clients.Impl.C_Client) is
    begin
-      null;
-      --  FIXME Check (Rcl_Wait_Set_Add_Client (This.Impl'Access, Cli.To_C));
+      Check
+        (Rcl_Wait_Set_Add_Client
+           (Wait_Set => This.Impl'Access,
+            Client   => Cli.To_C,
+            Index    => null));
    end Add;
 
    ---------
@@ -55,8 +59,11 @@ package body RCL.Impl.Wait is
    procedure Add (This : aliased in out Set;
                   Srv  : aliased in out Services.Impl.C_Service) is
    begin
-      null;
-      --  FIXME Check (Rcl_Wait_Set_Add_Service (This.Impl'Access, Srv.To_C));
+      Check
+        (Rcl_Wait_Set_Add_Service
+           (Wait_Set => This.Impl'Access,
+            Service  => Srv.To_C,
+            Index    => null));
    end Add;
 
    ---------
@@ -66,8 +73,11 @@ package body RCL.Impl.Wait is
    procedure Add (This : aliased in out Set;
                   Sub  : Aliased in out Subscriptions.Impl.C_Subscription) is
    begin
-      null;
-      --  FIXME Check (Rcl_Wait_Set_Add_Subscription (This.Impl'Access, Sub.Impl'Access));
+      Check
+        (Rcl_Wait_Set_Add_Subscription
+           (Wait_Set     => This.Impl'Access,
+            Subscription => Sub.Impl'Access,
+            Index        => null));
    end Add;
 
    ---------
@@ -78,8 +88,11 @@ package body RCL.Impl.Wait is
                   Timer : Aliased in out Timers.Timer)
    is
    begin
-      null;
-      --  FIXME Check (Rcl_Wait_Set_Add_Timer (This.Impl'Access, Timers.Impl.To_C (Timer)));
+      Check
+        (Rcl_Wait_Set_Add_Timer
+           (Wait_Set => This.Impl'Access,
+            Timer    => Timers.Impl.To_C (Timer),
+            Index    => Null));
    end Add;
 
 

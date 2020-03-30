@@ -43,9 +43,9 @@ package body RCL.Publishers is
    --------------
 
    function Is_Valid (This : Publisher) return Boolean is
-   (True); -- FIXME
---    (To_Boolean
---        (Rcl_Publisher_Is_Valid (This.Impl'Access, null)));
+     (To_Boolean
+        (Rcl_Publisher_Is_Valid
+             (Publisher => This.Impl'Access)));
 
    -------------
    -- Publish --
@@ -60,7 +60,9 @@ package body RCL.Publishers is
            (publisher   => This.Impl'Access,
             ros_message => Msg.To_Ptr,
             Allocation  => null));
-      --  FIXME: what about Allocation (new in Crystal)?
+      --  TODO: what about Allocation (new in Crystal)? Seems to be the way
+      --  to pass an allocator. Verify that a plain rcl_allocator_t is the
+      --  expected type here.
    end Publish;
 
 end RCL.Publishers;

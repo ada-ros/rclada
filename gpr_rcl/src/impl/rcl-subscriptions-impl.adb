@@ -4,7 +4,8 @@ with RCL.Nodes.Impl;
 
 with Rcl_Types_H; use Rcl_Types_H;
 
-with Rmw_Types_H; use Rmw_Types_H;
+with Rmw_Ret_Types_H; use Rmw_Ret_Types_H;
+with Rmw_Types_H;     use Rmw_Types_H;
 
 with Rosidl_Generator_C_Message_Type_Support_Struct_H;
 use  Rosidl_Generator_C_Message_Type_Support_Struct_H;
@@ -62,9 +63,11 @@ package body RCL.Subscriptions.Impl is
                               Ros_Message  => Buffer,
                               Message_Info => Impl_Info'Access,
                               Allocation   => null);
-      --  FIXME: what about that allocation parameter (introduced in Crystal)?
+      --  TODO: what about that allocation parameter (introduced in
+      --  Crystal)? Seems to be the way to use a custom allocator, verify
+      --  if rcl_allocator_t is the expected type here.
    begin
-      if false then -- FIXME Ret = RMW_RET_OK then
+      if Ret = RMW_RET_OK then
          Info.Intra_Process := To_Boolean (Impl_Info.From_Intra_Process);
          return True;
       elsif Ret = RCL_RET_SUBSCRIPTION_TAKE_FAILED then

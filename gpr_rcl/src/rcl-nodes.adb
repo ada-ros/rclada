@@ -231,7 +231,7 @@ package body RCL.Nodes is
    begin
       This.Dispatchers.Finalize;
 
-      if TRUE then -- FIXME To_Boolean (Rcl_Node_Is_Valid (This.Impl'Access, null)) then
+      if To_Boolean (Rcl_Node_Is_Valid (This.Impl'Access)) then
          This.Current_Executor.Remove (This);
          Check (Rcl_Node_Fini (This.Impl'Access));
 
