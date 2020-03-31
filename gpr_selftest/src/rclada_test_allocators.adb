@@ -13,7 +13,7 @@ with ROSIDL.Dynamic;
 with ROSIDL.Typesupport;
 
 procedure Rclada_Test_Allocators Is
-   
+
    --  This is the multicore test but using GNAT debug pool as allocator
    --  Sample output for 4 cores:
    --     Total allocated bytes :  8095
@@ -21,43 +21,43 @@ procedure Rclada_Test_Allocators Is
    --     Total physically deallocated bytes :  0
    --     Current Water Mark:  0
    --     High Water Mark:  415
-   
-   use RCL;      
-   
+
+   use RCL;
+
    Pool      : aliased Debug_Pool;
    Allocator : aliased Allocators.Allocator (Pool'Unchecked_Access);
-begin  
-   if Argument_Count < 1 then 
+begin
+   if Argument_Count < 1 then
       Logging.Error ("First argument must be amount of jobs per second");
       return;
    end if;
-   
+
    Allocators.Set_Global_Allocator (Allocator'Unchecked_Access);
    --  This shouldn't be necessary since we are explicitly passing it to
    --  both node and executor. But to err on the safe side...
-   
-   declare      
+
+   declare
       Executor : aliased Executors.Concurrent.Executor;
-      
+
       Node     :         Nodes.Node := Nodes.Init (Name      => Utils.Command_Name,
                                                    Namespace => "/",
-                                                   Options   => 
+                                                   Options   =>
                                                      (Executor  => Executor'Unchecked_Access,
                                                       Allocator => Allocator'Unchecked_Access));
-      
+
       Support  : constant ROSIDl.Typesupport.Message_Support :=
-                   ROSIDL.Typesupport.Get_Message_Support ("std_msgs", "String");  
-      
+                   ROSIDL.Typesupport.Get_Message_Support ("std_msgs", "String");
+
       Topic    : constant String := "/chatter";
-      
+
       Publisher : Publishers.Publisher := Node.Publish (Support, Topic);
-      
+
       Workload  : constant Positive := Positive'Value (Argument (1));
-      
+
       Job_Id    : Positive := 1;
-      
+
       Msg       : ROSIDL.Dynamic.Message := ROSIDL.Dynamic.Init (Support);
-      
+
       ------------------
       -- Publish_Work --
       ------------------
@@ -84,36 +84,36 @@ begin
          delay 1.0;
          Logging.Info (Msg ("data").Get_String & " done");
       end Process_Work;
-      
+
       Test_Period : constant Duration := 10.0;
-      
+
       task Boss is
          entry Start;
       end Boss;
-      
+
       task body Boss is
       begin
          accept Start;
-         
+
          for I in 1 .. Positive (Test_Period) loop
             Publish_Work;
             delay 1.0;
          end loop;
       end Boss;
-      
+
    begin
       Node.Subscribe (Support, Topic, Process_Work'Unrestricted_Access);
       Boss.Start;
-      Executor.Spin (During    => Test_Period);
+      Executor.Spin (During => Test_Period);
       Executor.Shutdown;
-      
+
       Logging.Info ("Test period ended, will dump pool info in 3 seconds...");
-      delay 3.0;      
-   end;   
-   
+      delay 3.0;
+   end;
+
    Pool.Print_Info_Stdout;
-   
-   if Pool.Current_Water_Mark /= 0 then 
+
+   if Pool.Current_Water_Mark /= 0 then
       raise Constraint_Error with "There is leaked memory";
    end if;
 end Rclada_Test_Allocators;

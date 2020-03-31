@@ -20,7 +20,7 @@ package RCL.Contexts is
 
    -- TODO: remove the global context and allow users to manage contexts
    -- manually.
-   function Global_Context return access Context;
+   function Global_Context return not null access Context;
 
 private
 

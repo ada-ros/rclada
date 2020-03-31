@@ -2,6 +2,7 @@ with Ada.Calendar;
 with Ada.Exceptions;
 
 with RCL.Clients.Impl;
+with RCL.Contexts;
 with RCL.Logging;
 with RCL.Publishers.Impl;
 with RCL.Services.Impl;
@@ -214,7 +215,7 @@ package body RCL.Nodes is
            (Node        => This.Impl'Access,
             Name        => To_C (Name).To_Ptr,
             Namespace_U => To_C (Namespace).To_Ptr,
-            Context     => This.Context.To_C,
+            Context     => Contexts.Global_Context.To_C,
             Options     => This.C_Options'Access));
 
       This.Base_Init;
@@ -277,7 +278,7 @@ package body RCL.Nodes is
    ----------------------
 
    function Graph_Node_Names (This : Node) return Utils.String_Arrays.String_Array is
-
+      Unused : aliased Utils.String_Arrays.String_Array;
    begin
       return Arr : aliased Utils.String_Arrays.String_Array do
        Check
@@ -285,7 +286,7 @@ package body RCL.Nodes is
             (node            => This.Impl'Access,
              allocator       => This.Options.Allocator.To_C.all,
              node_names      => Arr.To_C,
-             node_namespaces => null));
+             node_namespaces => Unused.To_C));
          --  TODO: return also namespaces
       end return;
    end Graph_Node_Names;
@@ -478,7 +479,7 @@ package body RCL.Nodes is
    is
    begin
       This.Timer_Assert (Timer);
-      Check (Rcl_Timer_Fini (Timers.Impl.To_C_Var (Timer)));
+      Timers.Impl.Finalize (Timer);
 
       if This.Timer_Exists (Timer) then
          This.Dispatchers.Delete (+Timers.Impl.To_Unique_Addr (Timer));

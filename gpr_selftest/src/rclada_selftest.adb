@@ -6,6 +6,7 @@ with GNAT.Debug_Pools; use GNAT.Debug_Pools;
 
 with RCL.Allocators;
 with RCL.Calendar;
+with RCL.Contexts;
 with RCL.Init;
 with RCL.Logging;
 with RCL.Nodes;
@@ -41,8 +42,12 @@ procedure Rclada_Selftest is
 
       Support : constant ROSIDl.Typesupport.Message_Support :=
                   ROSIDL.Typesupport.Get_Message_Support
-                    ((if Argument_Count >= 1 then Argument (1) else "rosidl_generator_ada"),
-                     (if Argument_Count >= 2 then Argument (2) else "Test"));
+                    ((if Argument_Count >= 1
+                     then ROSIDL.Namespace (Argument (1))
+                     else "rosidl_generator_ada"),
+                     (if Argument_Count >= 2
+                      then Argument (2)
+                      else "Test"));
 
       Topic : constant String := "/rclada_test";
       Node  :          Nodes.Node := Nodes.Init
@@ -117,6 +122,7 @@ procedure Rclada_Selftest is
                Msg ("dynamic_array").As_Array.Element (I).As_Float32 := Float32 (I);
             end loop;
 
+            pragma Assert (Msg ("static_array").As_Array.Length = 8);
             for I in 1 .. Msg ("static_array").As_Array.Length loop
                Msg ("static_array").As_Array.Element (I).As_Int32 := Int32 (I);
             end loop;
@@ -331,9 +337,12 @@ begin
 
    Test;
 
-   --  For some reason this now bombs on exit. Something is going awry during
-   --  finalization. Debug pool detects nothing. Valgrind hints at Calendar.
-   --  Valgrind also complaints about eproxima ??
+   --  The node is finalized on exit of Test. This causes a (harmless?) error at
+   --  https://github.com/ros2/rcl/blob/241f3a5f51e9af93650f418dfd7090e9601a2d80/rcl/src/rcl/timer.c#L216
+   --  with the timer, which is still ticking in the node, so it should
+   --  finalize normally. Indeed removing the finalizatin is reported as a leak,
+   --  and re-doing it is reported as a double-free. So, that's not the problem.
+   --  It might be in the C side? To keep track in future releases (FIXME).
 
    if Use_Debug_Allocator then
       New_Line;
@@ -344,6 +353,9 @@ begin
          raise Constraint_Error with "There is leaked memory";
       end if;
    end if;
+
+   --  Finalize manually and early the global context so user count matches:
+   Contexts.Global_Context.Finalize;
 
    pragma Assert (Init.User_Count = 0, "Remaining user at test end");
 end Rclada_Selftest;

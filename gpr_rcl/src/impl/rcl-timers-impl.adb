@@ -1,4 +1,5 @@
 with RCL.Calendar;
+with RCL.Contexts;
 with RCL.Nodes; -- Full view
 
 package body RCL.Timers.Impl is
@@ -31,7 +32,7 @@ package body RCL.Timers.Impl is
            (Rcl_Timer_Init
               (Timer     => This.Impl'Access,
                Clock     => Default_Clock.To_C,
-               Context   => Node.Context.To_C,
+               Context   => Contexts.Global_Context.To_C,
                Period    => To_Nanoseconds (Period),
                Callback  => null,
                Allocator => Allocator.To_C.all));

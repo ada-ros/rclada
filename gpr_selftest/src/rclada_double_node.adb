@@ -14,8 +14,12 @@ procedure Rclada_Double_Node is
 
    Support : constant ROSIDl.Typesupport.Message_Support :=
                ROSIDL.Typesupport.Get_Message_Support
-                 ((if Argument_Count >= 1 then Argument (1) else "rosidl_generator_ada"),
-                  (if Argument_Count >= 2 then Argument (2) else "Test"));
+                 ((if Argument_Count >= 1
+                  then ROSIDL.Namespace (Argument (1))
+                  else "rosidl_generator_ada"),
+                  (if Argument_Count >= 2
+                   then Argument (2)
+                   else "Test"));
 
    Topic  : constant String := "/rclada_test";
 

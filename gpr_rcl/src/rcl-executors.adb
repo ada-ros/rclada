@@ -1,6 +1,7 @@
 with Ada.Calendar;
 with Ada.Exceptions;
 
+with RCL.Contexts;
 with RCL.Impl.Dispatchers.Maps;
 with RCL.Impl.Wait;
 use RCL.Impl;
@@ -110,7 +111,7 @@ package body RCL.Executors is
       declare
          Set : Impl.Wait.Set :=
                  Impl.Wait.Init (Allocator => This.Allocator,
-                                 Context   => Node.Context.all,
+                                 Context   => Contexts.Global_Context.all,
                                  Callbacks => CBs);
       begin
          Logging.Debug ("Waiting on" & CBs.Length'Img & " callbacks");

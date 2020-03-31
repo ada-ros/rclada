@@ -3,7 +3,6 @@ with Ada.Finalization;
 with RCL.Allocators;
 with RCL.Impl.Dispatchers.Maps;
 with RCL.Clients;
-with RCL.Contexts;
 with RCL.Executors;
 with RCL.Executors.Sequential;
 with RCL.Publishers;
@@ -185,9 +184,6 @@ package RCL.Nodes is
 
    function Allocator (This : Node) return Allocators.Handle;
 
-   function Context (This : aliased in out Node)
-                     return access Contexts.Context;
-
 private
 
    use RCL.Impl;
@@ -249,10 +245,6 @@ private
 
    function Allocator (This : Node) return Allocators.Handle is
      (This.Allocator);
-
-   function Context (This : aliased in out Node)
-                        return access Contexts.Context is
-     (Contexts.Global_Context);
 
    Default_Options  : constant Node_Options := (others => <>);
 

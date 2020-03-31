@@ -65,7 +65,8 @@ package body RCL.Allocators is
                           Size_In_Storage_Elements => Header.Size,
                           Alignment                => 1);
       else
-         raise Program_Error with "Asked to deallocate a null pointer";
+         null;
+--           raise Program_Error with "Asked to deallocate a null pointer";
       end if;
    end Deallocate;
 

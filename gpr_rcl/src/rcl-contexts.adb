@@ -28,7 +28,7 @@ package body RCL.Contexts is
    -- Global_Context --
    --------------------
 
-   function Global_Context return access Context is
+   function Global_Context return not null access Context is
      (The_Context'Access);
 
 end RCL.Contexts;

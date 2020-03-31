@@ -38,7 +38,7 @@ package RCL.Allocators is
    --  Global allocator used through RCL by default  --
 
    function Global_Allocator return Handle;
-   --  This is unless overriden the default ROS2 allocator (regular heap)
+   --  This is, unless overriden, the default ROS2 allocator (regular heap)
 
    procedure Set_Global_Allocator (Alloc : Handle);
 
