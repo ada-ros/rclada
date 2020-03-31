@@ -229,9 +229,6 @@ private
       -- Are derived from Options, no need to initialize
       Allocator   : Allocators.Handle := Allocators.Global_Allocator;
 
-      --  TODO: this should be able to be supplied by users
-      Context     : aliased Contexts.Context;
-
       C_Options   : aliased Rcl_Node_Options_H.Rcl_Node_Options_T;
    end record;
 
@@ -255,7 +252,7 @@ private
 
    function Context (This : aliased in out Node)
                         return access Contexts.Context is
-     (This.Context'Access);
+     (Contexts.Global_Context);
 
    Default_Options  : constant Node_Options := (others => <>);
 

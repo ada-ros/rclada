@@ -2,7 +2,6 @@ with Ada.Calendar;
 with Ada.Exceptions;
 
 with RCL.Clients.Impl;
-with RCL.Init;
 with RCL.Logging;
 with RCL.Publishers.Impl;
 with RCL.Services.Impl;
@@ -206,8 +205,6 @@ package body RCL.Nodes is
                    Options   : Node_Options := Default_Options)
    is
    begin
-      RCL.Init.Initialize (This.Context);
-
       This.Options     := Options;
       This.C_Options   := To_C (Options);
       This.Allocator   := Options.Allocator;
@@ -234,8 +231,6 @@ package body RCL.Nodes is
       if To_Boolean (Rcl_Node_Is_Valid (This.Impl'Access)) then
          This.Current_Executor.Remove (This);
          Check (Rcl_Node_Fini (This.Impl'Access));
-
-         RCL.Init.Shutdown (This.Context);
       else
          Logging.Warn ("Attempt to finalize already finalized node");
       end if;

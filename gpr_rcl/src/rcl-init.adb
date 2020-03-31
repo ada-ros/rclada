@@ -12,11 +12,7 @@ with System.Atomic_Counters; use System.Atomic_Counters;
 
 package body RCL.Init is
 
-   -----------
-   -- Users --
-   -----------
-
-   Users : aliased Atomic_Unsigned := 0;
+   Active_Contexts : aliased Atomic_Unsigned := 0;
    --  Initial value is zero
 
    ----------------
@@ -28,10 +24,12 @@ package body RCL.Init is
       Gnat_Argv : System.Address with Import, Convention => C;
 
       --  TODO: allow using init options and an allocator not the default one
-      Init_Options : aliased Rcl_Init_Options_T;
+      Init_Options : aliased Rcl_Init_Options_T :=
+                       Rcl_Get_Zero_Initialized_Init_Options;
    begin
       Rcutils_Reset_Error;
 
+      --  TODO: allow using a custom allocator instead of the global one.
       Check
         (Rcl_Init_Options_Init
            (Init_Options => Init_Options'Access,
@@ -44,8 +42,7 @@ package body RCL.Init is
             Options => Init_Options'Access,
             Context => Context.To_C));
 
-      Increment (Users);
---        Logging.Warn ("USER COUNT++:" & Users'Img);
+      Increment (Active_Contexts);
    exception
       when E : others =>
          Logging.Warn ("Exception while initializing rcl:");
@@ -62,10 +59,9 @@ package body RCL.Init is
         (Rcl_Shutdown
            (Context => Context.To_C));
 
-      if Decrement (Users) then
+      if Decrement (Active_Contexts) then
          Logging.Shutdown;
       end if;
---        Logging.Warn ("USER COUNT--:" & Users'Img);
    exception
       when E : others =>
          Logging.Warn ("Exception while finalizing rcl:");
@@ -76,6 +72,6 @@ package body RCL.Init is
    -- User_Count --
    ----------------
 
-   function User_Count return Natural is (Natural (Users));
+   function User_Count return Natural is (Natural (Active_Contexts));
 
 end RCL.Init;
