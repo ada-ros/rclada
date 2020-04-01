@@ -15,6 +15,7 @@ package body RCL.Executors.Concurrent is
    -- Call --
    ----------
 
+   overriding
    procedure Call (This : in out Executor;
                    CB   :        Impl.Callbacks.Callback'Class) is
    begin
@@ -34,7 +35,7 @@ package body RCL.Executors.Concurrent is
    -- Shutdown --
    --------------
 
-   procedure Shutdown (This : in out Executor) is
+   overriding procedure Shutdown (This : in out Executor) is
    begin
       Logging.Debug ("Executor shutting down...");
 

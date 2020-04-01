@@ -60,11 +60,11 @@ package RCL.Impl.Dispatchers is
       Success  : Boolean;
    end record;
 
-   procedure Dispatch (This : Client_Dispatcher);
+   overriding procedure Dispatch (This : Client_Dispatcher);
 
-   procedure Finalize (This : in out Client_Dispatcher);
+   overriding procedure Finalize (This : in out Client_Dispatcher);
 
-   function To_Handle (This : Client_Dispatcher) return Handle;
+   overriding function To_Handle (This : Client_Dispatcher) return Handle;
 
    --------------
    -- Services --
@@ -76,11 +76,11 @@ package RCL.Impl.Dispatchers is
       Support  : ROSIDL.Typesupport.Service_Support;
    end record;
 
-   procedure Dispatch (This : Service_Dispatcher);
+   overriding procedure Dispatch (This : Service_Dispatcher);
 
-   procedure Finalize (This : in out Service_Dispatcher);
+   overriding procedure Finalize (This : in out Service_Dispatcher);
 
-   function To_Handle (This : Service_Dispatcher) return Handle;
+   overriding function To_Handle (This : Service_Dispatcher) return Handle;
 
    -------------------
    -- Subscriptions --
@@ -92,11 +92,11 @@ package RCL.Impl.Dispatchers is
       Support      :         ROSIDL.Typesupport.Message_Support;
    end record;
 
-   procedure Dispatch (This : Subscription_Dispatcher);
+   overriding procedure Dispatch (This : Subscription_Dispatcher);
 
-   procedure Finalize (This : in out Subscription_Dispatcher);
+   overriding procedure Finalize (This : in out Subscription_Dispatcher);
 
-   function To_Handle (This : Subscription_Dispatcher) return Handle;
+   overriding function To_Handle (This : Subscription_Dispatcher) return Handle;
 
    ------------
    -- Timers --
@@ -107,11 +107,11 @@ package RCL.Impl.Dispatchers is
       Callback  :         Timers.Callback;
    end record;
 
-   procedure Dispatch (This : Timer_Dispatcher);
+   overriding procedure Dispatch (This : Timer_Dispatcher);
 
-   procedure Finalize (This : in out Timer_Dispatcher);
+   overriding procedure Finalize (This : in out Timer_Dispatcher);
 
-   function To_Handle (This : Timer_Dispatcher) return Handle;
+   overriding function To_Handle (This : Timer_Dispatcher) return Handle;
 
    --  Horrible klunkyness to avoid dynamic allocation while preserving
    --  finalization. Bounded_Holders would have been ideal but it obviously
@@ -157,16 +157,16 @@ private
 
    function Current_Executor (This : Dispatcher'Class) return Executors.Handle;
 
-   function To_Handle (This : Client_Dispatcher) return Handle is
+   overriding function To_Handle (This : Client_Dispatcher) return Handle is
      (+This.Client.To_Unique_Addr);
 
-   function To_Handle (This : Service_Dispatcher) return Handle is
+   overriding function To_Handle (This : Service_Dispatcher) return Handle is
      (+This.Service.To_Unique_Addr);
 
-   function To_Handle (This : Subscription_Dispatcher) return Handle is
+   overriding function To_Handle (This : Subscription_Dispatcher) return Handle is
      (+This.Subscription.To_Unique_Addr);
 
-   function To_Handle (This : Timer_Dispatcher) return Handle is
+   overriding function To_Handle (This : Timer_Dispatcher) return Handle is
      (+Timers.Impl.To_Unique_Addr (This.Timer));
 
 end RCL.Impl.Dispatchers;

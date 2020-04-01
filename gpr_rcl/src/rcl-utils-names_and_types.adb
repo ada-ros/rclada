@@ -8,7 +8,7 @@ with Rcutils_Types_String_Array_H; use Rcutils_Types_String_Array_H;
 package body RCL.Utils.Names_And_Types is
 
    type Iterator is
-     new Iterators.Forward_Iterator With
+     new Iterators.Forward_Iterator with
       record
          V   : access constant Vector;
          Pos : Positive;
@@ -18,13 +18,13 @@ package body RCL.Utils.Names_And_Types is
    -- First --
    -----------
 
-   function First (This : Iterator) return Cursor is (This.V, Positive'First);
+   overriding function First (This : Iterator) return Cursor is (This.V, Positive'First);
 
    ----------
    -- Next --
    ----------
 
-   function Next
+   overriding function Next
      (This   : Iterator;
       Position : Cursor) return Cursor is (This.V, Position.Pos + 1);
 
@@ -87,7 +87,9 @@ package body RCL.Utils.Names_And_Types is
         Address => This.Impl.Types.all'Address;
       --  Binding reports the array of string arrays as a pointer to the first string_array
 
-      Elem  : CS.Chars_Ptr with -- Since we know theres only one element, we can bypass it and just point to the first element in it
+      Elem  : CS.Chars_Ptr with
+      -- Since we know theres only one element, we can bypass it and just point
+      -- to the first element in it.
         Convention => C,
         Import,
         Address => Elems (Pos).data;

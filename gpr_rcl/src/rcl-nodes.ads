@@ -135,7 +135,7 @@ package RCL.Nodes is
                         Callback :        Subscriptions.Callback);
 
    ---------------
-   -- Timer_Add -- et other timer functions
+   -- Timer_Add --
    ---------------
 
    function Timer_Add (This     : in out Node;
@@ -152,7 +152,7 @@ package RCL.Nodes is
    --  Disables (but not deletes) a timer. It can be rearmed with Reset
 
    procedure Timer_Delete (This  : in out Node;
-                           Timer : in Out Timers.Timer);
+                           Timer : in out Timers.Timer);
    --  Entirely removes a timer.
 
    function Timer_Exists (This  : Node;
@@ -219,10 +219,10 @@ private
       Self        : access Node    := Node'Unchecked_Access;
       Dispatchers : Safe_Dispatchers (Node'Access);
 
-      -- Must be initialized
+      --  Must be initialized
       Options     : Node_Options;
 
-      -- Are derived from Options, no need to initialize
+      --  Are derived from Options, no need to initialize
       Allocator   : Allocators.Handle := Allocators.Global_Allocator;
 
       C_Options   : aliased Rcl_Node_Options_H.Rcl_Node_Options_T;

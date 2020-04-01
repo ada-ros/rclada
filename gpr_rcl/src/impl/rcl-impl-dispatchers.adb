@@ -41,7 +41,7 @@ package body RCL.Impl.Dispatchers is
    -- Dispatch --
    --------------
 
-   procedure Dispatch (This : Client_Dispatcher) is
+   overriding procedure Dispatch (This : Client_Dispatcher) is
       use all type Clients.Callback;
       Header : aliased Rmw_Request_Id_T;
    begin
@@ -69,7 +69,7 @@ package body RCL.Impl.Dispatchers is
    -- Dispatch --
    --------------
 
-   procedure Dispatch (This : Service_Dispatcher) is
+   overriding procedure Dispatch (This : Service_Dispatcher) is
       Request  : constant ROSIDL.Dynamic.Shared_Message :=
                    ROSIDL.Dynamic.Init_Shared (This.Support.Request_Support);
 
@@ -94,9 +94,9 @@ package body RCL.Impl.Dispatchers is
    -- Dispatch --
    --------------
 
-   procedure Dispatch (This : Subscription_Dispatcher) is
+   overriding procedure Dispatch (This : Subscription_Dispatcher) is
       Msg  : constant ROSIDL.Dynamic.Shared_Message := ROSIDL.Dynamic.Init_Shared (This.Support);
-        -- (This.Support.Message_Class.Package_Name, This.Support.Message_Class.Message_Name);
+      --  (This.Support.Message_Class.Package_Name, This.Support.Message_Class.Message_Name);
       Info : ROSIDL.Message_Info;
       Sub  : Subscriptions.Impl.C_Subscription := This.Subscription;
    begin
@@ -118,7 +118,7 @@ package body RCL.Impl.Dispatchers is
    -- Dispatch --
    --------------
 
-   procedure Dispatch (This : Timer_Dispatcher) is
+   overriding procedure Dispatch (This : Timer_Dispatcher) is
    begin
       This.Current_Executor.Call
         (Callbacks.Timer_Callback'(Node          => This.Node,
@@ -130,7 +130,7 @@ package body RCL.Impl.Dispatchers is
    -- Finalize --
    --------------
 
-   procedure Finalize (This : in out Client_Dispatcher) is
+   overriding procedure Finalize (This : in out Client_Dispatcher) is
    begin
       Clients.Impl.Finalize (This.Client, This.C_Node);
    end Finalize;
@@ -139,7 +139,7 @@ package body RCL.Impl.Dispatchers is
    -- Finalize --
    --------------
 
-   procedure Finalize (This : in out Service_Dispatcher) is
+   overriding procedure Finalize (This : in out Service_Dispatcher) is
    begin
       Services.Impl.Finalize (This.Service, This.C_Node);
    end Finalize;
@@ -148,7 +148,7 @@ package body RCL.Impl.Dispatchers is
    -- Finalize --
    --------------
 
-   procedure Finalize (This : in out Subscription_Dispatcher) is
+   overriding procedure Finalize (This : in out Subscription_Dispatcher) is
    begin
       Subscriptions.Impl.Finalize (This.Subscription, This.C_Node);
    end Finalize;
@@ -157,7 +157,7 @@ package body RCL.Impl.Dispatchers is
    -- Finalize --
    --------------
 
-   procedure Finalize (This : in out Timer_Dispatcher) is
+   overriding procedure Finalize (This : in out Timer_Dispatcher) is
    begin
       Timers.Impl.Finalize (This.Timer);
    end Finalize;

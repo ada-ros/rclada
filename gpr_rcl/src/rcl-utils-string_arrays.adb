@@ -5,7 +5,7 @@ with RCL.Logging;
 package body RCL.Utils.String_Arrays is
 
    type Iterator is
-     new Iterators.Forward_Iterator With
+     new Iterators.Forward_Iterator with
       record
          Arr : access constant String_Array;
          Pos : Positive;
@@ -15,13 +15,13 @@ package body RCL.Utils.String_Arrays is
    -- First --
    -----------
 
-   function First (This : Iterator) return Cursor is (This.Arr, Positive'First);
+   overriding function First (This : Iterator) return Cursor is (This.Arr, Positive'First);
 
    ----------
    -- Next --
    ----------
 
-   function Next
+   overriding function Next
      (This   : Iterator;
       Position : Cursor) return Cursor is (This.Arr, Position.Pos + 1);
 

@@ -71,7 +71,7 @@ package body RCL.Impl.Wait is
    ---------
 
    procedure Add (This : aliased in out Set;
-                  Sub  : Aliased in out Subscriptions.Impl.C_Subscription) is
+                  Sub  : aliased in out Subscriptions.Impl.C_Subscription) is
    begin
       Check
         (Rcl_Wait_Set_Add_Subscription
@@ -85,14 +85,14 @@ package body RCL.Impl.Wait is
    ---------
 
    procedure Add (This  : aliased in out Set;
-                  Timer : Aliased in out Timers.Timer)
+                  Timer : aliased in out Timers.Timer)
    is
    begin
       Check
         (Rcl_Wait_Set_Add_Timer
            (Wait_Set => This.Impl'Access,
             Timer    => Timers.Impl.To_C (Timer),
-            Index    => Null));
+            Index    => null));
    end Add;
 
 
@@ -152,7 +152,7 @@ package body RCL.Impl.Wait is
    -- Finalize --
    --------------
 
-   procedure Finalize (This : in out Set) is
+   overriding procedure Finalize (This : in out Set) is
    begin
       Check (Rcl_Wait_Set_Fini (This.Impl'Access));
    end Finalize;
@@ -186,7 +186,7 @@ package body RCL.Impl.Wait is
    -- First --
    -----------
 
-   function First (I : Iterator) return Cursor is
+   overriding function First (I : Iterator) return Cursor is
    begin
       return Find_Next_Valid (I.Over.all, (T     => (Kinds'First, 1, System.Null_Address),
                                            Ended => False));
@@ -283,6 +283,7 @@ package body RCL.Impl.Wait is
    -- Next --
    ----------
 
+   overriding
    function Next (I        : Iterator;
                   Position : Cursor) return Cursor is
       (Find_Next_Valid (I.Over.all, Advance (I.Over.all, Position)));

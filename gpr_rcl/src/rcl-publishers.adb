@@ -26,7 +26,7 @@ package body RCL.Publishers is
    -- Finalize --
    --------------
 
-   procedure Finalize (This : in out Publisher) is
+   overriding procedure Finalize (This : in out Publisher) is
    begin
       if This.Is_Valid then
          Check (Rcl_Publisher_Fini (This.Impl'Access,

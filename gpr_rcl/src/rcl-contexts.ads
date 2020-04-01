@@ -18,8 +18,8 @@ package RCL.Contexts is
    overriding procedure Initialize (This : in out Context);
    overriding procedure Finalize   (This : in out Context);
 
-   -- TODO: remove the global context and allow users to manage contexts
-   -- manually.
+   --  TODO: remove the global context and allow users to manage contexts
+   --  manually.
    function Global_Context return not null access Context;
 
 private

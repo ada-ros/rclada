@@ -81,11 +81,11 @@ package body RCL.Impl.Callbacks is
       case Ret is
          when RCL_RET_TIMER_CANCELED =>
             Logging.Warn ("Attempt to call canceled timer");
-            -- Happens once after cancelling, not important
+            --  Happens once after cancelling, not important
          when RMW_RET_OK => -- Should be RCL_RET_OK but generator chokes with unsupported renaming
-           This.User_Callback (This.Node.all,
-                               Temp, -- temporary timer for the callee
-                               Elapsed);
+            This.User_Callback (This.Node.all,
+                                Temp, -- temporary timer for the callee
+                                Elapsed);
          when others =>
             Check (Ret);
       end case;

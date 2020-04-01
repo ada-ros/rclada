@@ -31,7 +31,7 @@ package body RCL.Calendar is
    -- Finalize --
    --------------
 
-   procedure Finalize (This : in out Clock) is
+   overriding procedure Finalize (This : in out Clock) is
    begin
       if This.Inited then
          Check (Rcl_Clock_Fini (This.Impl'Access));

@@ -1,4 +1,4 @@
-package body RCL.Nodes.Impl is   
+package body RCL.Nodes.Impl is
 
    --------------------
    -- Client_Success --
@@ -7,8 +7,8 @@ package body RCL.Nodes.Impl is
    procedure Client_Success (This : in out Node; Client : Dispatchers.Handle) is
    begin
       This.Dispatchers.Client_Success (Client);
-   end Client_Success;   
-   
+   end Client_Success;
+
    -------------------
    -- Get_Callbacks --
    -------------------
@@ -17,7 +17,7 @@ package body RCL.Nodes.Impl is
    begin
       This.Dispatchers.Union (Set);
    end Get_Callbacks;
-   
+
    -------------
    -- Trigger --
    -------------

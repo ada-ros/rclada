@@ -14,7 +14,7 @@ package RCL.Timers is
 
    type Timer (Node : not null access Nodes.Node'Class) is tagged private;
 
-   function "=" (L, R : Timer) return Boolean;
+   overriding function "=" (L, R : Timer) return Boolean;
 
    type Callback is
      access procedure (Node    : in out Nodes.Node'Class;
@@ -42,7 +42,7 @@ private
 
    use all type System.Address;
 
-   function "=" (L, R : Timer) return Boolean is
+   overriding function "=" (L, R : Timer) return Boolean is
      (L.Impl.Impl = R.Impl.Impl);
 
    function To_Duration (Nanoseconds : C.Long) return Duration is

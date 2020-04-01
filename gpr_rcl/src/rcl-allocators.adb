@@ -104,7 +104,7 @@ package body RCL.Allocators is
    is
       Size : constant Stddef_H.Size_T := Element_Count * Element_Size;
       Data : constant Address := Allocate (Size, Pool_Addr);
-      Mem  : constant Storage_Array (1 .. Storage_Offset (Size)) := (others => 0) With
+      Mem  : constant Storage_Array (1 .. Storage_Offset (Size)) := (others => 0) with
         Address    => Data,
         Convention => C;
    begin
@@ -116,7 +116,7 @@ package body RCL.Allocators is
    -- Initialize --
    ----------------
 
-   procedure Initialize (This : in out Allocator) is
+   overriding procedure Initialize (This : in out Allocator) is
    begin
       if This.Get_Pool /= null then
          This.Impl := Rcl_Allocator_T'(Allocate      => Allocate'Access,

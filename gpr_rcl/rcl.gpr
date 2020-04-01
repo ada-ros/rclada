@@ -28,7 +28,8 @@ library project Rcl is
    package Compiler is
       for Switches ("ada") use ("-gnatVa", "-gnatwa", "-g", "-O2", "-gnato",
                                 "-fstack-check", "-gnata", "-gnat12",
-                                "-fPIC");
+                                "-fPIC")
+                               & ROSIDL.Style_Check_Switches;
 
       --  Silence irrelevant warnings
       for Switches ("*_h.ads") use Compiler'Switches ("ada") & ("-gnatwU");

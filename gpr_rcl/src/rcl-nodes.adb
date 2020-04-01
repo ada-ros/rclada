@@ -281,12 +281,12 @@ package body RCL.Nodes is
       Unused : aliased Utils.String_Arrays.String_Array;
    begin
       return Arr : aliased Utils.String_Arrays.String_Array do
-       Check
-         (Rcl_Get_Node_Names
-            (node            => This.Impl'Access,
-             allocator       => This.Options.Allocator.To_C.all,
-             node_names      => Arr.To_C,
-             node_namespaces => Unused.To_C));
+         Check
+           (Rcl_Get_Node_Names
+              (Node            => This.Impl'Access,
+               Allocator       => This.Options.Allocator.To_C.all,
+               Node_Names      => Arr.To_C,
+               Node_Namespaces => Unused.To_C));
          --  TODO: return also namespaces
       end return;
    end Graph_Node_Names;
