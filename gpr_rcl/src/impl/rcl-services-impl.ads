@@ -27,6 +27,6 @@ private
      (This.C'Access);
 
    function To_Unique_Addr (This : C_Service) return System.Address is
-      (This.C.Impl);
+      (This.C.Impl.all'Address);
 
 end RCL.Services.Impl;

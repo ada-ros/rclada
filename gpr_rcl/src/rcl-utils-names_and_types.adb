@@ -88,8 +88,8 @@ package body RCL.Utils.Names_And_Types is
       --  Binding reports the array of string arrays as a pointer to the first string_array
 
       Elem  : CS.Chars_Ptr with
-      -- Since we know theres only one element, we can bypass it and just point
-      -- to the first element in it.
+      --  Since we know theres only one element, we can bypass it and just point
+      --  to the first element in it.
         Convention => C,
         Import,
         Address => Elems (Pos).data;

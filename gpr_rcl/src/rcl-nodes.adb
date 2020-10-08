@@ -505,10 +505,12 @@ package body RCL.Nodes is
    function To_C (Options : Node_Options) return Rcl_Node_Options_T is
       Defaults : constant Rcl_Node_Options_T := Rcl_Node_Get_Default_Options;
    begin
-      return Rcl_Node_Options_T'(Domain_Id            => Defaults.Domain_Id,
-                                 Allocator            => Options.Allocator.To_C.all,
-                                 Use_Global_Arguments => Defaults.Use_Global_Arguments,
-                                 Arguments            => Defaults.Arguments);
+      return Rcl_Node_Options_T'
+        (Domain_Id            => Defaults.Domain_Id,
+         Allocator            => Options.Allocator.To_C.all,
+         Use_Global_Arguments => Defaults.Use_Global_Arguments,
+         Arguments            => Defaults.Arguments,
+         Enable_Rosout        => Defaults.Enable_Rosout);
    end To_C;
 
    --------------------

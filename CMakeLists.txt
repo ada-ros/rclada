@@ -56,7 +56,13 @@ set(_extra_headers
         ${_rcutils_include}/rcutils/types/string_map.h
         ${_rcutils_include}/rcutils/types/uint8_array.h
 
+        ${_rmw_include}/rmw/localhost.h
+        ${_rmw_include}/rmw/message_sequence.h
         ${_rmw_include}/rmw/names_and_types.h
+        ${_rmw_include}/rmw/security_options.h
+        ${_rmw_include}/rmw/serialized_message.h
+        ${_rmw_include}/rmw/topic_endpoint_info.h
+        ${_rmw_include}/rmw/topic_endpoint_info_array.h
         ${_rmw_include}/rmw/types.h
 
         ${_rmw_include}/rmw/init.h

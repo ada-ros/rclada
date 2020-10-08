@@ -1,9 +1,8 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
 limited with rcl_context_h;
-with System;
 with rcl_allocator_h;
 with rcl_types_h;
 limited with rmw_types_h;
@@ -21,26 +20,29 @@ package rcl_guard_condition_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
   --/ Internal rcl guard condition implementation struct.
-   --  skipped empty struct rcl_guard_condition_impl_t
+   type rcl_guard_condition_impl_t is null record;   -- incomplete struct
 
   --/ Handle for a rcl guard condition.
   --/ Context associated with this guard condition.
    type rcl_guard_condition_t is record
-      context : access rcl_context_h.rcl_context_t;  -- /opt/ros/dashing/include/rcl/guard_condition.h:36
-      impl : System.Address;  -- /opt/ros/dashing/include/rcl/guard_condition.h:38
-   end record;
-   pragma Convention (C_Pass_By_Copy, rcl_guard_condition_t);  -- /opt/ros/dashing/include/rcl/guard_condition.h:33
+      context : access rcl_context_h.rcl_context_t;  -- /opt/ros/foxy/include/rcl/guard_condition.h:36
+      impl : access rcl_guard_condition_impl_t;  -- /opt/ros/foxy/include/rcl/guard_condition.h:39
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcl/guard_condition.h:33
 
+  --/ Pointer to the guard condition implementation
   --/ Options available for a rcl guard condition.
   --/ Custom allocator for the guard condition, used for internal allocations.
    type rcl_guard_condition_options_t is record
-      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/dashing/include/rcl/guard_condition.h:45
-   end record;
-   pragma Convention (C_Pass_By_Copy, rcl_guard_condition_options_t);  -- /opt/ros/dashing/include/rcl/guard_condition.h:42
+      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/foxy/include/rcl/guard_condition.h:46
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcl/guard_condition.h:43
 
   --/ Return a rcl_guard_condition_t struct with members set to `NULL`.
-   function rcl_get_zero_initialized_guard_condition return rcl_guard_condition_t;  -- /opt/ros/dashing/include/rcl/guard_condition.h:52
-   pragma Import (C, rcl_get_zero_initialized_guard_condition, "rcl_get_zero_initialized_guard_condition");
+   function rcl_get_zero_initialized_guard_condition return rcl_guard_condition_t  -- /opt/ros/foxy/include/rcl/guard_condition.h:53
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_zero_initialized_guard_condition";
 
   --/ Initialize a rcl guard_condition.
   --*
@@ -85,8 +87,10 @@ package rcl_guard_condition_h is
    function rcl_guard_condition_init
      (guard_condition : access rcl_guard_condition_t;
       context : access rcl_context_h.rcl_context_t;
-      options : rcl_guard_condition_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/guard_condition.h:96
-   pragma Import (C, rcl_guard_condition_init, "rcl_guard_condition_init");
+      options : rcl_guard_condition_options_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/guard_condition.h:97
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_guard_condition_init";
 
   --/ Same as rcl_guard_condition_init(), but reusing an existing rmw handle.
   --*
@@ -127,8 +131,10 @@ package rcl_guard_condition_h is
      (guard_condition : access rcl_guard_condition_t;
       rmw_guard_condition : access constant rmw_types_h.rmw_guard_condition_t;
       context : access rcl_context_h.rcl_context_t;
-      options : rcl_guard_condition_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/guard_condition.h:136
-   pragma Import (C, rcl_guard_condition_init_from_rmw, "rcl_guard_condition_init_from_rmw");
+      options : rcl_guard_condition_options_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/guard_condition.h:137
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_guard_condition_init_from_rmw";
 
   --/ Finalize a rcl_guard_condition_t.
   --*
@@ -150,8 +156,10 @@ package rcl_guard_condition_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_guard_condition_fini (guard_condition : access rcl_guard_condition_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/guard_condition.h:164
-   pragma Import (C, rcl_guard_condition_fini, "rcl_guard_condition_fini");
+   function rcl_guard_condition_fini (guard_condition : access rcl_guard_condition_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/guard_condition.h:165
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_guard_condition_fini";
 
   --/ Return the default options in a rcl_guard_condition_options_t struct.
   --*
@@ -160,8 +168,10 @@ package rcl_guard_condition_h is
   -- * - allocator = rcl_get_default_allocator()
   --  
 
-   function rcl_guard_condition_get_default_options return rcl_guard_condition_options_t;  -- /opt/ros/dashing/include/rcl/guard_condition.h:175
-   pragma Import (C, rcl_guard_condition_get_default_options, "rcl_guard_condition_get_default_options");
+   function rcl_guard_condition_get_default_options return rcl_guard_condition_options_t  -- /opt/ros/foxy/include/rcl/guard_condition.h:176
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_guard_condition_get_default_options";
 
   --/ Trigger a rcl guard condition.
   --*
@@ -186,8 +196,10 @@ package rcl_guard_condition_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_trigger_guard_condition (guard_condition : access rcl_guard_condition_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/guard_condition.h:202
-   pragma Import (C, rcl_trigger_guard_condition, "rcl_trigger_guard_condition");
+   function rcl_trigger_guard_condition (guard_condition : access rcl_guard_condition_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/guard_condition.h:203
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_trigger_guard_condition";
 
   --/ Return the guard condition options.
   --*
@@ -210,8 +222,10 @@ package rcl_guard_condition_h is
   -- * \return rcl guard condition options if successful, otherwise `NULL`
   --  
 
-   function rcl_guard_condition_get_options (guard_condition : access constant rcl_guard_condition_t) return access constant rcl_guard_condition_options_t;  -- /opt/ros/dashing/include/rcl/guard_condition.h:227
-   pragma Import (C, rcl_guard_condition_get_options, "rcl_guard_condition_get_options");
+   function rcl_guard_condition_get_options (guard_condition : access constant rcl_guard_condition_t) return access constant rcl_guard_condition_options_t  -- /opt/ros/foxy/include/rcl/guard_condition.h:228
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_guard_condition_get_options";
 
   --/ Return the rmw guard condition handle.
   --*
@@ -240,7 +254,9 @@ package rcl_guard_condition_h is
   -- * \return rmw guard condition handle if successful, otherwise `NULL`
   --  
 
-   function rcl_guard_condition_get_rmw_handle (guard_condition : access constant rcl_guard_condition_t) return access rmw_types_h.rmw_guard_condition_t;  -- /opt/ros/dashing/include/rcl/guard_condition.h:258
-   pragma Import (C, rcl_guard_condition_get_rmw_handle, "rcl_guard_condition_get_rmw_handle");
+   function rcl_guard_condition_get_rmw_handle (guard_condition : access constant rcl_guard_condition_t) return access rmw_types_h.rmw_guard_condition_t  -- /opt/ros/foxy/include/rcl/guard_condition.h:259
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_guard_condition_get_rmw_handle";
 
 end rcl_guard_condition_h;

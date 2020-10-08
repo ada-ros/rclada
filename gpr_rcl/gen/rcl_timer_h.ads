@@ -1,13 +1,13 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
-with System;
 with x86_64_linux_gnu_bits_stdint_intn_h;
 limited with rcl_time_h;
 limited with rcl_context_h;
 with rcl_allocator_h;
 with rcl_types_h;
+with System;
 with Interfaces.C.Extensions;
 limited with rcl_guard_condition_h;
 
@@ -23,14 +23,14 @@ package rcl_timer_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   --  skipped empty struct rcl_timer_impl_t
+   type rcl_timer_impl_t is null record;   -- incomplete struct
 
   --/ Structure which encapsulates a ROS Timer.
   --/ Private implementation pointer.
    type rcl_timer_t is record
-      impl : System.Address;  -- /opt/ros/dashing/include/rcl/timer.h:40
-   end record;
-   pragma Convention (C_Pass_By_Copy, rcl_timer_t);  -- /opt/ros/dashing/include/rcl/timer.h:37
+      impl : access rcl_timer_impl_t;  -- /opt/ros/foxy/include/rcl/timer.h:40
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcl/timer.h:37
 
   --/ User callback signature for timers.
   --*
@@ -46,12 +46,14 @@ package rcl_timer_h is
   -- * The time since the last callback call is given in nanoseconds.
   --  
 
-   type rcl_timer_callback_t is access procedure (arg1 : access rcl_timer_t; arg2 : x86_64_linux_gnu_bits_stdint_intn_h.int64_t);
-   pragma Convention (C, rcl_timer_callback_t);  -- /opt/ros/dashing/include/rcl/timer.h:56
+   type rcl_timer_callback_t is access procedure (arg1 : access rcl_timer_t; arg2 : x86_64_linux_gnu_bits_stdint_intn_h.int64_t)
+   with Convention => C;  -- /opt/ros/foxy/include/rcl/timer.h:56
 
   --/ Return a zero initialized timer.
-   function rcl_get_zero_initialized_timer return rcl_timer_t;  -- /opt/ros/dashing/include/rcl/timer.h:62
-   pragma Import (C, rcl_get_zero_initialized_timer, "rcl_get_zero_initialized_timer");
+   function rcl_get_zero_initialized_timer return rcl_timer_t  -- /opt/ros/foxy/include/rcl/timer.h:62
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_zero_initialized_timer";
 
   --/ Initialize a timer.
   --*
@@ -146,8 +148,10 @@ package rcl_timer_h is
       context : access rcl_context_h.rcl_context_t;
       period : x86_64_linux_gnu_bits_stdint_intn_h.int64_t;
       callback : rcl_timer_callback_t;
-      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/timer.h:153
-   pragma Import (C, rcl_timer_init, "rcl_timer_init");
+      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/timer.h:153
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_init";
 
   --/ Finalize a timer.
   --*
@@ -176,8 +180,10 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_fini (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/timer.h:190
-   pragma Import (C, rcl_timer_fini, "rcl_timer_fini");
+   function rcl_timer_fini (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/timer.h:190
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_fini";
 
   --/ Call the timer's callback and set the last call time.
   --*
@@ -219,8 +225,10 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_call (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/timer.h:234
-   pragma Import (C, rcl_timer_call, "rcl_timer_call");
+   function rcl_timer_call (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/timer.h:234
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_call";
 
   --/ Retrieve the clock of the timer.
   --*
@@ -244,8 +252,10 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_clock (timer : access rcl_timer_t; clock : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/timer.h:260
-   pragma Import (C, rcl_timer_clock, "rcl_timer_clock");
+   function rcl_timer_clock (timer : access rcl_timer_t; clock : System.Address) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/timer.h:260
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_clock";
 
   --/ Calculates whether or not the timer should be called.
   --*
@@ -273,8 +283,10 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_is_ready (timer : access constant rcl_timer_t; is_ready : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/timer.h:290
-   pragma Import (C, rcl_timer_is_ready, "rcl_timer_is_ready");
+   function rcl_timer_is_ready (timer : access constant rcl_timer_t; is_ready : access Extensions.bool) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/timer.h:290
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_is_ready";
 
   --/ Calculate and retrieve the time until the next call in nanoseconds.
   --*
@@ -307,8 +319,10 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_get_time_until_next_call (timer : access constant rcl_timer_t; time_until_next_call : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/timer.h:325
-   pragma Import (C, rcl_timer_get_time_until_next_call, "rcl_timer_get_time_until_next_call");
+   function rcl_timer_get_time_until_next_call (timer : access constant rcl_timer_t; time_until_next_call : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/timer.h:325
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_get_time_until_next_call";
 
   --/ Retrieve the time since the previous call to rcl_timer_call() occurred.
   --*
@@ -338,8 +352,10 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_get_time_since_last_call (timer : access constant rcl_timer_t; time_since_last_call : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/timer.h:357
-   pragma Import (C, rcl_timer_get_time_since_last_call, "rcl_timer_get_time_since_last_call");
+   function rcl_timer_get_time_since_last_call (timer : access constant rcl_timer_t; time_since_last_call : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/timer.h:357
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_get_time_since_last_call";
 
   --/ Retrieve the period of the timer.
   --*
@@ -360,12 +376,13 @@ package rcl_timer_h is
   -- * \param[out] period the int64_t in which the period is stored
   -- * \return `RCL_RET_OK` if the period was retrieved successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
-  -- * \return `RCL_RET_TIMER_INVALID` if the timer is invalid, or
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_get_period (timer : access constant rcl_timer_t; period : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/timer.h:384
-   pragma Import (C, rcl_timer_get_period, "rcl_timer_get_period");
+   function rcl_timer_get_period (timer : access constant rcl_timer_t; period : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/timer.h:383
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_get_period";
 
   --/ Exchange the period of the timer and return the previous period.
   --*
@@ -390,15 +407,16 @@ package rcl_timer_h is
   -- * \param[out] old_period the int64_t in which the previous period is stored
   -- * \return `RCL_RET_OK` if the period was retrieved successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
-  -- * \return `RCL_RET_TIMER_INVALID` if the timer is invalid, or
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
    function rcl_timer_exchange_period
      (timer : access constant rcl_timer_t;
       new_period : x86_64_linux_gnu_bits_stdint_intn_h.int64_t;
-      old_period : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/timer.h:415
-   pragma Import (C, rcl_timer_exchange_period, "rcl_timer_exchange_period");
+      old_period : access x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/timer.h:413
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_exchange_period";
 
   --/ Return the current timer callback.
   --*
@@ -419,8 +437,10 @@ package rcl_timer_h is
   -- * \return function pointer to the callback, or `NULL` if an error occurred
   --  
 
-   function rcl_timer_get_callback (timer : access constant rcl_timer_t) return rcl_timer_callback_t;  -- /opt/ros/dashing/include/rcl/timer.h:438
-   pragma Import (C, rcl_timer_get_callback, "rcl_timer_get_callback");
+   function rcl_timer_get_callback (timer : access constant rcl_timer_t) return rcl_timer_callback_t  -- /opt/ros/foxy/include/rcl/timer.h:436
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_get_callback";
 
   --/ Exchange the current timer callback and return the current callback.
   --*
@@ -445,8 +465,10 @@ package rcl_timer_h is
   -- * \return function pointer to the old callback, or `NULL` if an error occurred
   --  
 
-   function rcl_timer_exchange_callback (timer : access rcl_timer_t; new_callback : rcl_timer_callback_t) return rcl_timer_callback_t;  -- /opt/ros/dashing/include/rcl/timer.h:465
-   pragma Import (C, rcl_timer_exchange_callback, "rcl_timer_exchange_callback");
+   function rcl_timer_exchange_callback (timer : access rcl_timer_t; new_callback : rcl_timer_callback_t) return rcl_timer_callback_t  -- /opt/ros/foxy/include/rcl/timer.h:463
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_exchange_callback";
 
   --/ Cancel a timer.
   --*
@@ -472,8 +494,10 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_cancel (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/timer.h:493
-   pragma Import (C, rcl_timer_cancel, "rcl_timer_cancel");
+   function rcl_timer_cancel (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/timer.h:491
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_cancel";
 
   --/ Retrieve the canceled state of a timer.
   --*
@@ -496,12 +520,13 @@ package rcl_timer_h is
   -- * \param[out] is_canceled storage for the is canceled bool
   -- * \return `RCL_RET_OK` if the last call time was retrieved successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
-  -- * \return `RCL_RET_TIMER_INVALID` if the timer is invalid, or
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_is_canceled (timer : access constant rcl_timer_t; is_canceled : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/timer.h:522
-   pragma Import (C, rcl_timer_is_canceled, "rcl_timer_is_canceled");
+   function rcl_timer_is_canceled (timer : access constant rcl_timer_t; is_canceled : access Extensions.bool) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/timer.h:519
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_is_canceled";
 
   --/ Reset a timer.
   --*
@@ -525,8 +550,10 @@ package rcl_timer_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_timer_reset (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/timer.h:548
-   pragma Import (C, rcl_timer_reset, "rcl_timer_reset");
+   function rcl_timer_reset (timer : access rcl_timer_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/timer.h:545
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_reset";
 
   --/ Return the allocator for the timer.
   --*
@@ -548,8 +575,10 @@ package rcl_timer_h is
   -- * \return pointer to the allocator, or `NULL` if an error occurred
   --  
 
-   function rcl_timer_get_allocator (timer : access constant rcl_timer_t) return access constant rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/dashing/include/rcl/timer.h:570
-   pragma Import (C, rcl_timer_get_allocator, "rcl_timer_get_allocator");
+   function rcl_timer_get_allocator (timer : access constant rcl_timer_t) return access constant rcl_allocator_h.rcl_allocator_t  -- /opt/ros/foxy/include/rcl/timer.h:569
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_get_allocator";
 
   --/ Retrieve a guard condition used by the timer to wake the waitset when using ROSTime.
   --*
@@ -566,7 +595,9 @@ package rcl_timer_h is
   -- * \return a guard condition pointer.
   --  
 
-   function rcl_timer_get_guard_condition (timer : access constant rcl_timer_t) return access rcl_guard_condition_h.rcl_guard_condition_t;  -- /opt/ros/dashing/include/rcl/timer.h:589
-   pragma Import (C, rcl_timer_get_guard_condition, "rcl_timer_get_guard_condition");
+   function rcl_timer_get_guard_condition (timer : access constant rcl_timer_t) return access rcl_guard_condition_h.rcl_guard_condition_t  -- /opt/ros/foxy/include/rcl/timer.h:588
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_timer_get_guard_condition";
 
 end rcl_timer_h;

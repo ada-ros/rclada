@@ -1,4 +1,4 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
@@ -22,6 +22,6 @@ package rcl_allocator_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   subtype rcl_allocator_t is rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/dashing/include/rcl/allocator.h:25
+   subtype rcl_allocator_t is rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/foxy/include/rcl/allocator.h:25
 
 end rcl_allocator_h;

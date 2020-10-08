@@ -1,4 +1,4 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
@@ -21,6 +21,7 @@ package rcutils_time_h is
    --    return nanoseconds / (1000 * 1000);
    --  arg-macro: function RCUTILS_NS_TO_US (nanoseconds)
    --    return nanoseconds / 1000;
+   --  unsupported macro: RCUTILS_STEADY_TIME rcutils_steady_time_now
   -- Copyright 2015 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
   -- you may not use this file except in compliance with the License.
@@ -37,11 +38,12 @@ package rcutils_time_h is
   --/ Convenience macro to convert nanoseconds to seconds.
   --/ Convenience macro to convert nanoseconds to milliseconds.
   --/ Convenience macro to convert nanoseconds to microseconds.
+  --/ Convenience macro for rcutils_steady_time_now(rcutils_time_point_value_t *).
   --/ A single point in time, measured in nanoseconds since the Unix epoch.
-   subtype rcutils_time_point_value_t is x86_64_linux_gnu_bits_stdint_intn_h.int64_t;  -- /opt/ros/dashing/include/rcutils/time.h:44
+   subtype rcutils_time_point_value_t is x86_64_linux_gnu_bits_stdint_intn_h.int64_t;  -- /opt/ros/foxy/include/rcutils/time.h:46
 
   --/ A duration of time, measured in nanoseconds.
-   subtype rcutils_duration_value_t is x86_64_linux_gnu_bits_stdint_intn_h.int64_t;  -- /opt/ros/dashing/include/rcutils/time.h:46
+   subtype rcutils_duration_value_t is x86_64_linux_gnu_bits_stdint_intn_h.int64_t;  -- /opt/ros/foxy/include/rcutils/time.h:48
 
   --*
   -- * This function returns the time from a system clock.
@@ -66,8 +68,10 @@ package rcutils_time_h is
   -- * \return `RCUTILS_RET_ERROR` if an unspecified error occur.
   --  
 
-   function rcutils_system_time_now (now : access rcutils_time_point_value_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/time.h:73
-   pragma Import (C, rcutils_system_time_now, "rcutils_system_time_now");
+   function rcutils_system_time_now (now : access rcutils_time_point_value_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t  -- /opt/ros/foxy/include/rcutils/time.h:75
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcutils_system_time_now";
 
   --/ Retrieve the current time as a rcutils_time_point_value_t object.
   --*
@@ -93,8 +97,10 @@ package rcutils_time_h is
   -- * \return `RCUTILS_RET_ERROR` if an unspecified error occur.
   --  
 
-   function rcutils_steady_time_now (now : access rcutils_time_point_value_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/time.h:101
-   pragma Import (C, rcutils_steady_time_now, "rcutils_steady_time_now");
+   function rcutils_steady_time_now (now : access rcutils_time_point_value_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t  -- /opt/ros/foxy/include/rcutils/time.h:103
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcutils_steady_time_now";
 
   --/ Return a time point as nanoseconds in a string.
   --*
@@ -131,8 +137,10 @@ package rcutils_time_h is
    function rcutils_time_point_value_as_nanoseconds_string
      (time_point : access rcutils_time_point_value_t;
       str : Interfaces.C.Strings.chars_ptr;
-      str_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/time.h:137
-   pragma Import (C, rcutils_time_point_value_as_nanoseconds_string, "rcutils_time_point_value_as_nanoseconds_string");
+      str_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t  -- /opt/ros/foxy/include/rcutils/time.h:139
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcutils_time_point_value_as_nanoseconds_string";
 
   --/ Return a time point as floating point seconds in a string.
   --*
@@ -169,7 +177,9 @@ package rcutils_time_h is
    function rcutils_time_point_value_as_seconds_string
      (time_point : access rcutils_time_point_value_t;
       str : Interfaces.C.Strings.chars_ptr;
-      str_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t;  -- /opt/ros/dashing/include/rcutils/time.h:176
-   pragma Import (C, rcutils_time_point_value_as_seconds_string, "rcutils_time_point_value_as_seconds_string");
+      str_size : stddef_h.size_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t  -- /opt/ros/foxy/include/rcutils/time.h:178
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcutils_time_point_value_as_seconds_string";
 
 end rcutils_time_h;

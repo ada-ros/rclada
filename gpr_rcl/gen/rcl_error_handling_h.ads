@@ -1,4 +1,4 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
@@ -30,8 +30,8 @@ package rcl_error_handling_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
   --/ The error handling in RCL is just an alias to the error handling in rcutils.
-   subtype rcl_error_state_t is rcutils_error_handling_h.rcutils_error_state_t;  -- /opt/ros/dashing/include/rcl/error_handling.h:22
+   subtype rcl_error_state_t is rcutils_error_handling_h.rcutils_error_state_t;  -- /opt/ros/foxy/include/rcl/error_handling.h:22
 
-   subtype rcl_error_string_t is rcutils_error_handling_h.rcutils_error_string_t;  -- /opt/ros/dashing/include/rcl/error_handling.h:23
+   subtype rcl_error_string_t is rcutils_error_handling_h.rcutils_error_string_t;  -- /opt/ros/foxy/include/rcl/error_handling.h:23
 
 end rcl_error_handling_h;

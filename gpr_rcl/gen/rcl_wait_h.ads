@@ -1,4 +1,4 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
@@ -14,6 +14,7 @@ limited with rcl_client_h;
 limited with rcl_service_h;
 limited with rcl_event_h;
 with x86_64_linux_gnu_bits_stdint_intn_h;
+with Interfaces.C.Extensions;
 
 package rcl_wait_h is
 
@@ -27,36 +28,44 @@ package rcl_wait_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   --  skipped empty struct rcl_wait_set_impl_t
+   type rcl_wait_set_impl_t is null record;   -- incomplete struct
 
   --/ Container for subscription's, guard condition's, etc to be waited on.
   --/ Storage for subscription pointers.
    type rcl_wait_set_t is record
-      subscriptions : System.Address;  -- /opt/ros/dashing/include/rcl/wait.h:42
-      size_of_subscriptions : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rcl/wait.h:43
-      guard_conditions : System.Address;  -- /opt/ros/dashing/include/rcl/wait.h:45
-      size_of_guard_conditions : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rcl/wait.h:46
-      timers : System.Address;  -- /opt/ros/dashing/include/rcl/wait.h:48
-      size_of_timers : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rcl/wait.h:49
-      clients : System.Address;  -- /opt/ros/dashing/include/rcl/wait.h:51
-      size_of_clients : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rcl/wait.h:52
-      services : System.Address;  -- /opt/ros/dashing/include/rcl/wait.h:54
-      size_of_services : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rcl/wait.h:55
-      events : System.Address;  -- /opt/ros/dashing/include/rcl/wait.h:57
-      size_of_events : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rcl/wait.h:58
-      impl : System.Address;  -- /opt/ros/dashing/include/rcl/wait.h:60
-   end record;
-   pragma Convention (C_Pass_By_Copy, rcl_wait_set_t);  -- /opt/ros/dashing/include/rcl/wait.h:39
+      subscriptions : System.Address;  -- /opt/ros/foxy/include/rcl/wait.h:42
+      size_of_subscriptions : aliased stddef_h.size_t;  -- /opt/ros/foxy/include/rcl/wait.h:44
+      guard_conditions : System.Address;  -- /opt/ros/foxy/include/rcl/wait.h:46
+      size_of_guard_conditions : aliased stddef_h.size_t;  -- /opt/ros/foxy/include/rcl/wait.h:48
+      timers : System.Address;  -- /opt/ros/foxy/include/rcl/wait.h:50
+      size_of_timers : aliased stddef_h.size_t;  -- /opt/ros/foxy/include/rcl/wait.h:52
+      clients : System.Address;  -- /opt/ros/foxy/include/rcl/wait.h:54
+      size_of_clients : aliased stddef_h.size_t;  -- /opt/ros/foxy/include/rcl/wait.h:56
+      services : System.Address;  -- /opt/ros/foxy/include/rcl/wait.h:58
+      size_of_services : aliased stddef_h.size_t;  -- /opt/ros/foxy/include/rcl/wait.h:60
+      events : System.Address;  -- /opt/ros/foxy/include/rcl/wait.h:62
+      size_of_events : aliased stddef_h.size_t;  -- /opt/ros/foxy/include/rcl/wait.h:64
+      impl : access rcl_wait_set_impl_t;  -- /opt/ros/foxy/include/rcl/wait.h:66
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcl/wait.h:39
 
+  --/ Number of subscriptions
   --/ Storage for guard condition pointers.
+  --/ Number of guard_conditions
   --/ Storage for timer pointers.
+  --/ Number of timers
   --/ Storage for client pointers.
+  --/ Number of clients
   --/ Storage for service pointers.
+  --/ Number of services
   --/ Storage for event pointers.
+  --/ Number of events
   --/ Implementation specific storage.
   --/ Return a rcl_wait_set_t struct with members set to `NULL`.
-   function rcl_get_zero_initialized_wait_set return rcl_wait_set_t;  -- /opt/ros/dashing/include/rcl/wait.h:67
-   pragma Import (C, rcl_get_zero_initialized_wait_set, "rcl_get_zero_initialized_wait_set");
+   function rcl_get_zero_initialized_wait_set return rcl_wait_set_t  -- /opt/ros/foxy/include/rcl/wait.h:73
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_zero_initialized_wait_set";
 
   --/ Initialize a rcl wait set with space for items to be waited on.
   --*
@@ -101,6 +110,7 @@ package rcl_wait_h is
   -- * \param[in] number_of_timers non-zero size of the timers set
   -- * \param[in] number_of_clients non-zero size of the clients set
   -- * \param[in] number_of_services non-zero size of the services set
+  -- * \param[in] number_of_events non-zero size of the events set
   -- * \param[in] context the context that the wait set should be associated with
   -- * \param[in] allocator the allocator to use when allocating space in the sets
   -- * \return `RCL_RET_OK` if the wait set is initialized successfully, or
@@ -108,6 +118,7 @@ package rcl_wait_h is
   -- * \return `RCL_RET_NOT_INIT` if the given context is invalid, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_BAD_ALLOC` if allocating memory failed, or
+  -- * \return `RCL_RET_WAIT_SET_INVALID` if the wait set is not destroyed properly, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
@@ -120,8 +131,10 @@ package rcl_wait_h is
       number_of_services : stddef_h.size_t;
       number_of_events : stddef_h.size_t;
       context : access rcl_context_h.rcl_context_t;
-      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/wait.h:124
-   pragma Import (C, rcl_wait_set_init, "rcl_wait_set_init");
+      allocator : rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/wait.h:132
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_wait_set_init";
 
   --/ Finalize a rcl wait set.
   --*
@@ -146,11 +159,14 @@ package rcl_wait_h is
   -- * \param[inout] wait_set the wait set struct to be finalized.
   -- * \return `RCL_RET_OK` if the finalization was successful, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_WAIT_SET_INVALID` if the wait set is not destroyed properly, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_wait_set_fini (wait_set : access rcl_wait_set_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/wait.h:163
-   pragma Import (C, rcl_wait_set_fini, "rcl_wait_set_fini");
+   function rcl_wait_set_fini (wait_set : access rcl_wait_set_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/wait.h:172
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_wait_set_fini";
 
   --/ Retrieve the wait set's allocator.
   --*
@@ -169,11 +185,14 @@ package rcl_wait_h is
   -- * \param[out] allocator the rcl_allocator_t struct to which the result is copied
   -- * \return `RCL_RET_OK` if the allocator was successfully retrieved, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_WAIT_SET_INVALID` if the wait set is invalid, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_wait_set_get_allocator (wait_set : access constant rcl_wait_set_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/wait.h:187
-   pragma Import (C, rcl_wait_set_get_allocator, "rcl_wait_set_get_allocator");
+   function rcl_wait_set_get_allocator (wait_set : access constant rcl_wait_set_t; allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/wait.h:197
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_wait_set_get_allocator";
 
   --/ Store a pointer to the given subscription in the next empty spot in the set.
   --*
@@ -205,8 +224,10 @@ package rcl_wait_h is
    function rcl_wait_set_add_subscription
      (wait_set : access rcl_wait_set_t;
       subscription : access constant rcl_subscription_h.rcl_subscription_t;
-      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/wait.h:218
-   pragma Import (C, rcl_wait_set_add_subscription, "rcl_wait_set_add_subscription");
+      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/wait.h:228
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_wait_set_add_subscription";
 
   --/ Remove (sets to `NULL`) all entities in the wait set.
   --*
@@ -232,8 +253,10 @@ package rcl_wait_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_wait_set_clear (wait_set : access rcl_wait_set_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/wait.h:249
-   pragma Import (C, rcl_wait_set_clear, "rcl_wait_set_clear");
+   function rcl_wait_set_clear (wait_set : access rcl_wait_set_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/wait.h:259
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_wait_set_clear";
 
   --/ Reallocate space for entities in the wait set.
   --*
@@ -267,6 +290,7 @@ package rcl_wait_h is
   -- * \param[in] timers_size a size for the new timers set
   -- * \param[in] clients_size a size for the new clients set
   -- * \param[in] services_size a size for the new services set
+  -- * \param[in] events_size a size for the new events set
   -- * \return `RCL_RET_OK` if resized successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_BAD_ALLOC` if allocating memory failed, or
@@ -280,8 +304,10 @@ package rcl_wait_h is
       timers_size : stddef_h.size_t;
       clients_size : stddef_h.size_t;
       services_size : stddef_h.size_t;
-      events_size : stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/wait.h:291
-   pragma Import (C, rcl_wait_set_resize, "rcl_wait_set_resize");
+      events_size : stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/wait.h:302
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_wait_set_resize";
 
   --/ Store a pointer to the guard condition in the next empty spot in the set.
   --*
@@ -292,8 +318,10 @@ package rcl_wait_h is
    function rcl_wait_set_add_guard_condition
      (wait_set : access rcl_wait_set_t;
       guard_condition : access constant rcl_guard_condition_h.rcl_guard_condition_t;
-      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/wait.h:308
-   pragma Import (C, rcl_wait_set_add_guard_condition, "rcl_wait_set_add_guard_condition");
+      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/wait.h:319
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_wait_set_add_guard_condition";
 
   --/ Store a pointer to the timer in the next empty spot in the set.
   --*
@@ -304,8 +332,10 @@ package rcl_wait_h is
    function rcl_wait_set_add_timer
      (wait_set : access rcl_wait_set_t;
       timer : access constant rcl_timer_h.rcl_timer_t;
-      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/wait.h:321
-   pragma Import (C, rcl_wait_set_add_timer, "rcl_wait_set_add_timer");
+      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/wait.h:332
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_wait_set_add_timer";
 
   --/ Store a pointer to the client in the next empty spot in the set.
   --*
@@ -316,8 +346,10 @@ package rcl_wait_h is
    function rcl_wait_set_add_client
      (wait_set : access rcl_wait_set_t;
       client : access constant rcl_client_h.rcl_client_t;
-      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/wait.h:334
-   pragma Import (C, rcl_wait_set_add_client, "rcl_wait_set_add_client");
+      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/wait.h:345
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_wait_set_add_client";
 
   --/ Store a pointer to the service in the next empty spot in the set.
   --*
@@ -328,8 +360,10 @@ package rcl_wait_h is
    function rcl_wait_set_add_service
      (wait_set : access rcl_wait_set_t;
       service : access constant rcl_service_h.rcl_service_t;
-      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/wait.h:347
-   pragma Import (C, rcl_wait_set_add_service, "rcl_wait_set_add_service");
+      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/wait.h:358
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_wait_set_add_service";
 
   --/ Store a pointer to the event in the next empty spot in the set.
   --*
@@ -340,8 +374,10 @@ package rcl_wait_h is
    function rcl_wait_set_add_event
      (wait_set : access rcl_wait_set_t;
       event : access constant rcl_event_h.rcl_event_t;
-      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/wait.h:360
-   pragma Import (C, rcl_wait_set_add_event, "rcl_wait_set_add_event");
+      index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/wait.h:371
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_wait_set_add_event";
 
   --/ Block until the wait set is ready or until the timeout has been exceeded.
   --*
@@ -436,7 +472,34 @@ package rcl_wait_h is
   -- * \return `RCL_RET_ERROR` an unspecified error occur.
   --  
 
-   function rcl_wait (wait_set : access rcl_wait_set_t; timeout : x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/wait.h:460
-   pragma Import (C, rcl_wait, "rcl_wait");
+   function rcl_wait (wait_set : access rcl_wait_set_t; timeout : x86_64_linux_gnu_bits_stdint_intn_h.int64_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/wait.h:471
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_wait";
+
+  --/ Return `true` if the wait set is valid, else `false`.
+  --*
+  -- * A wait set is invalid if:
+  -- *   - the implementation is `NULL` (rcl_wait_set_init not called or failed)
+  -- *   - the wait set has been finalized with rcl_wait_set_fini
+  -- *
+  -- * Also return `false` if the wait set pointer is `NULL`.
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | No
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Yes
+  -- *
+  -- * \param[in] wait_set the rcl_wait_set_t to be validated
+  -- * \return `true` if the wait_set is valid, otherwise `false`.
+  --  
+
+   function rcl_wait_set_is_valid (wait_set : access constant rcl_wait_set_t) return Extensions.bool  -- /opt/ros/foxy/include/rcl/wait.h:494
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_wait_set_is_valid";
 
 end rcl_wait_h;

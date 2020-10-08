@@ -1,4 +1,4 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
@@ -10,7 +10,7 @@ with rcl_types_h;
 
 package rcl_node_options_h is
 
-   --  unsupported macro: RCL_NODE_OPTIONS_DEFAULT_DOMAIN_ID SIZE_MAX
+   --  unsupported macro: RCL_NODE_OPTIONS_DEFAULT_DOMAIN_ID RCL_DEFAULT_DOMAIN_ID
   -- Copyright 2019 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
   -- you may not use this file except in compliance with the License.
@@ -40,16 +40,18 @@ package rcl_node_options_h is
   --    
 
    type rcl_node_options_t is record
-      domain_id : aliased stddef_h.size_t;  -- /opt/ros/dashing/include/rcl/node_options.h:50
-      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/dashing/include/rcl/node_options.h:53
-      use_global_arguments : aliased Extensions.bool;  -- /opt/ros/dashing/include/rcl/node_options.h:56
-      arguments : aliased rcl_arguments_h.rcl_arguments_t;  -- /opt/ros/dashing/include/rcl/node_options.h:59
-   end record;
-   pragma Convention (C_Pass_By_Copy, rcl_node_options_t);  -- /opt/ros/dashing/include/rcl/node_options.h:30
+      domain_id : aliased stddef_h.size_t;  -- /opt/ros/foxy/include/rcl/node_options.h:52
+      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/foxy/include/rcl/node_options.h:55
+      use_global_arguments : aliased Extensions.bool;  -- /opt/ros/foxy/include/rcl/node_options.h:58
+      arguments : aliased rcl_arguments_h.rcl_arguments_t;  -- /opt/ros/foxy/include/rcl/node_options.h:61
+      enable_rosout : aliased Extensions.bool;  -- /opt/ros/foxy/include/rcl/node_options.h:64
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcl/node_options.h:32
 
   --/ Custom allocator used for internal allocations.
   --/ If false then only use arguments in this struct, otherwise use global arguments also.
   --/ Command line arguments that apply only to this node.
+  --/ Flag to enable rosout for this node
   --/ Return the default node options in a rcl_node_options_t.
   --*
   -- * The default values are:
@@ -57,11 +59,14 @@ package rcl_node_options_h is
   -- * - domain_id = RCL_NODE_OPTIONS_DEFAULT_DOMAIN_ID
   -- * - allocator = rcl_get_default_allocator()
   -- * - use_global_arguments = true
+  -- * - enable_rosout = true
   -- * - arguments = rcl_get_zero_initialized_arguments()
   --  
 
-   function rcl_node_get_default_options return rcl_node_options_t;  -- /opt/ros/dashing/include/rcl/node_options.h:73
-   pragma Import (C, rcl_node_get_default_options, "rcl_node_get_default_options");
+   function rcl_node_get_default_options return rcl_node_options_t  -- /opt/ros/foxy/include/rcl/node_options.h:79
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_get_default_options";
 
   --/ Copy one options structure into another.
   --*
@@ -82,8 +87,10 @@ package rcl_node_options_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_node_options_copy (options : access constant rcl_node_options_t; options_out : access rcl_node_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/node_options.h:96
-   pragma Import (C, rcl_node_options_copy, "rcl_node_options_copy");
+   function rcl_node_options_copy (options : access constant rcl_node_options_t; options_out : access rcl_node_options_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/node_options.h:102
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_options_copy";
 
   --/ Finalize the given node_options.
   --*
@@ -98,13 +105,15 @@ package rcl_node_options_h is
   -- * Uses Atomics       | Yes
   -- * Lock-Free          | Yes
   -- *
-  -- * \param[inout] node_options object to be finalized
+  -- * \param[inout] options object to be finalized
   -- * \return `RCL_RET_OK` if setup is successful, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_node_options_fini (options : access rcl_node_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/node_options.h:121
-   pragma Import (C, rcl_node_options_fini, "rcl_node_options_fini");
+   function rcl_node_options_fini (options : access rcl_node_options_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/node_options.h:127
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_options_fini";
 
 end rcl_node_options_h;

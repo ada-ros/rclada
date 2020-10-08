@@ -1,4 +1,4 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
@@ -21,19 +21,30 @@ package rmw_names_and_types_h is
   -- limitations under the License.
   --/ Associative array of topic or service names and types.
    type rmw_names_and_types_t is record
-      names : aliased rcutils_types_string_array_h.rcutils_string_array_t;  -- /opt/ros/dashing/include/rmw/names_and_types.h:34
-      types : access rcutils_types_string_array_h.rcutils_string_array_t;  -- /opt/ros/dashing/include/rmw/names_and_types.h:36
-   end record;
-   pragma Convention (C_Pass_By_Copy, rmw_names_and_types_t);  -- /opt/ros/dashing/include/rmw/names_and_types.h:32
+      names : aliased rcutils_types_string_array_h.rcutils_string_array_t;  -- /opt/ros/foxy/include/rmw/names_and_types.h:34
+      types : access rcutils_types_string_array_h.rcutils_string_array_t;  -- /opt/ros/foxy/include/rmw/names_and_types.h:36
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rmw/names_and_types.h:32
 
   -- The length of this array is the same as names.size
   --/ Return a rmw_names_and_types_t struct with members initialized to `NULL`.
-   function rmw_get_zero_initialized_names_and_types return rmw_names_and_types_t;  -- /opt/ros/dashing/include/rmw/names_and_types.h:43
-   pragma Import (C, rmw_get_zero_initialized_names_and_types, "rmw_get_zero_initialized_names_and_types");
+   function rmw_get_zero_initialized_names_and_types return rmw_names_and_types_t  -- /opt/ros/foxy/include/rmw/names_and_types.h:43
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rmw_get_zero_initialized_names_and_types";
 
   --/ Check that a rmw_topic_names_and_types_t struct is zero initialized.
-   function rmw_names_and_types_check_zero (names_and_types : access rmw_names_and_types_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/names_and_types.h:49
-   pragma Import (C, rmw_names_and_types_check_zero, "rmw_names_and_types_check_zero");
+  --*
+  -- * Sets error message if names_and_types is not zero initialized
+  -- *
+  -- * \param[in] names_and_types Object to check
+  -- * \return RMW_RET_OK if zero initialized, RMW_RET_INVALID_ARGUMENT otherwise
+  --  
+
+   function rmw_names_and_types_check_zero (names_and_types : access rmw_names_and_types_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/names_and_types.h:55
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rmw_names_and_types_check_zero";
 
   --/ Initialize a rmw_names_and_types_t object.
   --*
@@ -41,6 +52,8 @@ package rmw_names_and_types_h is
   -- * for all the string arrays for the types according to the given size, but
   -- * it does not initialize the string array for each setup of types.
   -- * However, the string arrays for each set of types is zero initialized.
+  -- *
+  -- * If a non RMW_RET_OK return value is returned, the RMW error message will be set
   -- *
   -- * \param[inout] names_and_types object to be initialized
   -- * \param[in] size the number of names and sets of types to be stored
@@ -54,8 +67,10 @@ package rmw_names_and_types_h is
    function rmw_names_and_types_init
      (names_and_types : access rmw_names_and_types_t;
       size : stddef_h.size_t;
-      allocator : access rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/names_and_types.h:69
-   pragma Import (C, rmw_names_and_types_init, "rmw_names_and_types_init");
+      allocator : access rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/names_and_types.h:77
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rmw_names_and_types_init";
 
   --/ Finalize a rmw_names_and_types_t object.
   --*
@@ -68,13 +83,17 @@ package rmw_names_and_types_h is
   -- * The allocator within the rmw_names_and_types_t object is used to deallocate
   -- * memory.
   -- *
+  -- * If a non RMW_RET_OK return value is returned, the RMW error message will be set
+  -- *
   -- * \param[inout] names_and_types object to be finalized
   -- * \returns `RMW_RET_OK` on successfully running the check, or
   -- * \returns `RMW_RET_INVALID_ARGUMENT` if names_and_types is NULL, or
   -- * \returns `RMW_RET_ERROR` when an unspecified error occurs.
   --  
 
-   function rmw_names_and_types_fini (names_and_types : access rmw_names_and_types_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/names_and_types.h:93
-   pragma Import (C, rmw_names_and_types_fini, "rmw_names_and_types_fini");
+   function rmw_names_and_types_fini (names_and_types : access rmw_names_and_types_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/names_and_types.h:103
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rmw_names_and_types_fini";
 
 end rmw_names_and_types_h;

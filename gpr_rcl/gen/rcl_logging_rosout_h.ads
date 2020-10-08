@@ -1,4 +1,4 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
@@ -42,8 +42,10 @@ package rcl_logging_rosout_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_logging_rosout_init (allocator : access constant rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/logging_rosout.h:51
-   pragma Import (C, rcl_logging_rosout_init, "rcl_logging_rosout_init");
+   function rcl_logging_rosout_init (allocator : access constant rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/logging_rosout.h:51
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_logging_rosout_init";
 
   --/ Uninitializes the rcl_logging_rosout features
   --*
@@ -62,8 +64,10 @@ package rcl_logging_rosout_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_logging_rosout_fini return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/logging_rosout.h:73
-   pragma Import (C, rcl_logging_rosout_fini, "rcl_logging_rosout_fini");
+   function rcl_logging_rosout_fini return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/logging_rosout.h:73
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_logging_rosout_fini";
 
   --/ Creates a rosout publisher for a node and registers it to be used by the logging system
   --*
@@ -86,15 +90,16 @@ package rcl_logging_rosout_h is
   -- * Lock-Free          | Yes
   -- *
   -- * \param[in] node a valid rcl_node_t that the publisher will be created on
-  -- * \return `RCL_RET_OK` if the publisher was created successfully, or
-  -- * \return `RCL_RET_ALREADY_INIT` if the publisher has already exists, or
-  -- * \return `RCL_RET_NODE_INVALID` if any arguments are invalid, or
+  -- * \return `RCL_RET_OK` if the logging publisher was created successfully, or
+  -- * \return `RCL_RET_NODE_INVALID` if the argument is invalid, or
   -- * \return `RCL_RET_BAD_ALLOC` if allocating memory failed, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_logging_rosout_init_publisher_for_node (node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/logging_rosout.h:105
-   pragma Import (C, rcl_logging_rosout_init_publisher_for_node, "rcl_logging_rosout_init_publisher_for_node");
+   function rcl_logging_rosout_init_publisher_for_node (node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/logging_rosout.h:104
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_logging_rosout_init_publisher_for_node";
 
   --/ Deregisters a rosout publisher for a node and cleans up allocated resources
   --*
@@ -111,14 +116,16 @@ package rcl_logging_rosout_h is
   -- * Lock-Free          | Yes
   -- *
   -- * \param[in] node a valid rcl_node_t that the publisher will be created on
-  -- * \return `RCL_RET_OK` if the publisher was created successfully, or
+  -- * \return `RCL_RET_OK` if the logging publisher was finalized successfully, or
   -- * \return `RCL_RET_NODE_INVALID` if any arguments are invalid, or
   -- * \return `RCL_RET_BAD_ALLOC` if allocating memory failed, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_logging_rosout_fini_publisher_for_node (node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/logging_rosout.h:131
-   pragma Import (C, rcl_logging_rosout_fini_publisher_for_node, "rcl_logging_rosout_fini_publisher_for_node");
+   function rcl_logging_rosout_fini_publisher_for_node (node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/logging_rosout.h:130
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_logging_rosout_fini_publisher_for_node";
 
   --/ The output handler outputs log messages to rosout topics.
   --*
@@ -141,7 +148,8 @@ package rcl_logging_rosout_h is
   -- * \param[in] severity The severity level
   -- * \param[in] name The name of the logger, must be null terminated c string
   -- * \param[in] timestamp The timestamp for when the log message was made
-  -- * \param[in] log_str The string to be logged
+  -- * \param[in] format The list of arguments to insert into the formatted log message
+  -- * \param[in] args argument for the string format
   --  
 
    procedure rcl_logging_rosout_output_handler
@@ -150,7 +158,9 @@ package rcl_logging_rosout_h is
       name : Interfaces.C.Strings.chars_ptr;
       timestamp : rcutils_time_h.rcutils_time_point_value_t;
       format : Interfaces.C.Strings.chars_ptr;
-      args : access stdio_h.va_list);  -- /opt/ros/dashing/include/rcl/logging_rosout.h:158
-   pragma Import (C, rcl_logging_rosout_output_handler, "rcl_logging_rosout_output_handler");
+      args : access stdio_h.va_list)  -- /opt/ros/foxy/include/rcl/logging_rosout.h:158
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_logging_rosout_output_handler";
 
 end rcl_logging_rosout_h;

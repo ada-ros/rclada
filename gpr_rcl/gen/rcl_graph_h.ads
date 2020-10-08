@@ -1,8 +1,10 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
 with rmw_names_and_types_h;
+with rmw_topic_endpoint_info_h;
+with rmw_topic_endpoint_info_array_h;
 limited with rcl_node_h;
 with rcl_allocator_h;
 with Interfaces.C.Extensions;
@@ -10,11 +12,14 @@ with Interfaces.C.Strings;
 with rcl_types_h;
 with stddef_h;
 limited with rcutils_types_string_array_h;
+limited with rcutils_allocator_h;
 limited with rcl_client_h;
 
 package rcl_graph_h is
 
    --  unsupported macro: rcl_get_zero_initialized_names_and_types rmw_get_zero_initialized_names_and_types
+   --  unsupported macro: rcl_get_zero_initialized_topic_endpoint_info_array rmw_get_zero_initialized_topic_endpoint_info_array
+   --  unsupported macro: rcl_topic_endpoint_info_array_fini rmw_topic_endpoint_info_array_fini
   -- Copyright 2016-2017 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
   -- you may not use this file except in compliance with the License.
@@ -25,7 +30,11 @@ package rcl_graph_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   subtype rcl_names_and_types_t is rmw_names_and_types_h.rmw_names_and_types_t;  -- /opt/ros/dashing/include/rcl/graph.h:35
+   subtype rcl_names_and_types_t is rmw_names_and_types_h.rmw_names_and_types_t;  -- /opt/ros/foxy/include/rcl/graph.h:36
+
+   subtype rcl_topic_endpoint_info_t is rmw_topic_endpoint_info_h.rmw_topic_endpoint_info_t;  -- /opt/ros/foxy/include/rcl/graph.h:37
+
+   subtype rcl_topic_endpoint_info_array_t is rmw_topic_endpoint_info_array_h.rmw_topic_endpoint_info_array_t;  -- /opt/ros/foxy/include/rcl/graph.h:38
 
   --/ Return a list of topic names and types for publishers associated with a node.
   --*
@@ -66,6 +75,9 @@ package rcl_graph_h is
   -- * \return `RCL_RET_OK` if the query was successful, or
   -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_NODE_INVALID_NAME` if the node name is invalid, or
+  -- * \return `RCL_RET_NODE_INVALID_NAMESPACE` if the node namespace is invalid, or
+  -- * \return `RCL_RET_NODE_NAME_NON_EXISTENT` if the node name wasn't found, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
@@ -75,8 +87,10 @@ package rcl_graph_h is
       no_demangle : Extensions.bool;
       node_name : Interfaces.C.Strings.chars_ptr;
       node_namespace : Interfaces.C.Strings.chars_ptr;
-      topic_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/graph.h:83
-   pragma Import (C, rcl_get_publisher_names_and_types_by_node, "rcl_get_publisher_names_and_types_by_node");
+      topic_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:92
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_publisher_names_and_types_by_node";
 
   --/ Return a list of topic names and types for subscriptions associated with a node.
   --*
@@ -112,6 +126,9 @@ package rcl_graph_h is
   -- * \return `RCL_RET_OK` if the query was successful, or
   -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_NODE_INVALID_NAME` if the node name is invalid, or
+  -- * \return `RCL_RET_NODE_INVALID_NAMESPACE` if the node namespace is invalid, or
+  -- * \return `RCL_RET_NODE_NAME_NON_EXISTENT` if the node name wasn't found, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
@@ -121,10 +138,12 @@ package rcl_graph_h is
       no_demangle : Extensions.bool;
       node_name : Interfaces.C.Strings.chars_ptr;
       node_namespace : Interfaces.C.Strings.chars_ptr;
-      topic_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/graph.h:130
-   pragma Import (C, rcl_get_subscriber_names_and_types_by_node, "rcl_get_subscriber_names_and_types_by_node");
+      topic_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:142
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_subscriber_names_and_types_by_node";
 
-  --/ Return a list of service names and types for associated with a node.
+  --/ Return a list of service names and types associated with a node.
   --*
   -- * The `node` parameter must point to a valid node.
   -- *
@@ -137,7 +156,7 @@ package rcl_graph_h is
   -- * \see rcl_get_publisher_names_and_types_by_node for details on the `no_demangle` parameter.
   -- *
   -- * The returned names are not automatically remapped by this function.
-  -- * Attempting to create clients or services using names returned by this function may not
+  -- * Attempting to create service clients using names returned by this function may not
   -- * result in the desired service name being used depending on the remap rules in use.
   -- *
   -- * <hr>
@@ -157,6 +176,9 @@ package rcl_graph_h is
   -- * \return `RCL_RET_OK` if the query was successful, or
   -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_NODE_INVALID_NAME` if the node name is invalid, or
+  -- * \return `RCL_RET_NODE_INVALID_NAMESPACE` if the node namespace is invalid, or
+  -- * \return `RCL_RET_NODE_NAME_NON_EXISTENT` if the node name wasn't found, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
@@ -165,8 +187,59 @@ package rcl_graph_h is
       allocator : access rcl_allocator_h.rcl_allocator_t;
       node_name : Interfaces.C.Strings.chars_ptr;
       node_namespace : Interfaces.C.Strings.chars_ptr;
-      service_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/graph.h:176
-   pragma Import (C, rcl_get_service_names_and_types_by_node, "rcl_get_service_names_and_types_by_node");
+      service_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:191
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_service_names_and_types_by_node";
+
+  --/ Return a list of service client names and types associated with a node.
+  --*
+  -- * The `node` parameter must point to a valid node.
+  -- *
+  -- * The `service_names_and_types` parameter must be allocated and zero initialized.
+  -- * This function allocates memory for the returned list of names and types and so it is the
+  -- * callers responsibility to pass `service_names_and_types` to rcl_names_and_types_fini()
+  -- * when it is no longer needed.
+  -- * Failing to do so will result in leaked memory.
+  -- *
+  -- * \see rcl_get_publisher_names_and_types_by_node for details on the `no_demangle` parameter.
+  -- *
+  -- * The returned names are not automatically remapped by this function.
+  -- * Attempting to create service servers using names returned by this function may not
+  -- * result in the desired service name being used depending on the remap rules in use.
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | Yes
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Maybe [1]
+  -- * <i>[1] implementation may need to protect the data structure with a lock</i>
+  -- *
+  -- * \param[in] node the handle to the node being used to query the ROS graph
+  -- * \param[in] allocator allocator to be used when allocating space for strings
+  -- * \param[in] node_name the node name of the services to return
+  -- * \param[in] node_namespace the node namespace of the services to return
+  -- * \param[out] service_names_and_types list of service client names and their types
+  -- * \return `RCL_RET_OK` if the query was successful, or
+  -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_NODE_INVALID_NAME` if the node name is invalid, or
+  -- * \return `RCL_RET_NODE_INVALID_NAMESPACE` if the node namespace is invalid, or
+  -- * \return `RCL_RET_NODE_NAME_NON_EXISTENT` if the node name wasn't found, or
+  -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
+  --  
+
+   function rcl_get_client_names_and_types_by_node
+     (node : access constant rcl_node_h.rcl_node_t;
+      allocator : access rcl_allocator_h.rcl_allocator_t;
+      node_name : Interfaces.C.Strings.chars_ptr;
+      node_namespace : Interfaces.C.Strings.chars_ptr;
+      service_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:239
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_client_names_and_types_by_node";
 
   --/ Return a list of topic names and their types.
   --*
@@ -200,6 +273,8 @@ package rcl_graph_h is
   -- * \return `RCL_RET_OK` if the query was successful, or
   -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_NODE_INVALID_NAME` if the node name is invalid, or
+  -- * \return `RCL_RET_NODE_INVALID_NAMESPACE` if the node namespace is invalid, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
@@ -207,8 +282,10 @@ package rcl_graph_h is
      (node : access constant rcl_node_h.rcl_node_t;
       allocator : access rcl_allocator_h.rcl_allocator_t;
       no_demangle : Extensions.bool;
-      topic_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/graph.h:220
-   pragma Import (C, rcl_get_topic_names_and_types, "rcl_get_topic_names_and_types");
+      topic_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:285
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_topic_names_and_types";
 
   --/ Return a list of service names and their types.
   --*
@@ -245,8 +322,10 @@ package rcl_graph_h is
    function rcl_get_service_names_and_types
      (node : access constant rcl_node_h.rcl_node_t;
       allocator : access rcl_allocator_h.rcl_allocator_t;
-      service_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/graph.h:260
-   pragma Import (C, rcl_get_service_names_and_types, "rcl_get_service_names_and_types");
+      service_names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:325
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_service_names_and_types";
 
   --/ Initialize a rcl_names_and_types_t object.
   --*
@@ -275,8 +354,10 @@ package rcl_graph_h is
    function rcl_names_and_types_init
      (names_and_types : access rcl_names_and_types_t;
       size : stddef_h.size_t;
-      allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/graph.h:291
-   pragma Import (C, rcl_names_and_types_init, "rcl_names_and_types_init");
+      allocator : access rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:356
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_names_and_types_init";
 
   --/ Finalize a rcl_names_and_types_t object.
   --*
@@ -302,8 +383,10 @@ package rcl_graph_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_names_and_types_fini (names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/graph.h:322
-   pragma Import (C, rcl_names_and_types_fini, "rcl_names_and_types_fini");
+   function rcl_names_and_types_fini (names_and_types : access rcl_names_and_types_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:387
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_names_and_types_fini";
 
   --/ Return a list of available nodes in the ROS graph.
   --*
@@ -345,9 +428,11 @@ package rcl_graph_h is
   -- *
   -- * \param[in] node the handle to the node being used to query the ROS graph
   -- * \param[in] allocator used to control allocation and deallocation of names
-  -- * \param[out] node_names struct storing discovered node names.
-  -- * \param[out] node_namesspaces struct storing discovered node namespaces.
+  -- * \param[out] node_names struct storing discovered node names
+  -- * \param[out] node_namespaces struct storing discovered node namespaces
   -- * \return `RCL_RET_OK` if the query was successful, or
+  -- * \return `RCL_RET_BAD_ALLOC` if an error occurred while allocating memory, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
@@ -355,8 +440,45 @@ package rcl_graph_h is
      (node : access constant rcl_node_h.rcl_node_t;
       allocator : rcl_allocator_h.rcl_allocator_t;
       node_names : access rcutils_types_string_array_h.rcutils_string_array_t;
-      node_namespaces : access rcutils_types_string_array_h.rcutils_string_array_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/graph.h:372
-   pragma Import (C, rcl_get_node_names, "rcl_get_node_names");
+      node_namespaces : access rcutils_types_string_array_h.rcutils_string_array_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:439
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_node_names";
+
+  --/ Return a list of available nodes in the ROS graph, including their enclave names.
+  --*
+  -- * An \ref rcl_get_node_names equivalent, but including in its output the enclave
+  -- * name the node is using.
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | Yes
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Maybe [1]
+  -- * <i>[1] RMW implementation in use may need to protect the data structure with a lock</i>
+  -- *
+  -- * \param[in] node the handle to the node being used to query the ROS graph
+  -- * \param[in] allocator used to control allocation and deallocation of names
+  -- * \param[out] node_names struct storing discovered node names
+  -- * \param[out] node_namespaces struct storing discovered node namespaces
+  -- * \param[out] enclaves struct storing discovered node enclaves
+  -- * \return `RCL_RET_OK` if the query was successful, or
+  -- * \return `RCL_RET_BAD_ALLOC` if an error occurred while allocating memory, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
+  --  
+
+   function rcl_get_node_names_with_enclaves
+     (node : access constant rcl_node_h.rcl_node_t;
+      allocator : rcl_allocator_h.rcl_allocator_t;
+      node_names : access rcutils_types_string_array_h.rcutils_string_array_t;
+      node_namespaces : access rcutils_types_string_array_h.rcutils_string_array_t;
+      enclaves : access rcutils_types_string_array_h.rcutils_string_array_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:472
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_node_names_with_enclaves";
 
   --/ Return the number of publishers on a given topic.
   --*
@@ -399,8 +521,10 @@ package rcl_graph_h is
    function rcl_count_publishers
      (node : access constant rcl_node_h.rcl_node_t;
       topic_name : Interfaces.C.Strings.chars_ptr;
-      count : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/graph.h:418
-   pragma Import (C, rcl_count_publishers, "rcl_count_publishers");
+      count : access stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:519
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_count_publishers";
 
   --/ Return the number of subscriptions on a given topic.
   --*
@@ -443,8 +567,134 @@ package rcl_graph_h is
    function rcl_count_subscribers
      (node : access constant rcl_node_h.rcl_node_t;
       topic_name : Interfaces.C.Strings.chars_ptr;
-      count : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/graph.h:463
-   pragma Import (C, rcl_count_subscribers, "rcl_count_subscribers");
+      count : access stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:564
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_count_subscribers";
+
+  --/ Return a list of all publishers to a topic.
+  --*
+  -- * The `node` parameter must point to a valid node.
+  -- *
+  -- * The `topic_name` parameter must not be `NULL`.
+  -- *
+  -- * When the `no_mangle` parameter is `true`, the provided `topic_name` should be a valid topic name
+  -- * for the middleware (useful when combining ROS with native middleware (e.g. DDS) apps).
+  -- * When the `no_mangle` parameter is `false`, the provided `topic_name` should follow
+  -- * ROS topic name conventions.
+  -- * In either case, the topic name should always be fully qualified.
+  -- *
+  -- * Each element in the `publishers_info` array will contain the node name, node namespace,
+  -- * topic type, gid and the qos profile of the publisher.
+  -- * It is the responsibility of the caller to ensure that `publishers_info` parameter points
+  -- * to a valid struct of type rcl_topic_endpoint_info_array_t.
+  -- * The `count` field inside the struct must be set to 0 and the `info_array` field inside
+  -- * the struct must be set to null.
+  -- * \see rmw_get_zero_initialized_topic_endpoint_info_array
+  -- *
+  -- * The `allocator` will be used to allocate memory to the `info_array` member
+  -- * inside of `publishers_info`.
+  -- * Moreover, every const char * member inside of
+  -- * rmw_topic_endpoint_info_t will be assigned a copied value on allocated memory.
+  -- * \see rmw_topic_endpoint_info_set_node_name and the likes.
+  -- * However, it is the responsibility of the caller to
+  -- * reclaim any allocated resources to `publishers_info` to avoid leaking memory.
+  -- * \see rmw_topic_endpoint_info_array_fini
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | Yes
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Maybe [1]
+  -- * <i>[1] implementation may need to protect the data structure with a lock</i>
+  -- *
+  -- * \param[in] node the handle to the node being used to query the ROS graph
+  -- * \param[in] allocator allocator to be used when allocating space for
+  -- *            the array inside publishers_info
+  -- * \param[in] topic_name the name of the topic in question
+  -- * \param[in] no_mangle if `true`, `topic_name` needs to be a valid middleware topic name,
+  -- *            otherwise it should be a valid ROS topic name
+  -- * \param[out] publishers_info a struct representing a list of publisher information
+  -- * \return `RCL_RET_OK` if the query was successful, or
+  -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_BAD_ALLOC` if memory allocation fails, or
+  -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
+  --  
+
+   function rcl_get_publishers_info_by_topic
+     (node : access constant rcl_node_h.rcl_node_t;
+      allocator : access rcutils_allocator_h.rcutils_allocator_t;
+      topic_name : Interfaces.C.Strings.chars_ptr;
+      no_mangle : Extensions.bool;
+      publishers_info : access rcl_topic_endpoint_info_array_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:623
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_publishers_info_by_topic";
+
+  --/ Return a list of all subscriptions to a topic.
+  --*
+  -- * The `node` parameter must point to a valid node.
+  -- *
+  -- * The `topic_name` parameter must not be `NULL`.
+  -- *
+  -- * When the `no_mangle` parameter is `true`, the provided `topic_name` should be a valid topic name
+  -- * for the middleware (useful when combining ROS with native middleware (e.g. DDS) apps).
+  -- * When the `no_mangle` parameter is `false`, the provided `topic_name` should follow
+  -- * ROS topic name conventions.
+  -- * In either case, the topic name should always be fully qualified.
+  -- *
+  -- * Each element in the `subscriptions_info` array will contain the node name, node namespace,
+  -- * topic type, gid and the qos profile of the subscription.
+  -- * It is the responsibility of the caller to ensure that `subscriptions_info` parameter points
+  -- * to a valid struct of type rcl_topic_endpoint_info_array_t.
+  -- * The `count` field inside the struct must be set to 0 and the `info_array` field inside
+  -- * the struct must be set to null.
+  -- * \see rmw_get_zero_initialized_topic_endpoint_info_array
+  -- *
+  -- * The `allocator` will be used to allocate memory to the `info_array` member
+  -- * inside of `subscriptions_info`.
+  -- * Moreover, every const char * member inside of
+  -- * rmw_topic_endpoint_info_t will be assigned a copied value on allocated memory.
+  -- * \see rmw_topic_endpoint_info_set_node_name and the likes.
+  -- * However, it is the responsibility of the caller to
+  -- * reclaim any allocated resources to `subscriptions_info` to avoid leaking memory.
+  -- * \see rmw_topic_endpoint_info_array_fini
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | Yes
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Maybe [1]
+  -- * <i>[1] implementation may need to protect the data structure with a lock</i>
+  -- *
+  -- * \param[in] node the handle to the node being used to query the ROS graph
+  -- * \param[in] allocator allocator to be used when allocating space for
+  -- *            the array inside publishers_info
+  -- * \param[in] topic_name the name of the topic in question
+  -- * \param[in] no_mangle if `true`, `topic_name` needs to be a valid middleware topic name,
+  -- *            otherwise it should be a valid ROS topic name
+  -- * \param[out] subscriptions_info a struct representing a list of subscriptions information
+  -- * \return `RCL_RET_OK` if the query was successful, or
+  -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_BAD_ALLOC` if memory allocation fails, or
+  -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
+  --  
+
+   function rcl_get_subscriptions_info_by_topic
+     (node : access constant rcl_node_h.rcl_node_t;
+      allocator : access rcutils_allocator_h.rcutils_allocator_t;
+      topic_name : Interfaces.C.Strings.chars_ptr;
+      no_mangle : Extensions.bool;
+      subscriptions_info : access rcl_topic_endpoint_info_array_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:684
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_subscriptions_info_by_topic";
 
   --/ Check if a service server is available for the given service client.
   --*
@@ -485,7 +735,9 @@ package rcl_graph_h is
    function rcl_service_server_is_available
      (node : access constant rcl_node_h.rcl_node_t;
       client : access constant rcl_client_h.rcl_client_t;
-      is_available : access Extensions.bool) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/graph.h:506
-   pragma Import (C, rcl_service_server_is_available, "rcl_service_server_is_available");
+      is_available : access Extensions.bool) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/graph.h:729
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_service_server_is_available";
 
 end rcl_graph_h;

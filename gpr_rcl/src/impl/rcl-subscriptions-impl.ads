@@ -30,7 +30,7 @@ private
    type Node_Access is access all Rcl_Node_T with Storage_Size => 0;
 
    function To_Unique_Addr (This : C_Subscription) return System.Address is
-      (This.Impl.Impl);
+      (This.Impl.Impl.all'Address);
 
 
 end RCL.Subscriptions.Impl;

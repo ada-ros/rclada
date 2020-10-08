@@ -1,4 +1,4 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
@@ -41,8 +41,9 @@ package rcl_lexer_h is
       RCL_LEXEME_TOKEN,
       RCL_LEXEME_FORWARD_SLASH,
       RCL_LEXEME_WILD_ONE,
-      RCL_LEXEME_WILD_MULTI);
-   pragma Convention (C, rcl_lexeme_t);  -- /opt/ros/dashing/include/rcl/lexer.h:31
+      RCL_LEXEME_WILD_MULTI,
+      RCL_LEXEME_DOT)
+   with Convention => C;  -- /opt/ros/foxy/include/rcl/lexer.h:31
 
   --/ Indicates no valid lexeme was found (end of input not reached)
   --/ Indicates end of input has been reached
@@ -50,7 +51,7 @@ package rcl_lexer_h is
   --/ rosservice://
   --/ rostopic://
   --/ :
-  --/ __node
+  --/ __node or __name
   --/ __ns
   --/ :=
   --/ \1
@@ -66,6 +67,9 @@ package rcl_lexer_h is
   --/ /
   --/ *
   --/ **
+  -- TODO(hidmic): remove when parameter names are standardized to
+  --               use slashes in lieu of dots
+  --/ .
   --/ Do lexical analysis on a string.
   --*
   -- * This function analyzes a string to see if it starts with a valid lexeme.
@@ -92,7 +96,9 @@ package rcl_lexer_h is
    function rcl_lexer_analyze
      (text : Interfaces.C.Strings.chars_ptr;
       lexeme : access rcl_lexeme_t;
-      length : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/lexer.h:105
-   pragma Import (C, rcl_lexer_analyze, "rcl_lexer_analyze");
+      length : access stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/lexer.h:109
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_lexer_analyze";
 
 end rcl_lexer_h;

@@ -1,4 +1,4 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
@@ -8,16 +8,16 @@ with rcl_types_h;
 
 package rcl_validate_topic_name_h is
 
-   RCL_TOPIC_NAME_VALID : constant := 0;  --  /opt/ros/dashing/include/rcl/validate_topic_name.h:27
-   RCL_TOPIC_NAME_INVALID_IS_EMPTY_STRING : constant := 1;  --  /opt/ros/dashing/include/rcl/validate_topic_name.h:28
-   RCL_TOPIC_NAME_INVALID_ENDS_WITH_FORWARD_SLASH : constant := 2;  --  /opt/ros/dashing/include/rcl/validate_topic_name.h:29
-   RCL_TOPIC_NAME_INVALID_CONTAINS_UNALLOWED_CHARACTERS : constant := 3;  --  /opt/ros/dashing/include/rcl/validate_topic_name.h:30
-   RCL_TOPIC_NAME_INVALID_NAME_TOKEN_STARTS_WITH_NUMBER : constant := 4;  --  /opt/ros/dashing/include/rcl/validate_topic_name.h:31
-   RCL_TOPIC_NAME_INVALID_UNMATCHED_CURLY_BRACE : constant := 5;  --  /opt/ros/dashing/include/rcl/validate_topic_name.h:32
-   RCL_TOPIC_NAME_INVALID_MISPLACED_TILDE : constant := 6;  --  /opt/ros/dashing/include/rcl/validate_topic_name.h:33
-   RCL_TOPIC_NAME_INVALID_TILDE_NOT_FOLLOWED_BY_FORWARD_SLASH : constant := 7;  --  /opt/ros/dashing/include/rcl/validate_topic_name.h:34
-   RCL_TOPIC_NAME_INVALID_SUBSTITUTION_CONTAINS_UNALLOWED_CHARACTERS : constant := 8;  --  /opt/ros/dashing/include/rcl/validate_topic_name.h:35
-   RCL_TOPIC_NAME_INVALID_SUBSTITUTION_STARTS_WITH_NUMBER : constant := 9;  --  /opt/ros/dashing/include/rcl/validate_topic_name.h:36
+   RCL_TOPIC_NAME_VALID : constant := 0;  --  /opt/ros/foxy/include/rcl/validate_topic_name.h:27
+   RCL_TOPIC_NAME_INVALID_IS_EMPTY_STRING : constant := 1;  --  /opt/ros/foxy/include/rcl/validate_topic_name.h:28
+   RCL_TOPIC_NAME_INVALID_ENDS_WITH_FORWARD_SLASH : constant := 2;  --  /opt/ros/foxy/include/rcl/validate_topic_name.h:29
+   RCL_TOPIC_NAME_INVALID_CONTAINS_UNALLOWED_CHARACTERS : constant := 3;  --  /opt/ros/foxy/include/rcl/validate_topic_name.h:30
+   RCL_TOPIC_NAME_INVALID_NAME_TOKEN_STARTS_WITH_NUMBER : constant := 4;  --  /opt/ros/foxy/include/rcl/validate_topic_name.h:31
+   RCL_TOPIC_NAME_INVALID_UNMATCHED_CURLY_BRACE : constant := 5;  --  /opt/ros/foxy/include/rcl/validate_topic_name.h:32
+   RCL_TOPIC_NAME_INVALID_MISPLACED_TILDE : constant := 6;  --  /opt/ros/foxy/include/rcl/validate_topic_name.h:33
+   RCL_TOPIC_NAME_INVALID_TILDE_NOT_FOLLOWED_BY_FORWARD_SLASH : constant := 7;  --  /opt/ros/foxy/include/rcl/validate_topic_name.h:34
+   RCL_TOPIC_NAME_INVALID_SUBSTITUTION_CONTAINS_UNALLOWED_CHARACTERS : constant := 8;  --  /opt/ros/foxy/include/rcl/validate_topic_name.h:35
+   RCL_TOPIC_NAME_INVALID_SUBSTITUTION_STARTS_WITH_NUMBER : constant := 9;  --  /opt/ros/foxy/include/rcl/validate_topic_name.h:36
 
   -- Copyright 2017 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
@@ -84,13 +84,18 @@ package rcl_validate_topic_name_h is
    function rcl_validate_topic_name
      (topic_name : Interfaces.C.Strings.chars_ptr;
       validation_result : access int;
-      invalid_index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/validate_topic_name.h:92
-   pragma Import (C, rcl_validate_topic_name, "rcl_validate_topic_name");
+      invalid_index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/validate_topic_name.h:92
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_validate_topic_name";
 
   --/ Validate a given topic name.
   --*
   -- * This is an overload with an extra parameter for the length of topic_name.
+  -- * \param[in] topic_name the topic name to be validated, must be null terminated
   -- * \param[in] topic_name_length The number of characters in topic_name.
+  -- * \param[out] validation_result the reason for validation failure, if any
+  -- * \param[out] invalid_index index of violation if the input topic is invalid
   -- *
   -- * \sa rcl_validate_topic_name(const char *, int *, size_t *)
   --  
@@ -99,11 +104,15 @@ package rcl_validate_topic_name_h is
      (topic_name : Interfaces.C.Strings.chars_ptr;
       topic_name_length : stddef_h.size_t;
       validation_result : access int;
-      invalid_index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/validate_topic_name.h:107
-   pragma Import (C, rcl_validate_topic_name_with_size, "rcl_validate_topic_name_with_size");
+      invalid_index : access stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/validate_topic_name.h:110
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_validate_topic_name_with_size";
 
   --/ Return a validation result description, or NULL if unknown or RCL_TOPIC_NAME_VALID.
-   function rcl_topic_name_validation_result_string (validation_result : int) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rcl/validate_topic_name.h:117
-   pragma Import (C, rcl_topic_name_validation_result_string, "rcl_topic_name_validation_result_string");
+   function rcl_topic_name_validation_result_string (validation_result : int) return Interfaces.C.Strings.chars_ptr  -- /opt/ros/foxy/include/rcl/validate_topic_name.h:120
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_topic_name_validation_result_string";
 
 end rcl_validate_topic_name_h;

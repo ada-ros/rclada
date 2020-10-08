@@ -7,8 +7,8 @@ with Rcl_Types_H; use Rcl_Types_H;
 with Rmw_Ret_Types_H; use Rmw_Ret_Types_H;
 with Rmw_Types_H;     use Rmw_Types_H;
 
-with Rosidl_Generator_C_Message_Type_Support_Struct_H;
-use  Rosidl_Generator_C_Message_Type_Support_Struct_H;
+with Rosidl_Runtime_C_Message_Type_Support_Struct_H;
+use  Rosidl_Runtime_C_Message_Type_Support_Struct_H;
 
 package body RCL.Subscriptions.Impl is
 

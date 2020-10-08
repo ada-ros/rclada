@@ -1,9 +1,8 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
 limited with rcl_context_h;
-with System;
 with Interfaces.C.Strings;
 limited with rcl_node_options_h;
 with rcl_types_h;
@@ -24,22 +23,24 @@ package rcl_node_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-   --  skipped empty struct rcl_guard_condition_t
+   type rcl_guard_condition_t is null record;   -- incomplete struct
 
-   --  skipped empty struct rcl_node_impl_t
+   type rcl_node_impl_t is null record;   -- incomplete struct
 
   --/ Structure which encapsulates a ROS Node.
   --/ Context associated with this node.
    type rcl_node_t is record
-      context : access rcl_context_h.rcl_context_t;  -- /opt/ros/dashing/include/rcl/node.h:40
-      impl : System.Address;  -- /opt/ros/dashing/include/rcl/node.h:43
-   end record;
-   pragma Convention (C_Pass_By_Copy, rcl_node_t);  -- /opt/ros/dashing/include/rcl/node.h:37
+      context : access rcl_context_h.rcl_context_t;  -- /opt/ros/foxy/include/rcl/node.h:40
+      impl : access rcl_node_impl_t;  -- /opt/ros/foxy/include/rcl/node.h:43
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcl/node.h:37
 
   --/ Private implementation pointer.
   --/ Return a rcl_node_t struct with members initialized to `NULL`.
-   function rcl_get_zero_initialized_node return rcl_node_t;  -- /opt/ros/dashing/include/rcl/node.h:50
-   pragma Import (C, rcl_get_zero_initialized_node, "rcl_get_zero_initialized_node");
+   function rcl_get_zero_initialized_node return rcl_node_t  -- /opt/ros/foxy/include/rcl/node.h:50
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_zero_initialized_node";
 
   --/ Initialize a ROS node.
   --*
@@ -89,10 +90,12 @@ package rcl_node_h is
   -- * Expected usage:
   -- *
   -- * ```c
+  -- * rcl_context_t context = rcl_get_zero_initialized_context();
+  -- * // ... initialize the context with rcl_init()
   -- * rcl_node_t node = rcl_get_zero_initialized_node();
   -- * rcl_node_options_t node_ops = rcl_node_get_default_options();
   -- * // ... node options customization
-  -- * rcl_ret_t ret = rcl_node_init(&node, "node_name", "/node_ns", &node_ops);
+  -- * rcl_ret_t ret = rcl_node_init(&node, "node_name", "/node_ns", &context, &node_ops);
   -- * // ... error handling and then use the node, but eventually deinitialize it:
   -- * ret = rcl_node_fini(&node);
   -- * // ... error handling for rcl_node_fini()
@@ -108,6 +111,7 @@ package rcl_node_h is
   -- * <i>[1] if `atomic_is_lock_free()` returns true for `atomic_uint_least64_t`</i>
   -- *
   -- * \pre the node handle must be allocated, zero initialized, and invalid
+  -- * \pre the context handle must be allocated, initialized, and valid
   -- * \post the node handle is valid and can be used in other `rcl_*` functions
   -- *
   -- * \param[inout] node a preallocated rcl_node_t
@@ -121,6 +125,7 @@ package rcl_node_h is
   -- *   pass in.
   -- * \return `RCL_RET_OK` if the node was initialized successfully, or
   -- * \return `RCL_RET_ALREADY_INIT` if the node has already be initialized, or
+  -- * \return `RCL_RET_NOT_INIT` if the given context is invalid, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_BAD_ALLOC` if allocating memory failed, or
   -- * \return `RCL_RET_NODE_INVALID_NAME` if the name is invalid, or
@@ -133,16 +138,23 @@ package rcl_node_h is
       name : Interfaces.C.Strings.chars_ptr;
       namespace_u : Interfaces.C.Strings.chars_ptr;
       context : access rcl_context_h.rcl_context_t;
-      options : access constant rcl_node_options_h.rcl_node_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/node.h:141
-   pragma Import (C, rcl_node_init, "rcl_node_init");
+      options : access constant rcl_node_options_h.rcl_node_options_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/node.h:145
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_init";
 
   --/ Finalize a rcl_node_t.
   --*
   -- * Destroys any automatically created infrastructure and deallocates memory.
   -- * After calling, the rcl_node_t can be safely deallocated.
   -- *
-  -- * Any middleware primitives created by the user, e.g. publishers, services, etc.,
-  -- * are invalid after deinitialization.
+  -- * All middleware primitives created by the user, e.g. publishers, services, etc,
+  -- * which were created from this node must be finalized using their respective
+  -- * `rcl_*_fini()` functions before this is called.
+  -- * \sa rcl_publisher_fini()
+  -- * \sa rcl_subscription_fini()
+  -- * \sa rcl_client_fini()
+  -- * \sa rcl_service_fini()
   -- *
   -- * <hr>
   -- * Attribute          | Adherence
@@ -159,8 +171,10 @@ package rcl_node_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_node_fini (node : access rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/node.h:173
-   pragma Import (C, rcl_node_fini, "rcl_node_fini");
+   function rcl_node_fini (node : access rcl_node_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/node.h:182
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_fini";
 
   --/ Return `true` if the node is valid, else `false`.
   --*
@@ -198,8 +212,10 @@ package rcl_node_h is
   -- * \return `true` if the node and allocator are valid, otherwise `false`.
   --  
 
-   function rcl_node_is_valid (node : access constant rcl_node_t) return Extensions.bool;  -- /opt/ros/dashing/include/rcl/node.h:212
-   pragma Import (C, rcl_node_is_valid, "rcl_node_is_valid");
+   function rcl_node_is_valid (node : access constant rcl_node_t) return Extensions.bool  -- /opt/ros/foxy/include/rcl/node.h:221
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_is_valid";
 
   --/ Return true if node is valid, except for the context being valid.
   --*
@@ -211,8 +227,10 @@ package rcl_node_h is
   -- * \sa rcl_node_is_valid()
   --  
 
-   function rcl_node_is_valid_except_context (node : access constant rcl_node_t) return Extensions.bool;  -- /opt/ros/dashing/include/rcl/node.h:225
-   pragma Import (C, rcl_node_is_valid_except_context, "rcl_node_is_valid_except_context");
+   function rcl_node_is_valid_except_context (node : access constant rcl_node_t) return Extensions.bool  -- /opt/ros/foxy/include/rcl/node.h:234
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_is_valid_except_context";
 
   --/ Return the name of the node.
   --*
@@ -237,8 +255,10 @@ package rcl_node_h is
   -- * \return name string if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rcl/node.h:252
-   pragma Import (C, rcl_node_get_name, "rcl_node_get_name");
+   function rcl_node_get_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr  -- /opt/ros/foxy/include/rcl/node.h:261
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_get_name";
 
   --/ Return the namespace of the node.
   --*
@@ -263,8 +283,10 @@ package rcl_node_h is
   -- * \return name string if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_namespace (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rcl/node.h:279
-   pragma Import (C, rcl_node_get_namespace, "rcl_node_get_namespace");
+   function rcl_node_get_namespace (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr  -- /opt/ros/foxy/include/rcl/node.h:288
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_get_namespace";
 
   --/ Return the fully qualified name of the node.
   --*
@@ -285,8 +307,10 @@ package rcl_node_h is
   -- * \return fully qualified name string if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_fully_qualified_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rcl/node.h:302
-   pragma Import (C, rcl_node_get_fully_qualified_name, "rcl_node_get_fully_qualified_name");
+   function rcl_node_get_fully_qualified_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr  -- /opt/ros/foxy/include/rcl/node.h:311
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_get_fully_qualified_name";
 
   --/ Return the rcl node options.
   --*
@@ -311,15 +335,17 @@ package rcl_node_h is
   -- * \return options struct if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_options (node : access constant rcl_node_t) return access constant rcl_node_options_h.rcl_node_options_t;  -- /opt/ros/dashing/include/rcl/node.h:329
-   pragma Import (C, rcl_node_get_options, "rcl_node_get_options");
+   function rcl_node_get_options (node : access constant rcl_node_t) return access constant rcl_node_options_h.rcl_node_options_t  -- /opt/ros/foxy/include/rcl/node.h:338
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_get_options";
 
   --/ Return the ROS domain ID that the node is using.
   --*
   -- * This function returns the ROS domain ID that the node is in.
   -- *
   -- * This function should be used to determine what `domain_id` was used rather
-  -- * than checking the domin_id field in the node options, because if
+  -- * than checking the domain_id field in the node options, because if
   -- * `RCL_NODE_OPTIONS_DEFAULT_DOMAIN_ID` is used when creating the node then
   -- * it is not changed after creation, but this function will return the actual
   -- * `domain_id` used.
@@ -343,32 +369,10 @@ package rcl_node_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_node_get_domain_id (node : access constant rcl_node_t; domain_id : access stddef_h.size_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/node.h:362
-   pragma Import (C, rcl_node_get_domain_id, "rcl_node_get_domain_id");
-
-  --/ Manually assert that this node is alive (for RMW_QOS_POLICY_LIVELINESS_MANUAL_BY_NODE)
-  --*
-  -- * If the rmw Liveliness policy is set to RMW_QOS_POLICY_LIVELINESS_MANUAL_BY_NODE, the creator of
-  -- * this node may manually call `assert_liveliness` at some point in time to signal to the rest
-  -- * of the system that this Node is still alive.
-  -- * This function must be called at least as often as the qos_profile's liveliness_lease_duration
-  -- *
-  -- * <hr>
-  -- * Attribute          | Adherence
-  -- * ------------------ | -------------
-  -- * Allocates Memory   | No
-  -- * Thread-Safe        | Yes
-  -- * Uses Atomics       | No
-  -- * Lock-Free          | Yes
-  -- *
-  -- * \param[in] node handle to the node that needs liveliness to be asserted
-  -- * \return `RCL_RET_OK` if the liveliness assertion was completed successfully, or
-  -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
-  -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
-  --  
-
-   function rcl_node_assert_liveliness (node : access constant rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/node.h:387
-   pragma Import (C, rcl_node_assert_liveliness, "rcl_node_assert_liveliness");
+   function rcl_node_get_domain_id (node : access constant rcl_node_t; domain_id : access stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/node.h:371
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_get_domain_id";
 
   --/ Return the rmw node handle.
   --*
@@ -397,8 +401,10 @@ package rcl_node_h is
   -- * \return rmw node handle if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_rmw_handle (node : access constant rcl_node_t) return access rmw_types_h.rmw_node_t;  -- /opt/ros/dashing/include/rcl/node.h:418
-   pragma Import (C, rcl_node_get_rmw_handle, "rcl_node_get_rmw_handle");
+   function rcl_node_get_rmw_handle (node : access constant rcl_node_t) return access rmw_types_h.rmw_node_t  -- /opt/ros/foxy/include/rcl/node.h:402
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_get_rmw_handle";
 
   --/ Return the associated rcl instance id.
   --*
@@ -425,8 +431,10 @@ package rcl_node_h is
   -- * \return rcl instance id captured during node init or `0` on error
   --  
 
-   function rcl_node_get_rcl_instance_id (node : access constant rcl_node_t) return x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/dashing/include/rcl/node.h:447
-   pragma Import (C, rcl_node_get_rcl_instance_id, "rcl_node_get_rcl_instance_id");
+   function rcl_node_get_rcl_instance_id (node : access constant rcl_node_t) return x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t  -- /opt/ros/foxy/include/rcl/node.h:431
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_get_rcl_instance_id";
 
   --/ Return a guard condition which is triggered when the ROS graph changes.
   --*
@@ -457,8 +465,10 @@ package rcl_node_h is
   -- * \return rcl guard condition handle if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_graph_guard_condition (node : access constant rcl_node_t) return System.Address;  -- /opt/ros/dashing/include/rcl/node.h:480
-   pragma Import (C, rcl_node_get_graph_guard_condition, "rcl_node_get_graph_guard_condition");
+   function rcl_node_get_graph_guard_condition (node : access constant rcl_node_t) return access constant rcl_guard_condition_t  -- /opt/ros/foxy/include/rcl/node.h:464
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_get_graph_guard_condition";
 
   --/ Return the logger name of the node.
   --*
@@ -483,7 +493,9 @@ package rcl_node_h is
   -- * \return logger_name string if successful, otherwise `NULL`
   --  
 
-   function rcl_node_get_logger_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rcl/node.h:507
-   pragma Import (C, rcl_node_get_logger_name, "rcl_node_get_logger_name");
+   function rcl_node_get_logger_name (node : access constant rcl_node_t) return Interfaces.C.Strings.chars_ptr  -- /opt/ros/foxy/include/rcl/node.h:491
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_node_get_logger_name";
 
 end rcl_node_h;

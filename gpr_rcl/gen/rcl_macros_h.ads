@@ -1,11 +1,11 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
 
 package rcl_macros_h is
 
-   --  unsupported macro: RCL_WARN_UNUSED __attribute__((warn_unused_result))
+   --  unsupported macro: RCL_WARN_UNUSED RCUTILS_WARN_UNUSED
    --  arg-macro: function RCL_UNUSED (x)
    --    return void)(x;
   -- Copyright 2015 Open Source Robotics Foundation, Inc.

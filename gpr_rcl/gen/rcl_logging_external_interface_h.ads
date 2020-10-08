@@ -1,4 +1,4 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
@@ -36,8 +36,10 @@ package rcl_logging_external_interface_h is
   -- * \return RCL_RET_ERROR if an unspecified error occurs.
   --  
 
-   function rcl_logging_external_initialize (config_file : Interfaces.C.Strings.chars_ptr; allocator : rcutils_allocator_h.rcutils_allocator_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/logging_external_interface.h:42
-   pragma Import (CPP, rcl_logging_external_initialize, "_Z31rcl_logging_external_initializePKc19rcutils_allocator_t");
+   function rcl_logging_external_initialize (config_file : Interfaces.C.Strings.chars_ptr; allocator : rcutils_allocator_h.rcutils_allocator_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/logging_external_interface.h:46
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_logging_external_initialize";
 
   --/ Free the resources allocated for the external logging system.
   --*
@@ -47,8 +49,10 @@ package rcl_logging_external_interface_h is
   -- * \return RCL_RET_ERROR if an unspecified error occurs.
   --  
 
-   function rcl_logging_external_shutdown return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/logging_external_interface.h:54
-   pragma Import (CPP, rcl_logging_external_shutdown, "_Z29rcl_logging_external_shutdownv");
+   function rcl_logging_external_shutdown return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/logging_external_interface.h:58
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_logging_external_shutdown";
 
   --/ Log a message.
   --*
@@ -62,8 +66,10 @@ package rcl_logging_external_interface_h is
    procedure rcl_logging_external_log
      (severity : int;
       name : Interfaces.C.Strings.chars_ptr;
-      msg : Interfaces.C.Strings.chars_ptr);  -- /opt/ros/dashing/include/rcl/logging_external_interface.h:66
-   pragma Import (CPP, rcl_logging_external_log, "_Z24rcl_logging_external_logiPKcS0_");
+      msg : Interfaces.C.Strings.chars_ptr)  -- /opt/ros/foxy/include/rcl/logging_external_interface.h:70
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_logging_external_log";
 
   --/ Set the severity level for a logger.
   --*
@@ -78,7 +84,9 @@ package rcl_logging_external_interface_h is
   -- * \return RCL_RET_ERROR if an unspecified error occurs.
   --  
 
-   function rcl_logging_external_set_logger_level (name : Interfaces.C.Strings.chars_ptr; level : int) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/logging_external_interface.h:81
-   pragma Import (CPP, rcl_logging_external_set_logger_level, "_Z37rcl_logging_external_set_logger_levelPKci");
+   function rcl_logging_external_set_logger_level (name : Interfaces.C.Strings.chars_ptr; level : int) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/logging_external_interface.h:86
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_logging_external_set_logger_level";
 
 end rcl_logging_external_interface_h;

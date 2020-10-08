@@ -1,11 +1,10 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
 with x86_64_linux_gnu_bits_stdint_uintn_h;
 with Interfaces.C.Strings;
-with System;
-limited with rmw_init_options_h;
+with rmw_init_options_h;
 with rmw_ret_types_h;
 
 package rmw_init_h is
@@ -25,23 +24,27 @@ package rmw_init_h is
   -- * This should be defined by the rmw implementation.
   --  
 
-   --  skipped empty struct rmw_context_impl_t
+   type rmw_context_impl_t is null record;   -- incomplete struct
 
   --/ Initialization context structure which is used to store init specific information.
   --/ Locally (process local) unique ID that represents this init/shutdown cycle.
    type rmw_context_t is record
-      instance_id : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/dashing/include/rmw/init.h:40
-      implementation_identifier : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rmw/init.h:42
-      impl : System.Address;  -- /opt/ros/dashing/include/rmw/init.h:45
-   end record;
-   pragma Convention (C_Pass_By_Copy, rmw_context_t);  -- /opt/ros/dashing/include/rmw/init.h:37
+      instance_id : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/foxy/include/rmw/init.h:40
+      implementation_identifier : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/foxy/include/rmw/init.h:42
+      options : aliased rmw_init_options_h.rmw_init_options_t;  -- /opt/ros/foxy/include/rmw/init.h:44
+      impl : access rmw_context_impl_t;  -- /opt/ros/foxy/include/rmw/init.h:47
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rmw/init.h:37
 
   --/ Implementation identifier, used to ensure two different implementations are not being mixed.
+  --/ Options used to initialize the context.
   --/ Implementation defined context information.
   --* May be NULL if there is no implementation defined context information.  
   --/ Return a zero initialized context structure.
-   function rmw_get_zero_initialized_context return rmw_context_t;  -- /opt/ros/dashing/include/rmw/init.h:52
-   pragma Import (C, rmw_get_zero_initialized_context, "rmw_get_zero_initialized_context");
+   function rmw_get_zero_initialized_context return rmw_context_t  -- /opt/ros/foxy/include/rmw/init.h:54
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rmw_get_zero_initialized_context";
 
   --/ Initialize the middleware with the given options, and yielding an context.
   --*
@@ -69,8 +72,10 @@ package rmw_init_h is
   -- * \return `RMW_RET_ERROR` if an unexpected error occurs.
   --  
 
-   function rmw_init (options : access constant rmw_init_options_h.rmw_init_options_t; context : access rmw_context_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/init.h:82
-   pragma Import (C, rmw_init, "rmw_init");
+   function rmw_init (options : access constant rmw_init_options_h.rmw_init_options_t; context : access rmw_context_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/init.h:84
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rmw_init";
 
   --/ Shutdown the middleware for a given context.
   --*
@@ -95,8 +100,10 @@ package rmw_init_h is
   -- * \return `RMW_RET_ERROR` if an unexpected error occurs.
   --  
 
-   function rmw_shutdown (context : access rmw_context_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/init.h:109
-   pragma Import (C, rmw_shutdown, "rmw_shutdown");
+   function rmw_shutdown (context : access rmw_context_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/init.h:111
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rmw_shutdown";
 
   --/ Finalize a context.
   --*
@@ -121,7 +128,9 @@ package rmw_init_h is
   -- * \return `RMW_RET_ERROR` if an unspecified error occur.
   --  
 
-   function rmw_context_fini (context : access rmw_context_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/init.h:136
-   pragma Import (C, rmw_context_fini, "rmw_context_fini");
+   function rmw_context_fini (context : access rmw_context_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/init.h:138
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rmw_context_fini";
 
 end rmw_init_h;

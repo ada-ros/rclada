@@ -3,12 +3,9 @@ pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
 
-package rcl_visibility_control_h is
+package rmw_localhost_h is
 
-   --  unsupported macro: RCL_EXPORT __attribute__ ((visibility("default")))
-   --  unsupported macro: RCL_PUBLIC __attribute__ ((visibility("default")))
-   --  unsupported macro: RCL_LOCAL __attribute__ ((visibility("hidden")))
-  -- Copyright 2015 Open Source Robotics Foundation, Inc.
+  -- Copyright 2019 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
   -- you may not use this file except in compliance with the License.
   -- You may obtain a copy of the License at
@@ -18,6 +15,14 @@ package rcl_visibility_control_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-  -- This logic was borrowed (then namespaced) from the examples on the gcc wiki:
-  --     https://gcc.gnu.org/wiki/Visibility
-end rcl_visibility_control_h;
+  --/ Used to specify if the context can only communicate through localhost.
+   type rmw_localhost_only_t is 
+     (RMW_LOCALHOST_ONLY_DEFAULT,
+      RMW_LOCALHOST_ONLY_ENABLED,
+      RMW_LOCALHOST_ONLY_DISABLED)
+   with Convention => C;  -- /opt/ros/foxy/include/rmw/localhost.h:26
+
+  --/ Uses ROS_LOCALHOST_ONLY environment variable.
+  --/ Forces using only localhost.
+  --/ Forces disabling localhost only.
+end rmw_localhost_h;

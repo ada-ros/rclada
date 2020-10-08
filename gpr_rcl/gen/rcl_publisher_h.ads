@@ -1,18 +1,17 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
-with System;
 with rmw_types_h;
 with rcl_allocator_h;
 limited with rcl_node_h;
-limited with rosidl_generator_c_message_type_support_struct_h;
+limited with rosidl_runtime_c_message_type_support_struct_h;
 with Interfaces.C.Strings;
 with rcl_types_h;
+with System;
 limited with rcl_context_h;
 with Interfaces.C.Extensions;
 with stddef_h;
-with rmw_ret_types_h;
 
 package rcl_publisher_h is
 
@@ -27,32 +26,37 @@ package rcl_publisher_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
   --/ Internal rcl publisher implementation struct.
-   --  skipped empty struct rcl_publisher_impl_t
+   type rcl_publisher_impl_t is null record;   -- incomplete struct
 
   --/ Structure which encapsulates a ROS Publisher.
+  --/ Pointer to the publisher implementation
    type rcl_publisher_t is record
-      impl : System.Address;  -- /opt/ros/dashing/include/rcl/publisher.h:35
-   end record;
-   pragma Convention (C_Pass_By_Copy, rcl_publisher_t);  -- /opt/ros/dashing/include/rcl/publisher.h:33
+      impl : access rcl_publisher_impl_t;  -- /opt/ros/foxy/include/rcl/publisher.h:36
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcl/publisher.h:33
 
   --/ Options available for a rcl publisher.
   --/ Middleware quality of service settings for the publisher.
    type rcl_publisher_options_t is record
-      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/dashing/include/rcl/publisher.h:42
-      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/dashing/include/rcl/publisher.h:45
-   end record;
-   pragma Convention (C_Pass_By_Copy, rcl_publisher_options_t);  -- /opt/ros/dashing/include/rcl/publisher.h:39
+      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/foxy/include/rcl/publisher.h:43
+      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/foxy/include/rcl/publisher.h:46
+      rmw_publisher_options : aliased rmw_types_h.rmw_publisher_options_t;  -- /opt/ros/foxy/include/rcl/publisher.h:48
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcl/publisher.h:40
 
   --/ Custom allocator for the publisher, used for incidental allocations.
   --* For default behavior (malloc/free), use: rcl_get_default_allocator()  
+  --/ rmw specific publisher options, e.g. the rmw implementation specific payload.
   --/ Return a rcl_publisher_t struct with members set to `NULL`.
   --*
   -- * Should be called to get a null rcl_publisher_t before passing to
   -- * rcl_publisher_init().
   --  
 
-   function rcl_get_zero_initialized_publisher return rcl_publisher_t;  -- /opt/ros/dashing/include/rcl/publisher.h:56
-   pragma Import (C, rcl_get_zero_initialized_publisher, "rcl_get_zero_initialized_publisher");
+   function rcl_get_zero_initialized_publisher return rcl_publisher_t  -- /opt/ros/foxy/include/rcl/publisher.h:59
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_zero_initialized_publisher";
 
   --/ Initialize a rcl publisher.
   --*
@@ -71,7 +75,7 @@ package rcl_publisher_h is
   -- * For C, a macro can be used (for example `std_msgs/String`):
   -- *
   -- * ```c
-  -- * #include <rosidl_generator_c/message_type_support_struct.h>
+  -- * #include <rosidl_runtime_c/message_type_support_struct.h>
   -- * #include <std_msgs/msg/string.h>
   -- * const rosidl_message_type_support_t * string_ts =
   -- *   ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String);
@@ -102,7 +106,7 @@ package rcl_publisher_h is
   -- *
   -- * ```c
   -- * #include <rcl/rcl.h>
-  -- * #include <rosidl_generator_c/message_type_support_struct.h>
+  -- * #include <rosidl_runtime_c/message_type_support_struct.h>
   -- * #include <std_msgs/msg/string.h>
   -- *
   -- * rcl_node_t node = rcl_get_zero_initialized_node();
@@ -145,10 +149,12 @@ package rcl_publisher_h is
    function rcl_publisher_init
      (publisher : access rcl_publisher_t;
       node : access constant rcl_node_h.rcl_node_t;
-      type_support : access constant rosidl_generator_c_message_type_support_struct_h.rosidl_message_type_support_t;
+      type_support : access constant rosidl_runtime_c_message_type_support_struct_h.rosidl_message_type_support_t;
       topic_name : Interfaces.C.Strings.chars_ptr;
-      options : access constant rcl_publisher_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/publisher.h:148
-   pragma Import (C, rcl_publisher_init, "rcl_publisher_init");
+      options : access constant rcl_publisher_options_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/publisher.h:151
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_init";
 
   --/ Finalize a rcl_publisher_t.
   --*
@@ -167,7 +173,7 @@ package rcl_publisher_h is
   -- * Lock-Free          | Yes
   -- *
   -- * \param[inout] publisher handle to the publisher to be finalized
-  -- * \param[in] node handle to the node used to create the publisher
+  -- * \param[in] node a valid (not finalized) handle to the node used to create the publisher
   -- * \return `RCL_RET_OK` if publisher was finalized successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_PUBLISHER_INVALID` if the publisher is invalid, or
@@ -175,8 +181,10 @@ package rcl_publisher_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_publisher_fini (publisher : access rcl_publisher_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/publisher.h:183
-   pragma Import (C, rcl_publisher_fini, "rcl_publisher_fini");
+   function rcl_publisher_fini (publisher : access rcl_publisher_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/publisher.h:185
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_fini";
 
   --/ Return the default publisher options in a rcl_publisher_options_t.
   --*
@@ -184,10 +192,74 @@ package rcl_publisher_h is
   -- *
   -- * - qos = rmw_qos_profile_default
   -- * - allocator = rcl_get_default_allocator()
+  -- * - rmw_publisher_options = rmw_get_default_publisher_options()
   --  
 
-   function rcl_publisher_get_default_options return rcl_publisher_options_t;  -- /opt/ros/dashing/include/rcl/publisher.h:195
-   pragma Import (C, rcl_publisher_get_default_options, "rcl_publisher_get_default_options");
+   function rcl_publisher_get_default_options return rcl_publisher_options_t  -- /opt/ros/foxy/include/rcl/publisher.h:198
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_get_default_options";
+
+  --/ Borrow a loaned message.
+  --*
+  -- * The memory allocated for the ros message belongs to the middleware and must not be deallocated
+  -- * other than by a call to \sa rcl_return_loaned_message_from_publisher.
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | No [0]
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Yes
+  -- * [0] the underlying middleware might allocate new memory or returns an existing chunk form a pool.
+  -- * The function in rcl however does not allocate any additional memory.
+  -- *
+  -- * \param[in] publisher Publisher to which the allocated message is associated.
+  -- * \param[in] type_support Typesupport to which the internal ros message is allocated.
+  -- * \param[out] ros_message The pointer to be filled to a valid ros message by the middleware.
+  -- * \return `RCL_RET_OK` if the ros message was correctly initialized, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if an argument other than the ros message is null, or
+  -- * \return `RCL_RET_BAD_ALLOC` if the ros message could not be correctly created, or
+  -- * \return `RCL_RET_UNIMPLEMENTED` if the middleware does not support that feature, or
+  -- * \return `RCL_RET_ERROR` if an unexpected error occured.
+  --  
+
+   function rcl_borrow_loaned_message
+     (publisher : access constant rcl_publisher_t;
+      type_support : access constant rosidl_runtime_c_message_type_support_struct_h.rosidl_message_type_support_t;
+      ros_message : System.Address) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/publisher.h:227
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_borrow_loaned_message";
+
+  --/ Return a loaned message previously borrowed from a publisher.
+  --*
+  -- * The ownership of the passed in ros message will be transferred back to the middleware.
+  -- * The middleware might deallocate and destroy the message so that the pointer is no longer
+  -- * guaranteed to be valid after that call.
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | No
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Yes
+  -- *
+  -- * \param[in] publisher Publisher to which the loaned message is associated.
+  -- * \param[in] loaned_message Loaned message to be deallocated and destroyed.
+  -- * \return `RCL_RET_OK` if successful, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if an argument is null, or
+  -- * \return `RCL_RET_UNIMPLEMENTED` if the middleware does not support that feature, or
+  -- * \return `RCL_RET_PUBLISHER_INVALID` if the publisher is invalid, or
+  -- * \return `RCL_RET_ERROR` if an unexpected error occurs and no message can be initialized.
+  --  
+
+   function rcl_return_loaned_message_from_publisher (publisher : access constant rcl_publisher_t; loaned_message : System.Address) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/publisher.h:257
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_return_loaned_message_from_publisher";
 
   --/ Publish a ROS message on a topic using a publisher.
   --*
@@ -250,8 +322,10 @@ package rcl_publisher_h is
    function rcl_publish
      (publisher : access constant rcl_publisher_t;
       ros_message : System.Address;
-      allocation : access rmw_types_h.rmw_publisher_allocation_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/publisher.h:257
-   pragma Import (C, rcl_publish, "rcl_publish");
+      allocation : access rmw_types_h.rmw_publisher_allocation_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/publisher.h:321
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publish";
 
   --/ Publish a serialized message on a topic using a publisher.
   --*
@@ -280,6 +354,7 @@ package rcl_publisher_h is
   -- * \param[in] serialized_message  pointer to the already serialized message in raw form
   -- * \param[in] allocation structure pointer, used for memory preallocation (may be NULL)
   -- * \return `RCL_RET_OK` if the message was published successfully, or
+  -- * \return `RCL_RET_BAD_ALLOC` if allocating memory failed, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_PUBLISHER_INVALID` if the publisher is invalid, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
@@ -288,8 +363,52 @@ package rcl_publisher_h is
    function rcl_publish_serialized_message
      (publisher : access constant rcl_publisher_t;
       serialized_message : access constant rcl_types_h.rcl_serialized_message_t;
-      allocation : access rmw_types_h.rmw_publisher_allocation_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/publisher.h:297
-   pragma Import (C, rcl_publish_serialized_message, "rcl_publish_serialized_message");
+      allocation : access rmw_types_h.rmw_publisher_allocation_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/publisher.h:361
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publish_serialized_message";
+
+  --/ Publish a loaned message on a topic using a publisher.
+  --*
+  -- * A previously borrowed loaned message can be sent via this call to `rcl_publish_loaned_message`.
+  -- * By calling this function, the ownership of the loaned message is getting transferred back
+  -- * to the middleware.
+  -- * The pointer to the `ros_message` is not guaranteed to be valid after as the middleware
+  -- * migth deallocate the memory for this message internally.
+  -- * It is thus recommended to call this function only in combination with
+  -- * \sa `rcl_borrow_loaned_message`.
+  -- *
+  -- * Apart from this, the `publish_loaned_message` function has the same behavior as `rcl_publish`
+  -- * except that no serialization step is done.
+  -- *
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | No [0]
+  -- * Thread-Safe        | Yes [1]
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Yes
+  -- * <i>[0] the middleware might deallocate the loaned message.
+  -- * The RCL function however does not allocate any memory.</i>
+  -- * <i>[1] for unique pairs of publishers and messages, see above for more</i>
+  -- *
+  -- * \param[in] publisher handle to the publisher which will do the publishing
+  -- * \param[in] ros_message  pointer to the previously borrow loaned message
+  -- * \param[in] allocation structure pointer, used for memory preallocation (may be NULL)
+  -- * \return `RCL_RET_OK` if the message was published successfully, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_PUBLISHER_INVALID` if the publisher is invalid, or
+  -- * \return `RCL_RET_UNIMPLEMENTED` if the middleware does not support that feature, or
+  -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
+  --  
+
+   function rcl_publish_loaned_message
+     (publisher : access constant rcl_publisher_t;
+      ros_message : System.Address;
+      allocation : access rmw_types_h.rmw_publisher_allocation_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/publisher.h:402
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publish_loaned_message";
 
   --/ Manually assert that this Publisher is alive (for RMW_QOS_POLICY_LIVELINESS_MANUAL_BY_TOPIC)
   --*
@@ -312,8 +431,10 @@ package rcl_publisher_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_publisher_assert_liveliness (publisher : access constant rcl_publisher_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/publisher.h:326
-   pragma Import (C, rcl_publisher_assert_liveliness, "rcl_publisher_assert_liveliness");
+   function rcl_publisher_assert_liveliness (publisher : access constant rcl_publisher_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/publisher.h:430
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_assert_liveliness";
 
   --/ Get the topic name for the publisher.
   --*
@@ -338,8 +459,10 @@ package rcl_publisher_h is
   -- * \return name string if successful, otherwise `NULL`
   --  
 
-   function rcl_publisher_get_topic_name (publisher : access constant rcl_publisher_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rcl/publisher.h:353
-   pragma Import (C, rcl_publisher_get_topic_name, "rcl_publisher_get_topic_name");
+   function rcl_publisher_get_topic_name (publisher : access constant rcl_publisher_t) return Interfaces.C.Strings.chars_ptr  -- /opt/ros/foxy/include/rcl/publisher.h:457
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_get_topic_name";
 
   --/ Return the rcl publisher options.
   --*
@@ -364,8 +487,10 @@ package rcl_publisher_h is
   -- * \return options struct if successful, otherwise `NULL`
   --  
 
-   function rcl_publisher_get_options (publisher : access constant rcl_publisher_t) return access constant rcl_publisher_options_t;  -- /opt/ros/dashing/include/rcl/publisher.h:380
-   pragma Import (C, rcl_publisher_get_options, "rcl_publisher_get_options");
+   function rcl_publisher_get_options (publisher : access constant rcl_publisher_t) return access constant rcl_publisher_options_t  -- /opt/ros/foxy/include/rcl/publisher.h:484
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_get_options";
 
   --/ Return the rmw publisher handle.
   --*
@@ -394,8 +519,10 @@ package rcl_publisher_h is
   -- * \return rmw publisher handle if successful, otherwise `NULL`
   --  
 
-   function rcl_publisher_get_rmw_handle (publisher : access constant rcl_publisher_t) return access rmw_types_h.rmw_publisher_t;  -- /opt/ros/dashing/include/rcl/publisher.h:411
-   pragma Import (C, rcl_publisher_get_rmw_handle, "rcl_publisher_get_rmw_handle");
+   function rcl_publisher_get_rmw_handle (publisher : access constant rcl_publisher_t) return access rmw_types_h.rmw_publisher_t  -- /opt/ros/foxy/include/rcl/publisher.h:515
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_get_rmw_handle";
 
   --/ Return the context associated with this publisher.
   --*
@@ -421,8 +548,10 @@ package rcl_publisher_h is
   -- * \return context if successful, otherwise `NULL`
   --  
 
-   function rcl_publisher_get_context (publisher : access constant rcl_publisher_t) return access rcl_context_h.rcl_context_t;  -- /opt/ros/dashing/include/rcl/publisher.h:439
-   pragma Import (C, rcl_publisher_get_context, "rcl_publisher_get_context");
+   function rcl_publisher_get_context (publisher : access constant rcl_publisher_t) return access rcl_context_h.rcl_context_t  -- /opt/ros/foxy/include/rcl/publisher.h:543
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_get_context";
 
   --/ Return true if the publisher is valid, otherwise false.
   --*
@@ -443,8 +572,10 @@ package rcl_publisher_h is
   -- * \return `true` if `publisher` is valid, otherwise `false`
   --  
 
-   function rcl_publisher_is_valid (publisher : access constant rcl_publisher_t) return Extensions.bool;  -- /opt/ros/dashing/include/rcl/publisher.h:461
-   pragma Import (C, rcl_publisher_is_valid, "rcl_publisher_is_valid");
+   function rcl_publisher_is_valid (publisher : access constant rcl_publisher_t) return Extensions.bool  -- /opt/ros/foxy/include/rcl/publisher.h:565
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_is_valid";
 
   --/ Return true if the publisher is valid except the context, otherwise false.
   --*
@@ -456,8 +587,10 @@ package rcl_publisher_h is
   -- * \sa rcl_publisher_is_valid()
   --  
 
-   function rcl_publisher_is_valid_except_context (publisher : access constant rcl_publisher_t) return Extensions.bool;  -- /opt/ros/dashing/include/rcl/publisher.h:474
-   pragma Import (C, rcl_publisher_is_valid_except_context, "rcl_publisher_is_valid_except_context");
+   function rcl_publisher_is_valid_except_context (publisher : access constant rcl_publisher_t) return Extensions.bool  -- /opt/ros/foxy/include/rcl/publisher.h:578
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_is_valid_except_context";
 
   --/ Get the number of subscriptions matched to a publisher.
   --*
@@ -480,8 +613,10 @@ package rcl_publisher_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_publisher_get_subscription_count (publisher : access constant rcl_publisher_t; subscription_count : access stddef_h.size_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rcl/publisher.h:499
-   pragma Import (C, rcl_publisher_get_subscription_count, "rcl_publisher_get_subscription_count");
+   function rcl_publisher_get_subscription_count (publisher : access constant rcl_publisher_t; subscription_count : access stddef_h.size_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/publisher.h:603
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_get_subscription_count";
 
   --/ Get the actual qos settings of the publisher.
   --*
@@ -505,7 +640,20 @@ package rcl_publisher_h is
   -- * \return qos struct if successful, otherwise `NULL`
   --  
 
-   function rcl_publisher_get_actual_qos (publisher : access constant rcl_publisher_t) return access constant rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/dashing/include/rcl/publisher.h:527
-   pragma Import (C, rcl_publisher_get_actual_qos, "rcl_publisher_get_actual_qos");
+   function rcl_publisher_get_actual_qos (publisher : access constant rcl_publisher_t) return access constant rmw_types_h.rmw_qos_profile_t  -- /opt/ros/foxy/include/rcl/publisher.h:631
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_get_actual_qos";
+
+  --/ Check if publisher instance can loan messages.
+  --*
+  -- * Depending on the middleware and the message type, this will return true if the middleware
+  -- * can allocate a ROS message instance.
+  --  
+
+   function rcl_publisher_can_loan_messages (publisher : access constant rcl_publisher_t) return Extensions.bool  -- /opt/ros/foxy/include/rcl/publisher.h:641
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_can_loan_messages";
 
 end rcl_publisher_h;

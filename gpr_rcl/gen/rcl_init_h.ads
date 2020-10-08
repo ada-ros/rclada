@@ -1,4 +1,4 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
@@ -61,6 +61,7 @@ package rcl_init_h is
   -- * \return `RCL_RET_OK` if initialization is successful, or
   -- * \return `RCL_RET_ALREADY_INIT` if rcl_init has already been called, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_INVALID_ROS_ARGS` if an invalid ROS argument is found, or
   -- * \return `RCL_RET_BAD_ALLOC` if allocating memory failed, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
@@ -69,8 +70,10 @@ package rcl_init_h is
      (argc : int;
       argv : System.Address;
       options : access constant rcl_init_options_h.rcl_init_options_t;
-      context : access rcl_context_h.rcl_context_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/init.h:78
-   pragma Import (C, rcl_init, "rcl_init");
+      context : access rcl_context_h.rcl_context_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/init.h:79
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_init";
 
   --/ Shutdown a given rcl context.
   --*
@@ -91,13 +94,16 @@ package rcl_init_h is
   -- * Lock-Free          | Yes [1]
   -- * <i>[1] if `atomic_is_lock_free()` returns true for `atomic_uint_least64_t`</i>
   -- *
+  -- * \param[inout] context object to shutdown
   -- * \return `RCL_RET_OK` if the shutdown was completed successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_ALREADY_SHUTDOWN` if the context is not currently valid, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occur.
   --  
 
-   function rcl_shutdown (context : access rcl_context_h.rcl_context_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/init.h:111
-   pragma Import (C, rcl_shutdown, "rcl_shutdown");
+   function rcl_shutdown (context : access rcl_context_h.rcl_context_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/init.h:113
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_shutdown";
 
 end rcl_init_h;

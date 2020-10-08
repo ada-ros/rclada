@@ -1,14 +1,14 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
-with System;
 with rmw_types_h;
 with rcl_allocator_h;
 limited with rcl_node_h;
-limited with rosidl_generator_c_service_type_support_struct_h;
+limited with rosidl_runtime_c_service_type_support_struct_h;
 with Interfaces.C.Strings;
 with rcl_types_h;
+with System;
 with Interfaces.C.Extensions;
 
 package rcl_service_h is
@@ -24,21 +24,22 @@ package rcl_service_h is
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
   --/ Internal rcl implementation struct.
-   --  skipped empty struct rcl_service_impl_t
+   type rcl_service_impl_t is null record;   -- incomplete struct
 
   --/ Structure which encapsulates a ROS Service.
+  --/ Pointer to the service implementation
    type rcl_service_t is record
-      impl : System.Address;  -- /opt/ros/dashing/include/rcl/service.h:35
-   end record;
-   pragma Convention (C_Pass_By_Copy, rcl_service_t);  -- /opt/ros/dashing/include/rcl/service.h:33
+      impl : access rcl_service_impl_t;  -- /opt/ros/foxy/include/rcl/service.h:36
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcl/service.h:33
 
   --/ Options available for a rcl service.
   --/ Middleware quality of service settings for the service.
    type rcl_service_options_t is record
-      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/dashing/include/rcl/service.h:42
-      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/dashing/include/rcl/service.h:45
-   end record;
-   pragma Convention (C_Pass_By_Copy, rcl_service_options_t);  -- /opt/ros/dashing/include/rcl/service.h:39
+      qos : aliased rmw_types_h.rmw_qos_profile_t;  -- /opt/ros/foxy/include/rcl/service.h:43
+      allocator : aliased rcl_allocator_h.rcl_allocator_t;  -- /opt/ros/foxy/include/rcl/service.h:46
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcl/service.h:40
 
   --/ Custom allocator for the service, used for incidental allocations.
   --* For default behavior (malloc/free), see: rcl_get_default_allocator()  
@@ -48,8 +49,10 @@ package rcl_service_h is
   -- * rcl_service_init().
   --  
 
-   function rcl_get_zero_initialized_service return rcl_service_t;  -- /opt/ros/dashing/include/rcl/service.h:56
-   pragma Import (C, rcl_get_zero_initialized_service, "rcl_get_zero_initialized_service");
+   function rcl_get_zero_initialized_service return rcl_service_t  -- /opt/ros/foxy/include/rcl/service.h:57
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_zero_initialized_service";
 
   --/ Initialize a rcl service.
   --*
@@ -69,7 +72,7 @@ package rcl_service_h is
   -- * For C, a macro can be used (for example `example_interfaces/AddTwoInts`):
   -- *
   -- * ```c
-  -- * #include <rosidl_generator_c/service_type_support_struct.h>
+  -- * #include <rosidl_runtime_c/service_type_support_struct.h>
   -- * #include <example_interfaces/srv/add_two_ints.h>
   -- * const rosidl_service_type_support_t * ts =
   -- *   ROSIDL_GET_SRV_TYPE_SUPPORT(example_interfaces, srv, AddTwoInts);
@@ -78,7 +81,7 @@ package rcl_service_h is
   -- * For C++, a template function is used:
   -- *
   -- * ```cpp
-  -- * #include <rosidl_generator_cpp/service_type_support.hpp>
+  -- * #include <rosidl_runtime_cpp/service_type_support.hpp>
   -- * #include <example_interfaces/srv/add_two_ints.h>
   -- * using rosidl_typesupport_cpp::get_service_type_support_handle;
   -- * const rosidl_service_type_support_t * ts =
@@ -101,7 +104,7 @@ package rcl_service_h is
   -- *
   -- * ```c
   -- * #include <rcl/rcl.h>
-  -- * #include <rosidl_generator_c/service_type_support_struct.h>
+  -- * #include <rosidl_runtime_c/service_type_support_struct.h>
   -- * #include <example_interfaces/srv/add_two_ints.h>
   -- *
   -- * rcl_node_t node = rcl_get_zero_initialized_node();
@@ -135,6 +138,7 @@ package rcl_service_h is
   -- * \param[in] options service options, including quality of service settings
   -- * \return `RCL_RET_OK` if service was initialized successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_ALREADY_INIT` if the service is already initialized, or
   -- * \return `RCL_RET_NODE_INVALID` if the node is invalid, or
   -- * \return `RCL_RET_BAD_ALLOC` if allocating memory failed, or
   -- * \return `RCL_RET_SERVICE_NAME_INVALID` if the given service name is invalid, or
@@ -144,10 +148,12 @@ package rcl_service_h is
    function rcl_service_init
      (service : access rcl_service_t;
       node : access constant rcl_node_h.rcl_node_t;
-      type_support : access constant rosidl_generator_c_service_type_support_struct_h.rosidl_service_type_support_t;
+      type_support : access constant rosidl_runtime_c_service_type_support_struct_h.rosidl_service_type_support_t;
       service_name : Interfaces.C.Strings.chars_ptr;
-      options : access constant rcl_service_options_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/service.h:150
-   pragma Import (C, rcl_service_init, "rcl_service_init");
+      options : access constant rcl_service_options_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/service.h:152
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_service_init";
 
   --/ Finalize a rcl_service_t.
   --*
@@ -168,7 +174,7 @@ package rcl_service_h is
   -- * Lock-Free          | Yes
   -- *
   -- * \param[inout] service handle to the service to be deinitialized
-  -- * \param[in] node handle to the node used to create the service
+  -- * \param[in] node a valid (not finalized) handle to the node used to create the service
   -- * \return `RCL_RET_OK` if service was deinitialized successfully, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_SERVICE_INVALID` if the service is invalid, or
@@ -176,8 +182,10 @@ package rcl_service_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_service_fini (service : access rcl_service_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/service.h:186
-   pragma Import (C, rcl_service_fini, "rcl_service_fini");
+   function rcl_service_fini (service : access rcl_service_t; node : access rcl_node_h.rcl_node_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/service.h:188
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_service_fini";
 
   --/ Return the default service options in a rcl_service_options_t.
   --*
@@ -187,8 +195,10 @@ package rcl_service_h is
   -- * - allocator = rcl_get_default_allocator()
   --  
 
-   function rcl_service_get_default_options return rcl_service_options_t;  -- /opt/ros/dashing/include/rcl/service.h:198
-   pragma Import (C, rcl_service_get_default_options, "rcl_service_get_default_options");
+   function rcl_service_get_default_options return rcl_service_options_t  -- /opt/ros/foxy/include/rcl/service.h:200
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_service_get_default_options";
 
   --/ Take a pending ROS request using a rcl service.
   --*
@@ -225,7 +235,7 @@ package rcl_service_h is
   -- * <i>[1] only if required when filling the request, avoided for fixed sizes</i>
   -- *
   -- * \param[in] service the handle to the service from which to take
-  -- * \param[inout] request_header ptr to the struct holding metadata about the request ID
+  -- * \param[inout] request_header ptr to the struct holding metadata about the request
   -- * \param[inout] ros_request type-erased ptr to an allocated ROS request message
   -- * \return `RCL_RET_OK` if the request was taken, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
@@ -236,11 +246,22 @@ package rcl_service_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
+   function rcl_take_request_with_info
+     (service : access constant rcl_service_t;
+      request_header : access rmw_types_h.rmw_service_info_t;
+      ros_request : System.Address) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/service.h:250
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_take_request_with_info";
+
+  --/ backwards compatibility version that takes a request_id only
    function rcl_take_request
      (service : access constant rcl_service_t;
       request_header : access rmw_types_h.rmw_request_id_t;
-      ros_request : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/service.h:248
-   pragma Import (C, rcl_take_request, "rcl_take_request");
+      ros_request : System.Address) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/service.h:259
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_take_request";
 
   --/ Send a ROS response to a client using a service.
   --*
@@ -291,8 +312,10 @@ package rcl_service_h is
    function rcl_send_response
      (service : access constant rcl_service_t;
       response_header : access rmw_types_h.rmw_request_id_t;
-      ros_response : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/service.h:301
-   pragma Import (C, rcl_send_response, "rcl_send_response");
+      ros_response : System.Address) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/service.h:312
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_send_response";
 
   --/ Get the topic name for the service.
   --*
@@ -317,8 +340,10 @@ package rcl_service_h is
   -- * \return name string if successful, otherwise `NULL`
   --  
 
-   function rcl_service_get_service_name (service : access constant rcl_service_t) return Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rcl/service.h:331
-   pragma Import (C, rcl_service_get_service_name, "rcl_service_get_service_name");
+   function rcl_service_get_service_name (service : access constant rcl_service_t) return Interfaces.C.Strings.chars_ptr  -- /opt/ros/foxy/include/rcl/service.h:342
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_service_get_service_name";
 
   --/ Return the rcl service options.
   --*
@@ -343,8 +368,10 @@ package rcl_service_h is
   -- * \return options struct if successful, otherwise `NULL`
   --  
 
-   function rcl_service_get_options (service : access constant rcl_service_t) return access constant rcl_service_options_t;  -- /opt/ros/dashing/include/rcl/service.h:358
-   pragma Import (C, rcl_service_get_options, "rcl_service_get_options");
+   function rcl_service_get_options (service : access constant rcl_service_t) return access constant rcl_service_options_t  -- /opt/ros/foxy/include/rcl/service.h:369
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_service_get_options";
 
   --/ Return the rmw service handle.
   --*
@@ -373,8 +400,10 @@ package rcl_service_h is
   -- * \return rmw service handle if successful, otherwise `NULL`
   --  
 
-   function rcl_service_get_rmw_handle (service : access constant rcl_service_t) return access rmw_types_h.rmw_service_t;  -- /opt/ros/dashing/include/rcl/service.h:389
-   pragma Import (C, rcl_service_get_rmw_handle, "rcl_service_get_rmw_handle");
+   function rcl_service_get_rmw_handle (service : access constant rcl_service_t) return access rmw_types_h.rmw_service_t  -- /opt/ros/foxy/include/rcl/service.h:400
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_service_get_rmw_handle";
 
   --/ Check that the service is valid.
   --*
@@ -395,7 +424,9 @@ package rcl_service_h is
   -- * \return `true` if `service` is valid, otherwise `false`
   --  
 
-   function rcl_service_is_valid (service : access constant rcl_service_t) return Extensions.bool;  -- /opt/ros/dashing/include/rcl/service.h:411
-   pragma Import (C, rcl_service_is_valid, "rcl_service_is_valid");
+   function rcl_service_is_valid (service : access constant rcl_service_t) return Extensions.bool  -- /opt/ros/foxy/include/rcl/service.h:422
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_service_is_valid";
 
 end rcl_service_h;

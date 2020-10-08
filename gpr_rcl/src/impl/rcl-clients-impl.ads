@@ -29,9 +29,9 @@ private
      (This.C'Access);
 
    function To_Var_C (This : aliased in out C_Client) return access Rcl_Client_T is
-      (This.C'Access);
+     (This.C'Access);
 
    function To_Unique_Addr (This : C_Client) return System.Address is
-      (This.C.Impl);
+     (This.C.Impl.all'Address);
 
 end RCL.Clients.Impl;

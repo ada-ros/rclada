@@ -26,6 +26,7 @@ private
 
    function To_C_Var (This : aliased in out Timer) return access Rcl_Timer_T is (This.Impl'Access);
 
-   function To_Unique_Addr (This : Timer) return System.Address is (This.Impl.Impl);
+   function To_Unique_Addr (This : Timer) return System.Address
+   is (This.Impl.Impl.all'Address);
 
 end RCL.Timers.Impl;

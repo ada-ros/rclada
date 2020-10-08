@@ -1,11 +1,11 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
-with System;
 limited with rcl_publisher_h;
 with rcl_types_h;
 limited with rcl_subscription_h;
+with System;
 
 package rcl_event_h is
 
@@ -21,25 +21,28 @@ package rcl_event_h is
   -- limitations under the License.
    type rcl_publisher_event_type_t is 
      (RCL_PUBLISHER_OFFERED_DEADLINE_MISSED,
-      RCL_PUBLISHER_LIVELINESS_LOST);
-   pragma Convention (C, rcl_publisher_event_type_t);  -- /opt/ros/dashing/include/rcl/event.h:30
+      RCL_PUBLISHER_LIVELINESS_LOST,
+      RCL_PUBLISHER_OFFERED_INCOMPATIBLE_QOS)
+   with Convention => C;  -- /opt/ros/foxy/include/rcl/event.h:30
 
    type rcl_subscription_event_type_t is 
      (RCL_SUBSCRIPTION_REQUESTED_DEADLINE_MISSED,
-      RCL_SUBSCRIPTION_LIVELINESS_CHANGED);
-   pragma Convention (C, rcl_subscription_event_type_t);  -- /opt/ros/dashing/include/rcl/event.h:36
+      RCL_SUBSCRIPTION_LIVELINESS_CHANGED,
+      RCL_SUBSCRIPTION_REQUESTED_INCOMPATIBLE_QOS)
+   with Convention => C;  -- /opt/ros/foxy/include/rcl/event.h:37
 
   --/ rmw struct.
-   --  skipped empty struct rmw_event_t
+   type rmw_event_t is null record;   -- incomplete struct
 
   --/ Internal rcl implementation struct.
-   --  skipped empty struct rcl_event_impl_t
+   type rcl_event_impl_t is null record;   -- incomplete struct
 
   --/ Structure which encapsulates a ROS QoS event handle.
+  --/ Pointer to the event implementation
    type rcl_event_t is record
-      impl : System.Address;  -- /opt/ros/dashing/include/rcl/event.h:51
-   end record;
-   pragma Convention (C_Pass_By_Copy, rcl_event_t);  -- /opt/ros/dashing/include/rcl/event.h:49
+      impl : access rcl_event_impl_t;  -- /opt/ros/foxy/include/rcl/event.h:54
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcl/event.h:51
 
   --/ Return a rcl_event_t struct with members set to `NULL`.
   --*
@@ -47,8 +50,10 @@ package rcl_event_h is
   -- * rcl_event_init().
   --  
 
-   function rcl_get_zero_initialized_event return rcl_event_t;  -- /opt/ros/dashing/include/rcl/event.h:62
-   pragma Import (C, rcl_get_zero_initialized_event, "rcl_get_zero_initialized_event");
+   function rcl_get_zero_initialized_event return rcl_event_t  -- /opt/ros/foxy/include/rcl/event.h:65
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_get_zero_initialized_event";
 
   --/ Initialize an rcl_event_t with a publisher.
   --*
@@ -59,14 +64,18 @@ package rcl_event_h is
   -- * \param[in] event_type to listen for
   -- * \return `RCL_RET_OK` if the rcl_event_t is filled, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_BAD_ALLOC` if allocating memory fails, or
+  -- * \return `RCL_RET_UNSUPPORTED` if event_type is not supported, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
    function rcl_publisher_event_init
      (event : access rcl_event_t;
       publisher : access constant rcl_publisher_h.rcl_publisher_t;
-      event_type : rcl_publisher_event_type_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/event.h:78
-   pragma Import (C, rcl_publisher_event_init, "rcl_publisher_event_init");
+      event_type : rcl_publisher_event_type_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/event.h:83
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_publisher_event_init";
 
   --/ Initialize an rcl_event_t with a subscription.
   --*
@@ -77,29 +86,36 @@ package rcl_event_h is
   -- * \param[in] event_type to listen for
   -- * \return `RCL_RET_OK` if the rcl_event_t is filled, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RCL_RET_BAD_ALLOC` if allocating memory fails, or
+  -- * \return `RCL_RET_UNSUPPORTED` if event_type is not supported, or
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
    function rcl_subscription_event_init
      (event : access rcl_event_t;
       subscription : access constant rcl_subscription_h.rcl_subscription_t;
-      event_type : rcl_subscription_event_type_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/event.h:97
-   pragma Import (C, rcl_subscription_event_init, "rcl_subscription_event_init");
+      event_type : rcl_subscription_event_type_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/event.h:104
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_subscription_event_init";
 
   -- Take event using the event handle.
   --*
   -- * Take an event from the event handle.
   -- *
-  -- * \param[in] event_handle event object to take from
+  -- * \param[in] event event object to take from
   -- * \param[in, out] event_info event info object to write taken data into
-  -- * \param[in, out] taken boolean flag indicating if an event was taken or not
   -- * \return `RCL_RET_OK` if successful, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_BAD_ALLOC` if memory allocation failed, or
+  -- * \return `RCL_RET_EVENT_TAKE_FAILED` if the take event failed, or
   -- * \return `RCL_RET_ERROR` if an unexpected error occurs.
   --  
 
-   function rcl_take_event (event : access constant rcl_event_t; event_info : System.Address) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/event.h:116
-   pragma Import (C, rcl_take_event, "rcl_take_event");
+   function rcl_take_event (event : access constant rcl_event_t; event_info : System.Address) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/event.h:124
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_take_event";
 
   -- Finalize an event.
   --*
@@ -111,8 +127,10 @@ package rcl_event_h is
   -- * \return `RCL_RET_ERROR` if an unexpected error occurs.
   --  
 
-   function rcl_event_fini (event : access rcl_event_t) return rcl_types_h.rcl_ret_t;  -- /opt/ros/dashing/include/rcl/event.h:132
-   pragma Import (C, rcl_event_fini, "rcl_event_fini");
+   function rcl_event_fini (event : access rcl_event_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/event.h:140
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_event_fini";
 
   --/ Return the rmw event handle.
   --*
@@ -141,7 +159,9 @@ package rcl_event_h is
   -- * \return rmw event handle if successful, otherwise `NULL`
   --  
 
-   function rcl_event_get_rmw_handle (event : access constant rcl_event_t) return System.Address;  -- /opt/ros/dashing/include/rcl/event.h:163
-   pragma Import (C, rcl_event_get_rmw_handle, "rcl_event_get_rmw_handle");
+   function rcl_event_get_rmw_handle (event : access constant rcl_event_t) return access rmw_event_t  -- /opt/ros/foxy/include/rcl/event.h:171
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_event_get_rmw_handle";
 
 end rcl_event_h;

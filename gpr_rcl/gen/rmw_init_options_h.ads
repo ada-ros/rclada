@@ -1,11 +1,13 @@
-pragma Ada_2005;
+pragma Ada_2012;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
 with x86_64_linux_gnu_bits_stdint_uintn_h;
 with Interfaces.C.Strings;
+with stddef_h;
+with rmw_security_options_h;
+with rmw_localhost_h;
 with rcutils_allocator_h;
-with System;
 with rmw_ret_types_h;
 
 package rmw_init_options_h is
@@ -25,7 +27,7 @@ package rmw_init_options_h is
   -- * This should be defined by the rmw implementation.
   --  
 
-   --  skipped empty struct rmw_init_options_impl_t
+   type rmw_init_options_impl_t is null record;   -- incomplete struct
 
   --/ Options structure used during rmw_init().
   --/ Locally (process local) unique ID that represents this init/shutdown cycle.
@@ -36,21 +38,31 @@ package rmw_init_options_h is
   --    
 
    type rmw_init_options_t is record
-      instance_id : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/dashing/include/rmw/init_options.h:45
-      implementation_identifier : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/dashing/include/rmw/init_options.h:47
-      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/dashing/include/rmw/init_options.h:50
-      impl : System.Address;  -- /opt/ros/dashing/include/rmw/init_options.h:53
-   end record;
-   pragma Convention (C_Pass_By_Copy, rmw_init_options_t);  -- /opt/ros/dashing/include/rmw/init_options.h:37
+      instance_id : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/foxy/include/rmw/init_options.h:48
+      implementation_identifier : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/foxy/include/rmw/init_options.h:50
+      domain_id : aliased stddef_h.size_t;  -- /opt/ros/foxy/include/rmw/init_options.h:52
+      security_options : aliased rmw_security_options_h.rmw_security_options_t;  -- /opt/ros/foxy/include/rmw/init_options.h:54
+      localhost_only : aliased rmw_localhost_h.rmw_localhost_only_t;  -- /opt/ros/foxy/include/rmw/init_options.h:56
+      enclave : Interfaces.C.Strings.chars_ptr;  -- /opt/ros/foxy/include/rmw/init_options.h:58
+      allocator : aliased rcutils_allocator_h.rcutils_allocator_t;  -- /opt/ros/foxy/include/rmw/init_options.h:62
+      impl : access rmw_init_options_impl_t;  -- /opt/ros/foxy/include/rmw/init_options.h:65
+   end record
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rmw/init_options.h:40
 
   --/ Implementation identifier, used to ensure two different implementations are not being mixed.
+  --/ ROS domain id
+  --/ Security options
+  --/ Enable localhost only
+  --/ Enclave, name used to find security artifacts in a sros2 keystore.
   -- TODO(wjwwood): replace with rmw_allocator_t when that refactor happens
   --/ Allocator used during internal allocation of init options, if needed.
   --/ Implementation defined init options.
   --* May be NULL if there are no implementation defined options.  
   --/ Return a zero initialized init options structure.
-   function rmw_get_zero_initialized_init_options return rmw_init_options_t;  -- /opt/ros/dashing/include/rmw/init_options.h:60
-   pragma Import (C, rmw_get_zero_initialized_init_options, "rmw_get_zero_initialized_init_options");
+   function rmw_get_zero_initialized_init_options return rmw_init_options_t  -- /opt/ros/foxy/include/rmw/init_options.h:72
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rmw_get_zero_initialized_init_options";
 
   --/ Initialize given init_options with the default values and implementation specific values.
   --*
@@ -80,8 +92,10 @@ package rmw_init_options_h is
   -- * \return `RMW_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rmw_init_options_init (init_options : access rmw_init_options_t; allocator : rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/init_options.h:92
-   pragma Import (C, rmw_init_options_init, "rmw_init_options_init");
+   function rmw_init_options_init (init_options : access rmw_init_options_t; allocator : rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/init_options.h:104
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rmw_init_options_init";
 
   --/ Copy the given source init options to the destination init options.
   --*
@@ -115,8 +129,10 @@ package rmw_init_options_h is
   -- * \return `RMW_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rmw_init_options_copy (src : access constant rmw_init_options_t; dst : access rmw_init_options_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/init_options.h:128
-   pragma Import (C, rmw_init_options_copy, "rmw_init_options_copy");
+   function rmw_init_options_copy (src : access constant rmw_init_options_t; dst : access rmw_init_options_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/init_options.h:140
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rmw_init_options_copy";
 
   --/ Finalize the given init_options.
   --*
@@ -139,7 +155,9 @@ package rmw_init_options_h is
   -- * \return `RMW_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rmw_init_options_fini (init_options : access rmw_init_options_t) return rmw_ret_types_h.rmw_ret_t;  -- /opt/ros/dashing/include/rmw/init_options.h:153
-   pragma Import (C, rmw_init_options_fini, "rmw_init_options_fini");
+   function rmw_init_options_fini (init_options : access rmw_init_options_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/init_options.h:165
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rmw_init_options_fini";
 
 end rmw_init_options_h;
