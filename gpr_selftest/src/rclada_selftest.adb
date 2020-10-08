@@ -7,7 +7,6 @@ with GNAT.Debug_Pools; use GNAT.Debug_Pools;
 with RCL.Allocators;
 with RCL.Calendar;
 with RCL.Contexts;
-with RCL.Init;
 with RCL.Logging;
 with RCL.Nodes;
 with RCL.Publishers;
@@ -357,5 +356,5 @@ begin
    --  Finalize manually and early the global context so user count matches:
    Contexts.Global_Context.Finalize;
 
-   pragma Assert (Init.User_Count = 0, "Remaining user at test end");
+   pragma Assert (Contexts.User_Count = 0, "Remaining user at test end");
 end Rclada_Selftest;
