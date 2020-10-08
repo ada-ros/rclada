@@ -22,6 +22,9 @@ package Rcl_Allocator_H is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
+
+   --  VERIFIED NEEDED in FOXY
+
    type rcl_allocator_t is new Rcutils_Allocator_H.rcutils_allocator_t;  -- /home/jano/local/ros2/ros2_rolling/install/include/rcl/allocator.h:25
 
 end Rcl_Allocator_H;
