@@ -19,7 +19,7 @@ package rmw_topic_endpoint_info_array_h is
   -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   -- See the License for the specific language governing permissions and
   -- limitations under the License.
-  --/ Array of rmw_topic_endpoint_info_t
+  --/ Array of topic endpoint information
   --/ Size of the array.
    type rmw_topic_endpoint_info_array_t is record
       size : aliased stddef_h.size_t;  -- /opt/ros/foxy/include/rmw/topic_endpoint_info_array.h:31
@@ -27,78 +27,118 @@ package rmw_topic_endpoint_info_array_h is
    end record
    with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rmw/topic_endpoint_info_array.h:28
 
-  --/ Pointer representing an array of rmw_topic_endpoint_info_t
-  --/ Return a rmw_topic_endpoint_info_array_t struct with members initialized to `NULL`.
+  --/ Contiguous storage for topic endpoint information elements.
+  --/ Return a zero initialized array of topic endpoint information.
    function rmw_get_zero_initialized_topic_endpoint_info_array return rmw_topic_endpoint_info_array_t  -- /opt/ros/foxy/include/rmw/topic_endpoint_info_array.h:40
    with Import => True, 
         Convention => C, 
         External_Name => "rmw_get_zero_initialized_topic_endpoint_info_array";
 
-  --/ Check that a rmw_topic_endpoint_info_array_t struct is zero initialized.
+  --/ Check that the given `topic_endpoint_info_array` is zero initialized.
   --*
-  -- * This function checks if the provided rmw_topic_endpoint_info_array_t is zero initialized or not.
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | No
+  -- * Thread-Safe        | Yes
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Yes
   -- *
-  -- * If a non RMW_RET_OK return value is returned, the RMW error message will be set
+  -- * \par Thread-safety
+  -- *   Access to the array of topic endpoint information is read-only, but it is not synchronized.
+  -- *   Concurrent `topic_endpoint_info_array` reads are safe, but concurrent reads
+  -- *   and writes are not.
   -- *
-  -- * \param[in] topic_endpoint_info_array the data structure to be checked
-  -- * \returns `RMW_RET_OK` if topic_endpoint_info_array is zero initialized
-  -- * \returns `RMW_RET_INVALID_ARGUMENT` if the parameter is NULL, or
-  -- * \returns `RMW_RET_ERROR` if topic_endpoint_info_array is not zero initialized
+  -- * \param[in] topic_endpoint_info_array Array to be checked.
+  -- * \returns `RMW_RET_OK` if array is zero initialized, or
+  -- * \returns `RMW_RET_INVALID_ARGUMENT` if `topic_endpoint_info_array` is NULL, or
+  -- * \returns `RMW_RET_ERROR` if `topic_endpoint_info_array` is not zero initialized.
+  -- * \remark This function sets the RMW error state on failure.
   --  
 
-   function rmw_topic_endpoint_info_array_check_zero (topic_endpoint_info_array : access rmw_topic_endpoint_info_array_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/topic_endpoint_info_array.h:56
+   function rmw_topic_endpoint_info_array_check_zero (topic_endpoint_info_array : access rmw_topic_endpoint_info_array_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/topic_endpoint_info_array.h:66
    with Import => True, 
         Convention => C, 
         External_Name => "rmw_topic_endpoint_info_array_check_zero";
 
-  --/ Initialize the info_array member inside rmw_topic_endpoint_info_array_t with the given size
+  --/ Initialize an array of topic endpoint information.
   --*
-  -- * The rmw_topic_endpoint_info_array_t has a member variable info_array which is an array of
-  -- * type rmw_topic_endpoint_info_t.
-  -- * This function allocates memory to this array to hold n elements,
-  -- * where n is the value of the size param to this function.
-  -- * The member `size` is updated accordingly.
+  -- * This function allocates space to hold `size` topic endpoint information elements.
+  -- * Both `info_array` and `size` members are updated accordingly.
   -- *
-  -- * topic_endpoint_info_array must be zero initialized before being passed into this function.
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | Yes
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Yes
   -- *
-  -- * If a non RMW_RET_OK return value is returned, the RMW error message will be set
+  -- * \par Thread-safety
+  -- *   Initialization is a reentrant procedure, but:
+  -- *   - Access to the array of topic endpoint information is not synchronized.
+  -- *     It is not safe to read or write `topic_endpoint_info_array` during initialization.
+  -- *   - The default allocators are thread-safe objects, but any custom `allocator` may not be.
+  -- *     Check your allocator documentation for further reference.
   -- *
-  -- * \param[inout] topic_endpoint_info_array the data structure to initialise
-  -- * \param[in] size the size of the array
-  -- * \param[in] allocator the allocator to be used to allocate space
-  -- * \returns `RMW_RET_OK` on successful init, or
-  -- * \returns `RMW_RET_INVALID_ARGUMENT` if any of the parameters are NULL, or
-  -- * \returns `RMW_RET_INVALID_ARGUMENT` if topic_endpoint_info_array is not zero initialized, or
+  -- * \param[inout] topic_endpoint_info_array Array to be initialized on success,
+  -- *   but left unchanged on failure.
+  -- * \param[in] size Size of the array.
+  -- * \param[in] allocator Allocator to be used to populate `names_and_types`.
+  -- * \returns `RMW_RET_OK` if successful, or
+  -- * \returns `RMW_RET_INVALID_ARGUMENT` if `topic_endpoint_info_array` is NULL, or
+  -- * \returns `RMW_RET_INVALID_ARGUMENT` if `topic_endpoint_info_array` is not
+  -- *   a zero initialized array, or
+  -- * \returns `RMW_RET_INVALID_ARGUMENT` if `allocator` is invalid,
+  -- *   by rcutils_allocator_is_valid() definition, or
   -- * \returns `RMW_BAD_ALLOC` if memory allocation fails, or
   -- * \returns `RMW_RET_ERROR` when an unspecified error occurs.
+  -- * \remark This function sets the RMW error state on failure.
   --  
 
    function rmw_topic_endpoint_info_array_init_with_size
      (topic_endpoint_info_array : access rmw_topic_endpoint_info_array_t;
       size : stddef_h.size_t;
-      allocator : access rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/topic_endpoint_info_array.h:83
+      allocator : access rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/topic_endpoint_info_array.h:106
    with Import => True, 
         Convention => C, 
         External_Name => "rmw_topic_endpoint_info_array_init_with_size";
 
-  --/ Finalize a rmw_topic_endpoint_info_array_t object.
+  --/ Finalize an array of topic endpoint information.
   --*
-  -- * The info_array member variable inside of rmw_topic_endpoint_info_array represents an array of
-  -- * rmw_topic_endpoint_info_t.
-  -- * When initializing this array, memory is allocated for it using the allocator.
-  -- * This function reclaims any allocated resources within the object and also sets the value of size
-  -- * to 0.
+  -- * This function deallocates the given array storage, and then zero initializes it.
+  -- * If a logical error, such as `RMW_RET_INVALID_ARGUMENT`, ensues, this function will
+  -- * return early, leaving the given array unchanged.
+  -- * Otherwise, it will proceed despite errors.
   -- *
-  -- * If a non RMW_RET_OK return value is returned, the RMW error message will be set
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | No
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Yes
   -- *
-  -- * \param[inout] topic_endpoint_info_array object to be finalized
-  -- * \param[in] allocator the allocator used to allocate memory to the object
-  -- * \returns `RMW_RET_OK` on successfully reclaiming memory, or
-  -- * \returns `RMW_RET_INVALID_ARGUMENT` if any parameters are NULL, or
+  -- * \par Thread-safety
+  -- *   Finalization is a reentrant procedure, but:
+  -- *   - Access to the array of topic endpoint information is not synchronized.
+  -- *     It is not safe to read or write `topic_endpoint_info_array` during finalization.
+  -- *   - The default allocators are thread-safe objects, but any custom `allocator` may not be.
+  -- *     Check your allocator documentation for further reference.
+  -- *
+  -- * \pre Given `allocator` must be the same used to initialize the given `topic_endpoint_info_array`.
+  -- *
+  -- * \param[inout] topic_endpoint_info_array object to be finalized.
+  -- * \param[in] allocator Allocator used to populate the given `topic_endpoint_info_array`.
+  -- * \returns `RMW_RET_OK` if successful, or
+  -- * \returns `RMW_RET_INVALID_ARGUMENT` if `topic_endpoint_info_array` is NULL, or
+  -- * \returns `RMW_RET_INVALID_ARGUMENT` if `allocator` is invalid,
+  -- *   by rcutils_allocator_is_valid() definition, or
   -- * \returns `RMW_RET_ERROR` when an unspecified error occurs.
+  -- * \remark This function sets the RMW error state on failure.
   --  
 
-   function rmw_topic_endpoint_info_array_fini (topic_endpoint_info_array : access rmw_topic_endpoint_info_array_t; allocator : access rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/topic_endpoint_info_array.h:107
+   function rmw_topic_endpoint_info_array_fini (topic_endpoint_info_array : access rmw_topic_endpoint_info_array_t; allocator : access rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/topic_endpoint_info_array.h:147
    with Import => True, 
         Convention => C, 
         External_Name => "rmw_topic_endpoint_info_array_fini";

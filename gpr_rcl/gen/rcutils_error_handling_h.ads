@@ -13,12 +13,12 @@ package rcutils_error_handling_h is
 
    --  arg-macro: procedure RCUTILS_SAFE_FWRITE_TO_STDERR (msg)
    --    do {fwrite(msg, sizeof(char), strlen(msg), stderr);} while (0)
-   RCUTILS_ERROR_STATE_LINE_NUMBER_STR_MAX_LENGTH : constant := 20;  --  /opt/ros/foxy/include/rcutils/error_handling.h:53
-   RCUTILS_ERROR_FORMATTING_CHARACTERS : constant := 6;  --  /opt/ros/foxy/include/rcutils/error_handling.h:54
+   RCUTILS_ERROR_STATE_LINE_NUMBER_STR_MAX_LENGTH : constant := 20;  --  /opt/ros/foxy/include/rcutils/error_handling.h:54
+   RCUTILS_ERROR_FORMATTING_CHARACTERS : constant := 6;  --  /opt/ros/foxy/include/rcutils/error_handling.h:55
 
-   RCUTILS_ERROR_MESSAGE_MAX_LENGTH : constant := 1024;  --  /opt/ros/foxy/include/rcutils/error_handling.h:57
+   RCUTILS_ERROR_MESSAGE_MAX_LENGTH : constant := 1024;  --  /opt/ros/foxy/include/rcutils/error_handling.h:58
 
-   RCUTILS_ERROR_STATE_MESSAGE_MAX_LENGTH : constant := 768;  --  /opt/ros/foxy/include/rcutils/error_handling.h:62
+   RCUTILS_ERROR_STATE_MESSAGE_MAX_LENGTH : constant := 768;  --  /opt/ros/foxy/include/rcutils/error_handling.h:63
    --  unsupported macro: RCUTILS_ERROR_STATE_FILE_MAX_LENGTH ( RCUTILS_ERROR_MESSAGE_MAX_LENGTH - RCUTILS_ERROR_STATE_MESSAGE_MAX_LENGTH - RCUTILS_ERROR_STATE_LINE_NUMBER_STR_MAX_LENGTH - RCUTILS_ERROR_FORMATTING_CHARACTERS - 1)
    --  unsupported macro: RCUTILS_CHECK_ARGUMENT_FOR_NULL(argument,error_return_type) RCUTILS_CHECK_FOR_NULL_WITH_MSG( argument, #argument " argument is null", return error_return_type)
    --  arg-macro: procedure RCUTILS_CHECK_FOR_NULL_WITH_MSG (value, msg, error_statement)
@@ -26,6 +26,8 @@ package rcutils_error_handling_h is
    --  arg-macro: procedure RCUTILS_SET_ERROR_MSG (msg)
    --    do {rcutils_set_error_state(msg, __FILE__, __LINE__);} while (0)
    --  unsupported macro: RCUTILS_SET_ERROR_MSG_WITH_FORMAT_STRING(format_string,...) do { char output_msg[RCUTILS_ERROR_MESSAGE_MAX_LENGTH]; int ret = rcutils_snprintf(output_msg, sizeof(output_msg), format_string, __VA_ARGS__); if (ret < 0) { RCUTILS_SAFE_FWRITE_TO_STDERR("Failed to call snprintf for error message formatting\n"); } else { RCUTILS_SET_ERROR_MSG(output_msg); } } while (0)
+   --  arg-macro: procedure RCUTILS_CAN_SET_MSG_AND_RETURN_WITH_ERROR_OF (error_return_value)
+   --    RCUTILS_CAN_FAIL_WITH( { RCUTILS_SET_ERROR_MSG("Injecting " RCUTILS_STRINGIFY(error_return_value)); return error_return_value; })
 
   -- Copyright 2014 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,20 +51,20 @@ package rcutils_error_handling_h is
   --/ Struct wrapping a fixed-size c string used for returning the formatted error string.
    subtype rcutils_error_string_t_str_array is Interfaces.C.char_array (0 .. 1023);
    type rcutils_error_string_t is record
-      str : aliased rcutils_error_string_t_str_array;  -- /opt/ros/foxy/include/rcutils/error_handling.h:74
+      str : aliased rcutils_error_string_t_str_array;  -- /opt/ros/foxy/include/rcutils/error_handling.h:75
    end record
-   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcutils/error_handling.h:72
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcutils/error_handling.h:73
 
   --/ Struct which encapsulates the error state set by RCUTILS_SET_ERROR_MSG().
   --/ User message storage, limited to RCUTILS_ERROR_STATE_MESSAGE_MAX_LENGTH characters.
    subtype rcutils_error_state_t_message_array is Interfaces.C.char_array (0 .. 767);
    subtype rcutils_error_state_t_file_array is Interfaces.C.char_array (0 .. 228);
    type rcutils_error_state_t is record
-      message : aliased rcutils_error_state_t_message_array;  -- /opt/ros/foxy/include/rcutils/error_handling.h:81
-      file : aliased rcutils_error_state_t_file_array;  -- /opt/ros/foxy/include/rcutils/error_handling.h:84
-      line_number : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/foxy/include/rcutils/error_handling.h:86
+      message : aliased rcutils_error_state_t_message_array;  -- /opt/ros/foxy/include/rcutils/error_handling.h:82
+      file : aliased rcutils_error_state_t_file_array;  -- /opt/ros/foxy/include/rcutils/error_handling.h:85
+      line_number : aliased x86_64_linux_gnu_bits_stdint_uintn_h.uint64_t;  -- /opt/ros/foxy/include/rcutils/error_handling.h:87
    end record
-   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcutils/error_handling.h:78
+   with Convention => C_Pass_By_Copy;  -- /opt/ros/foxy/include/rcutils/error_handling.h:79
 
   --/ File name, limited to what's left from RCUTILS_ERROR_STATE_MAX_SIZE characters
   --/ after subtracting storage for others.
@@ -108,7 +110,7 @@ package rcutils_error_handling_h is
   -- * \return `RCUTILS_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcutils_initialize_error_handling_thread_local_storage (allocator : rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t  -- /opt/ros/foxy/include/rcutils/error_handling.h:142
+   function rcutils_initialize_error_handling_thread_local_storage (allocator : rcutils_allocator_h.rcutils_allocator_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t  -- /opt/ros/foxy/include/rcutils/error_handling.h:143
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_initialize_error_handling_thread_local_storage";
@@ -131,7 +133,7 @@ package rcutils_error_handling_h is
    procedure rcutils_set_error_state
      (error_string : Interfaces.C.Strings.chars_ptr;
       file : Interfaces.C.Strings.chars_ptr;
-      line_number : stddef_h.size_t)  -- /opt/ros/foxy/include/rcutils/error_handling.h:160
+      line_number : stddef_h.size_t)  -- /opt/ros/foxy/include/rcutils/error_handling.h:161
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_set_error_state";
@@ -176,8 +178,20 @@ package rcutils_error_handling_h is
   -- * \param[in] ... Arguments for the format string.
   --  
 
+  --/ Indicate that the function intends to set an error message and return an error value.
+  --*
+  -- * \def RCUTILS_CAN_SET_MSG_AND_RETURN_WITH_ERROR_OF
+  -- * Indicating macro similar to RCUTILS_CAN_RETURN_WITH_ERROR_OF, that also sets an error
+  -- * message.
+  -- *
+  -- * For now, this macro simply relies on `RCUTILS_CAN_FAIL_WITH` to set a generic error
+  -- * message and return the given `error_return_value` if fault injection is enabled.
+  -- *
+  -- * \param error_return_value the value returned as a result of a given error.
+  --  
+
   --/ Return `true` if the error is set, otherwise `false`.
-   function rcutils_error_is_set return Extensions.bool  -- /opt/ros/foxy/include/rcutils/error_handling.h:229
+   function rcutils_error_is_set return Extensions.bool  -- /opt/ros/foxy/include/rcutils/error_handling.h:248
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_error_is_set";
@@ -192,7 +206,7 @@ package rcutils_error_handling_h is
   -- * \return A pointer to the current error state struct.
   --  
 
-   function rcutils_get_error_state return access constant rcutils_error_state_t  -- /opt/ros/foxy/include/rcutils/error_handling.h:243
+   function rcutils_get_error_state return access constant rcutils_error_state_t  -- /opt/ros/foxy/include/rcutils/error_handling.h:262
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_get_error_state";
@@ -208,13 +222,13 @@ package rcutils_error_handling_h is
   -- * \return The current error string, with file and line number, or "error not set" if not set.
   --  
 
-   function rcutils_get_error_string return rcutils_error_string_t  -- /opt/ros/foxy/include/rcutils/error_handling.h:258
+   function rcutils_get_error_string return rcutils_error_string_t  -- /opt/ros/foxy/include/rcutils/error_handling.h:277
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_get_error_string";
 
   --/ Reset the error state by clearing any previously set error state.
-   procedure rcutils_reset_error  -- /opt/ros/foxy/include/rcutils/error_handling.h:263
+   procedure rcutils_reset_error  -- /opt/ros/foxy/include/rcutils/error_handling.h:282
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_reset_error";

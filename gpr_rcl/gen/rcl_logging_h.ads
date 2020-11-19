@@ -43,7 +43,7 @@ package rcl_logging_h is
   -- * \return `RCL_RET_OK` if successful, or
   -- * \return `RCL_RET_BAD_ALLOC` if allocating memory failed, or
   -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
-  -- * \return `RCL_RET_ERR` if a general error occurs
+  -- * \return `RCL_RET_ERROR` if a general error occurs
   --  
 
    function rcl_logging_configure (global_args : access constant rcl_arguments_h.rcl_arguments_t; allocator : access constant rcl_allocator_h.rcl_allocator_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/logging.h:56
@@ -68,14 +68,15 @@ package rcl_logging_h is
   -- * \param allocator Used to allocate memory used by the logging system
   -- * \param output_handler Output handler to be installed
   -- * \return `RCL_RET_OK` if successful, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RCL_RET_BAD_ALLOC` if allocating memory failed, or
-  -- * \return `RCL_RET_ERR` if a general error occurs
+  -- * \return `RCL_RET_ERROR` if a general error occurs
   --  
 
    function rcl_logging_configure_with_output_handler
      (global_args : access constant rcl_arguments_h.rcl_arguments_t;
       allocator : access constant rcl_allocator_h.rcl_allocator_t;
-      output_handler : rcl_logging_output_handler_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/logging.h:83
+      output_handler : rcl_logging_output_handler_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/logging.h:84
    with Import => True, 
         Convention => C, 
         External_Name => "rcl_logging_configure_with_output_handler";
@@ -92,10 +93,10 @@ package rcl_logging_h is
   -- * Lock-Free          | Yes
   -- *
   -- * \return `RCL_RET_OK` if successful.
-  -- * \return `RCL_RET_ERR` if a general error occurs
+  -- * \return `RCL_RET_ERROR` if a general error occurs
   --  
 
-   function rcl_logging_fini return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/logging.h:104
+   function rcl_logging_fini return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/logging.h:105
    with Import => True, 
         Convention => C, 
         External_Name => "rcl_logging_fini";
@@ -116,7 +117,7 @@ package rcl_logging_h is
   -- * \return `FALSE` if logging rosout is disabled.
   --  
 
-   function rcl_logging_rosout_enabled return Extensions.bool  -- /opt/ros/foxy/include/rcl/logging.h:123
+   function rcl_logging_rosout_enabled return Extensions.bool  -- /opt/ros/foxy/include/rcl/logging.h:124
    with Import => True, 
         Convention => C, 
         External_Name => "rcl_logging_rosout_enabled";
@@ -143,7 +144,7 @@ package rcl_logging_h is
       name : Interfaces.C.Strings.chars_ptr;
       timestamp : rcutils_time_h.rcutils_time_point_value_t;
       format : Interfaces.C.Strings.chars_ptr;
-      args : access stdarg_h.va_list)  -- /opt/ros/foxy/include/rcl/logging.h:142
+      args : access stdarg_h.va_list)  -- /opt/ros/foxy/include/rcl/logging.h:143
    with Import => True, 
         Convention => C, 
         External_Name => "rcl_logging_multiple_output_handler";

@@ -139,8 +139,9 @@ package rcl_context_h is
   --*
   -- * The context to be finalized must have been previously initialized with
   -- * `rcl_init()`, and then later invalidated with `rcl_shutdown()`.
+  -- * A zero-initialized context that has not been initialized can be finalized.
   -- * If context is `NULL`, then `RCL_RET_INVALID_ARGUMENT` is returned.
-  -- * If context is zero-initialized, then `RCL_RET_INVALID_ARGUMENT` is returned.
+  -- * If context is zero-initialized, then `RCL_RET_OK` is returned.
   -- * If context is initialized and valid (`rcl_shutdown()` was not called on it),
   -- * then `RCL_RET_INVALID_ARGUMENT` is returned.
   -- *
@@ -159,7 +160,7 @@ package rcl_context_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occur.
   --  
 
-   function rcl_context_fini (context : access rcl_context_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/context.h:179
+   function rcl_context_fini (context : access rcl_context_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/context.h:180
    with Import => True, 
         Convention => C, 
         External_Name => "rcl_context_fini";
@@ -193,7 +194,7 @@ package rcl_context_h is
   -- * \return `NULL` if there was an error
   --  
 
-   function rcl_context_get_init_options (context : access rcl_context_t) return access constant rcl_init_options_h.rcl_init_options_t  -- /opt/ros/foxy/include/rcl/context.h:213
+   function rcl_context_get_init_options (context : access rcl_context_t) return access constant rcl_init_options_h.rcl_init_options_t  -- /opt/ros/foxy/include/rcl/context.h:214
    with Import => True, 
         Convention => C, 
         External_Name => "rcl_context_get_init_options";
@@ -222,7 +223,7 @@ package rcl_context_h is
   -- * \return `0` if context is `NULL`
   --  
 
-   function rcl_context_get_instance_id (context : access rcl_context_t) return rcl_context_instance_id_t  -- /opt/ros/foxy/include/rcl/context.h:241
+   function rcl_context_get_instance_id (context : access rcl_context_t) return rcl_context_instance_id_t  -- /opt/ros/foxy/include/rcl/context.h:242
    with Import => True, 
         Convention => C, 
         External_Name => "rcl_context_get_instance_id";
@@ -245,7 +246,7 @@ package rcl_context_h is
   -- * \return `true` if valid, otherwise `false`
   --  
 
-   function rcl_context_is_valid (context : access rcl_context_t) return Extensions.bool  -- /opt/ros/foxy/include/rcl/context.h:263
+   function rcl_context_is_valid (context : access rcl_context_t) return Extensions.bool  -- /opt/ros/foxy/include/rcl/context.h:264
    with Import => True, 
         Convention => C, 
         External_Name => "rcl_context_is_valid";
@@ -268,7 +269,7 @@ package rcl_context_h is
   -- * \return pointer to rmw context if valid, otherwise `NULL`
   --  
 
-   function rcl_context_get_rmw_context (context : access rcl_context_t) return access rmw_init_h.rmw_context_t  -- /opt/ros/foxy/include/rcl/context.h:285
+   function rcl_context_get_rmw_context (context : access rcl_context_t) return access rmw_init_h.rmw_context_t  -- /opt/ros/foxy/include/rcl/context.h:286
    with Import => True, 
         Convention => C, 
         External_Name => "rcl_context_get_rmw_context";

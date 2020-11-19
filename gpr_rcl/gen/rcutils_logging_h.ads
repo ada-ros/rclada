@@ -296,7 +296,6 @@ package rcutils_logging_h is
   -- * \param[in] name The name of the logger that this message came from
   -- * \param[in] timestamp The time at which the log message was generated
   -- * \param[in] msg The message being logged
-  -- * \param[in] args The list of arguments to insert into the formatted log message
   -- * \param[out] logging_output An output buffer for the formatted message
   --  
 
@@ -306,7 +305,7 @@ package rcutils_logging_h is
       name : Interfaces.C.Strings.chars_ptr;
       timestamp : rcutils_time_h.rcutils_time_point_value_t;
       msg : Interfaces.C.Strings.chars_ptr;
-      logging_output : access rcutils_types_char_array_h.rcutils_char_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t  -- /opt/ros/foxy/include/rcutils/logging.h:280
+      logging_output : access rcutils_types_char_array_h.rcutils_char_array_t) return rcutils_types_rcutils_ret_h.rcutils_ret_t  -- /opt/ros/foxy/include/rcutils/logging.h:279
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_logging_format_message";
@@ -319,7 +318,7 @@ package rcutils_logging_h is
   -- * \see rcutils_logging_get_logger_effective_level()
   --  
 
-   g_rcutils_logging_default_logger_level : aliased int  -- /opt/ros/foxy/include/rcutils/logging.h:293
+   g_rcutils_logging_default_logger_level : aliased int  -- /opt/ros/foxy/include/rcutils/logging.h:292
    with Import => True, 
         Convention => C, 
         External_Name => "g_rcutils_logging_default_logger_level";
@@ -337,7 +336,7 @@ package rcutils_logging_h is
   -- * \return The level.
   --  
 
-   function rcutils_logging_get_default_logger_level return int  -- /opt/ros/foxy/include/rcutils/logging.h:309
+   function rcutils_logging_get_default_logger_level return int  -- /opt/ros/foxy/include/rcutils/logging.h:308
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_logging_get_default_logger_level";
@@ -359,7 +358,7 @@ package rcutils_logging_h is
   -- * \param[in] level The level to be used.
   --  
 
-   procedure rcutils_logging_set_default_logger_level (level : int)  -- /opt/ros/foxy/include/rcutils/logging.h:328
+   procedure rcutils_logging_set_default_logger_level (level : int)  -- /opt/ros/foxy/include/rcutils/logging.h:327
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_logging_set_default_logger_level";
@@ -386,7 +385,7 @@ package rcutils_logging_h is
   -- * \return -1 if an error occurred
   --  
 
-   function rcutils_logging_get_logger_level (name : Interfaces.C.Strings.chars_ptr) return int  -- /opt/ros/foxy/include/rcutils/logging.h:353
+   function rcutils_logging_get_logger_level (name : Interfaces.C.Strings.chars_ptr) return int  -- /opt/ros/foxy/include/rcutils/logging.h:352
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_logging_get_logger_level";
@@ -413,7 +412,7 @@ package rcutils_logging_h is
   -- * \return -1 if an error occurred
   --  
 
-   function rcutils_logging_get_logger_leveln (name : Interfaces.C.Strings.chars_ptr; name_length : stddef_h.size_t) return int  -- /opt/ros/foxy/include/rcutils/logging.h:378
+   function rcutils_logging_get_logger_leveln (name : Interfaces.C.Strings.chars_ptr; name_length : stddef_h.size_t) return int  -- /opt/ros/foxy/include/rcutils/logging.h:377
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_logging_get_logger_leveln";
@@ -439,7 +438,7 @@ package rcutils_logging_h is
   -- * \return `RCUTILS_RET_ERROR` if an unspecified error occured
   --  
 
-   function rcutils_logging_set_logger_level (name : Interfaces.C.Strings.chars_ptr; level : int) return rcutils_types_rcutils_ret_h.rcutils_ret_t  -- /opt/ros/foxy/include/rcutils/logging.h:402
+   function rcutils_logging_set_logger_level (name : Interfaces.C.Strings.chars_ptr; level : int) return rcutils_types_rcutils_ret_h.rcutils_ret_t  -- /opt/ros/foxy/include/rcutils/logging.h:401
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_logging_set_logger_level";
@@ -460,7 +459,7 @@ package rcutils_logging_h is
   -- * \return true if the logger is enabled for the level; false otherwise.
   --  
 
-   function rcutils_logging_logger_is_enabled_for (name : Interfaces.C.Strings.chars_ptr; severity : int) return Extensions.bool  -- /opt/ros/foxy/include/rcutils/logging.h:421
+   function rcutils_logging_logger_is_enabled_for (name : Interfaces.C.Strings.chars_ptr; severity : int) return Extensions.bool  -- /opt/ros/foxy/include/rcutils/logging.h:420
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_logging_logger_is_enabled_for";
@@ -491,7 +490,7 @@ package rcutils_logging_h is
   -- * \return -1 if an error occurred.
   --  
 
-   function rcutils_logging_get_logger_effective_level (name : Interfaces.C.Strings.chars_ptr) return int  -- /opt/ros/foxy/include/rcutils/logging.h:450
+   function rcutils_logging_get_logger_effective_level (name : Interfaces.C.Strings.chars_ptr) return int  -- /opt/ros/foxy/include/rcutils/logging.h:449
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_logging_get_logger_effective_level";
@@ -522,7 +521,7 @@ package rcutils_logging_h is
       severity : int;
       name : Interfaces.C.Strings.chars_ptr;
       format : Interfaces.C.Strings.chars_ptr  -- , ...
-      )  -- /opt/ros/foxy/include/rcutils/logging.h:473
+      )  -- /opt/ros/foxy/include/rcutils/logging.h:472
    with Import => True, 
         Convention => C, 
         External_Name => "rcutils_log";
@@ -550,7 +549,8 @@ package rcutils_logging_h is
   -- * \param[in] severity The severity level
   -- * \param[in] name The name of the logger, must be null terminated c string
   -- * \param[in] timestamp The timestamp for when the log message was made
-  -- * \param[in] log_str The string to be logged
+  -- * \param[in] format The format string
+  -- * \param[in] args The `va_list` used by the logger
   --  
 
    procedure rcutils_logging_console_output_handler

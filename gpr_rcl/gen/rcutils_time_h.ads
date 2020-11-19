@@ -10,17 +10,17 @@ with stddef_h;
 package rcutils_time_h is
 
    --  arg-macro: function RCUTILS_S_TO_NS (seconds)
-   --    return seconds * (1000 * 1000 * 1000);
+   --    return (seconds) * (1000 * 1000 * 1000);
    --  arg-macro: function RCUTILS_MS_TO_NS (milliseconds)
-   --    return milliseconds * (1000 * 1000);
+   --    return (milliseconds) * (1000 * 1000);
    --  arg-macro: function RCUTILS_US_TO_NS (microseconds)
-   --    return microseconds * 1000;
+   --    return (microseconds) * 1000;
    --  arg-macro: function RCUTILS_NS_TO_S (nanoseconds)
-   --    return nanoseconds / (1000 * 1000 * 1000);
+   --    return (nanoseconds) / (1000 * 1000 * 1000);
    --  arg-macro: function RCUTILS_NS_TO_MS (nanoseconds)
-   --    return nanoseconds / (1000 * 1000);
+   --    return (nanoseconds) / (1000 * 1000);
    --  arg-macro: function RCUTILS_NS_TO_US (nanoseconds)
-   --    return nanoseconds / 1000;
+   --    return (nanoseconds) / 1000;
    --  unsupported macro: RCUTILS_STEADY_TIME rcutils_steady_time_now
   -- Copyright 2015 Open Source Robotics Foundation, Inc.
   -- Licensed under the Apache License, Version 2.0 (the "License");

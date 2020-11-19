@@ -245,6 +245,30 @@ package rcl_remap_h is
         Convention => C, 
         External_Name => "rcl_remap_node_namespace";
 
+  --/ Copy one remap structure into another.
+  --*
+  -- * <hr>
+  -- * Attribute          | Adherence
+  -- * ------------------ | -------------
+  -- * Allocates Memory   | Yes
+  -- * Thread-Safe        | No
+  -- * Uses Atomics       | No
+  -- * Lock-Free          | Yes
+  -- *
+  -- * \param[in] rule The structure to be copied.
+  -- *  Its allocator is used to copy memory into the new structure.
+  -- * \param[out] rule_out A zero-initialized rcl_remap_t structure to be copied into.
+  -- * \return `RCL_RET_OK` if the structure was copied successfully, or
+  -- * \return `RCL_RET_INVALID_ARGUMENT` if any function arguments are invalid, or
+  -- * \return `RCL_RET_BAD_ALLOC` if allocating memory failed, or
+  -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
+  --  
+
+   function rcl_remap_copy (rule : access constant rcl_remap_t; rule_out : access rcl_remap_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/remap.h:271
+   with Import => True, 
+        Convention => C, 
+        External_Name => "rcl_remap_copy";
+
   --/ Reclaim resources held inside rcl_remap_t structure.
   --*
   -- * <hr>
@@ -261,7 +285,7 @@ package rcl_remap_h is
   -- * \return `RCL_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rcl_remap_fini (remap : access rcl_remap_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/remap.h:268
+   function rcl_remap_fini (remap : access rcl_remap_t) return rcl_types_h.rcl_ret_t  -- /opt/ros/foxy/include/rcl/remap.h:293
    with Import => True, 
         Convention => C, 
         External_Name => "rcl_remap_fini";

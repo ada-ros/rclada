@@ -26,13 +26,18 @@ ada_find_package_include_dir(_rmw_include ${rmw_DIR})
 ada_find_package_include_dir(_rosidl_gen_c_include ${rosidl_generator_c_DIR})
 ada_find_package_include_dir(_rosidl_typesupport_interface_include ${rosidl_typesupport_interface_DIR})
 
-file(GLOB
-        _headers
-        "${_rcl_include}/rcl/*.h"
-#        "${_rcutils_include}/rcutils/*.h"
-#        "${_rcutils_include}/rcutils/types/*.h"
-#        "${_rmw_include}/rmw/*.h"
-        )
+# Cannot directly include all of rcl/*.h because some files have errors
+file(GLOB _headers "${_rcl_include}/rcl/*.h")
+list(REMOVE_ITEM _headers "${_rcl_include}/rcl/rmw_implementation_identifier_check.h")
+
+# See above on why this is broken in foxy
+#file(GLOB
+#        _headers
+#        "${_rcl_include}/rcl/*.h"
+##        "${_rcutils_include}/rcutils/*.h"
+##        "${_rcutils_include}/rcutils/types/*.h"
+##        "${_rmw_include}/rmw/*.h"
+#        )
 
 list(APPEND _includes
         ${_rcutils_include}

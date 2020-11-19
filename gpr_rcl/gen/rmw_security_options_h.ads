@@ -72,7 +72,7 @@ package rmw_security_options_h is
    function rmw_security_options_set_root_path
      (security_root_path : Interfaces.C.Strings.chars_ptr;
       allocator : access constant rcutils_allocator_h.rcutils_allocator_t;
-      security_options : access rmw_security_options_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/security_options.h:78
+      security_options : access rmw_security_options_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/security_options.h:79
    with Import => True, 
         Convention => C, 
         External_Name => "rmw_security_options_set_root_path";
@@ -85,7 +85,7 @@ package rmw_security_options_h is
   -- * \returns RMW_RET_OK
   --  
 
-   function rmw_security_options_fini (security_options : access rmw_security_options_t; allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/security_options.h:92
+   function rmw_security_options_fini (security_options : access rmw_security_options_t; allocator : access constant rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/security_options.h:93
    with Import => True, 
         Convention => C, 
         External_Name => "rmw_security_options_fini";

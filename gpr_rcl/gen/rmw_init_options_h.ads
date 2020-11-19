@@ -64,7 +64,7 @@ package rmw_init_options_h is
         Convention => C, 
         External_Name => "rmw_get_zero_initialized_init_options";
 
-  --/ Initialize given init_options with the default values and implementation specific values.
+  --/ Initialize given init options with the default values and implementation specific values.
   --*
   -- * The given allocator is used, if required, during setup of the init options,
   -- * but is also used during initialization.
@@ -72,6 +72,13 @@ package rmw_init_options_h is
   -- * In either case the given allocator is stored in the returned init options.
   -- *
   -- * The `impl` pointer should not be changed manually.
+  -- *
+  -- * \pre The given init options must be zero initialized.
+  -- *
+  -- * \post If initialization fails, init options will remain zero initialized.
+  -- *
+  -- * \remark Giving an already initialized init options will result
+  -- *   in a failure with return code `RMW_RET_INVALID_ARGUMENT`.
   -- *
   -- * <hr>
   -- * Attribute          | Adherence
@@ -86,13 +93,12 @@ package rmw_init_options_h is
   -- * \param[inout] init_options object to be setup
   -- * \param[in] allocator to be used during setup and during initialization
   -- * \return `RMW_RET_OK` if setup is successful, or
-  -- * \return `RMW_RET_INVALID_ARGUMENT` if init_options has already be initialized, or
   -- * \return `RMW_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RMW_RET_BAD_ALLOC` if allocating memory failed, or
   -- * \return `RMW_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rmw_init_options_init (init_options : access rmw_init_options_t; allocator : rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/init_options.h:104
+   function rmw_init_options_init (init_options : access rmw_init_options_t; allocator : rcutils_allocator_h.rcutils_allocator_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/init_options.h:110
    with Import => True, 
         Convention => C, 
         External_Name => "rmw_init_options_init";
@@ -102,11 +108,16 @@ package rmw_init_options_h is
   -- * The allocator from the source is used for any allocations and stored in the
   -- * destination.
   -- *
-  -- * The destination should either be zero initialized with
-  -- * `rmw_get_zero_initialized_init_options()` or should have had
-  -- * `rmw_init_options_fini()` called on it.
-  -- * Giving an already initialized init options for the destination will result
-  -- * in a failure with return code `RMW_RET_INVALID_ARGUMENT`.
+  -- * \pre The source init options must have been initialized
+  -- *   i.e. had `rmw_init_options_init()` called on.
+  -- * \pre The destination init options must be zero initialized.
+  -- *
+  -- * \post If copy fails, destination init options will remain zero initialized.
+  -- *
+  -- * \remark Giving an zero initialized init options as a source will result
+  -- *   in a failure with return code `RMW_RET_INVALID_ARGUMENT`.
+  -- * \remark Giving an already initialized init options for the destination will result
+  -- *   in a failure with return code `RMW_RET_INVALID_ARGUMENT`.
   -- *
   -- * <hr>
   -- * Attribute          | Adherence
@@ -123,21 +134,29 @@ package rmw_init_options_h is
   -- * \return `RMW_RET_OK` if the copy is successful, or
   -- * \return `RMW_RET_INCORRECT_RMW_IMPLEMENTATION` if the implementation
   -- *   identifier for src does not match the implementation of this function, or
-  -- * \return `RMW_RET_INVALID_ARGUMENT` if the dst has already be initialized, or
   -- * \return `RMW_RET_INVALID_ARGUMENT` if any arguments are invalid, or
   -- * \return `RMW_RET_BAD_ALLOC` if allocating memory failed, or
   -- * \return `RMW_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rmw_init_options_copy (src : access constant rmw_init_options_t; dst : access rmw_init_options_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/init_options.h:140
+   function rmw_init_options_copy (src : access constant rmw_init_options_t; dst : access rmw_init_options_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/init_options.h:150
    with Import => True, 
         Convention => C, 
         External_Name => "rmw_init_options_copy";
 
-  --/ Finalize the given init_options.
+  --/ Finalize the given init options.
   --*
-  -- * The given init_options must be non-`NULL` and valid, i.e. had
-  -- * `rmw_init_options_init()` called on it but not this function yet.
+  -- * This function will return early if a logical error, such as `RMW_RET_INVALID_ARGUMENT`
+  -- * or `RMW_RET_INCORRECT_RMW_IMPLEMENTATION`, ensues, leaving the given init options
+  -- * unchanged.
+  -- * Otherwise, it will proceed despite errors, freeing as much resources as it can and zero
+  -- * initializing the given init options.
+  -- *
+  -- * \pre The given init options must have been initialized
+  -- *   i.e. had `rmw_init_options_init()` called on.
+  -- *
+  -- * \remarks If init options are zero initialized,
+  -- *   then `RMW_RET_INVALID_ARGUMENT` is returned.
   -- *
   -- * <hr>
   -- * Attribute          | Adherence
@@ -149,13 +168,15 @@ package rmw_init_options_h is
   -- *
   -- * This should be defined by the rmw implementation.
   -- *
-  -- * \param[inout] init_options object to be setup
-  -- * \return `RMW_RET_OK` if setup is successful, or
+  -- * \param[inout] init_options object to finalized
+  -- * \return `RMW_RET_OK` if finalization is successful, or
   -- * \return `RMW_RET_INVALID_ARGUMENT` if any arguments are invalid, or
+  -- * \return `RMW_RET_INCORRECT_RMW_IMPLEMENTATION` if the implementation
+  -- *   identifier does not match the implementation of this function, or
   -- * \return `RMW_RET_ERROR` if an unspecified error occurs.
   --  
 
-   function rmw_init_options_fini (init_options : access rmw_init_options_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/init_options.h:165
+   function rmw_init_options_fini (init_options : access rmw_init_options_t) return rmw_ret_types_h.rmw_ret_t  -- /opt/ros/foxy/include/rmw/init_options.h:186
    with Import => True, 
         Convention => C, 
         External_Name => "rmw_init_options_fini";
