@@ -56,7 +56,7 @@ package RCL.Logging with Elaborate_Body is
 private
 
    function Initialized return Boolean is
-     (G_Rcutils_Logging_Initialized /= Bool_False);
+     (Boolean (G_Rcutils_Logging_Initialized));
 
    type Log_Location (Sub_Len, File_Len : Natural) is record
       Subprogram  : String (1 .. Sub_Len);

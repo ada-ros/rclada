@@ -30,7 +30,7 @@ package body RCL.Utils.String_Arrays is
    -------------
 
    function Iterate (This : aliased String_Array) return Iterators.Forward_Iterator'Class is
-      (Iterator'(This'Access, Positive'First));
+      (Iterator'(This'Unchecked_Access, Positive'First));
 
    --------------
    -- Finalize --

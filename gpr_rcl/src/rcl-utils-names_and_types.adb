@@ -33,7 +33,7 @@ package body RCL.Utils.Names_And_Types is
    -------------
 
    function Iterate (This : aliased Vector) return Iterators.Forward_Iterator'Class is
-      (Iterator'(This'Access, Positive'First));
+      (Iterator'(This'Unchecked_Access, Positive'First));
 
 
    -------------
