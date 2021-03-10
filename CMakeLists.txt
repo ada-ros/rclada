@@ -75,6 +75,7 @@ set(_extra_headers
         ${_rcl_action_include}/rcl_action/action_server.h
         ${_rcl_action_include}/rcl_action/goal_handle.h
         ${_rcl_action_include}/rcl_action/types.h        
+        ${_rcl_action_include}/rcl_action/wait.h      
 
         # BUILTIN INTERFACES (required by UUIDs)
         ${_builtin_interfaces_include}/builtin_interfaces/msg/detail/time__struct.h
