@@ -65,20 +65,21 @@ list(FILTER _headers EXCLUDE REGEX ".*/rcl/rmw_implementation_identifier_check.h
 # standard stuff, some of it not compilable
 set(_extra_headers
         # ACTION MSGS (required by rcl_action)
-        ${_action_msgs_include}/action_msgs/msg/detail/goal_info__struct.h        
-        ${_action_msgs_include}/action_msgs/msg/detail/goal_status__struct.h  
-        ${_action_msgs_include}/action_msgs/msg/detail/goal_status_array__struct.h  
-        ${_action_msgs_include}/action_msgs/srv/detail/cancel_goal__struct.h  
+        ${_action_msgs_include}/action_msgs/msg/detail/goal_info__struct.h
+        ${_action_msgs_include}/action_msgs/msg/detail/goal_status__struct.h
+        ${_action_msgs_include}/action_msgs/msg/detail/goal_status_array__struct.h
+        ${_action_msgs_include}/action_msgs/srv/detail/cancel_goal__struct.h
 
         # ACTIONS
-        ${_rcl_action_include}/rcl_action/action_client.h        
+        ${_rcl_action_include}/rcl_action/action_client.h
         ${_rcl_action_include}/rcl_action/action_server.h
         ${_rcl_action_include}/rcl_action/goal_handle.h
-        ${_rcl_action_include}/rcl_action/types.h        
-        ${_rcl_action_include}/rcl_action/wait.h      
+        ${_rcl_action_include}/rcl_action/types.h
+        ${_rcl_action_include}/rcl_action/wait.h
 
         # BUILTIN INTERFACES (required by UUIDs)
-        ${_builtin_interfaces_include}/builtin_interfaces/msg/detail/time__struct.h
+        # ${_builtin_interfaces_include}/builtin_interfaces/msg/detail/time__struct.h
+        # Already in rosidl_generator_ada
 
         # RCL UTILS
         ${_rcutils_include}/rcutils/allocator.h
@@ -93,11 +94,11 @@ set(_extra_headers
 
         # RMW
         ${_rmw_include}/rmw/init.h
-        ${_rmw_include}/rmw/init_options.h        
+        ${_rmw_include}/rmw/init_options.h
         ${_rmw_include}/rmw/localhost.h
         ${_rmw_include}/rmw/message_sequence.h
         ${_rmw_include}/rmw/names_and_types.h
-        ${_rmw_include}/rmw/ret_types.h        
+        ${_rmw_include}/rmw/ret_types.h
         ${_rmw_include}/rmw/security_options.h
         ${_rmw_include}/rmw/serialized_message.h
         ${_rmw_include}/rmw/topic_endpoint_info.h

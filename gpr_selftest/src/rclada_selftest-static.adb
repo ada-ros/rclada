@@ -30,6 +30,8 @@ procedure Rclada_Selftest.Static is
 
    Use_Debug_Allocator : constant Boolean := True;
 
+   Success : Boolean := False;
+
    ----------
    -- Test --
    ----------
@@ -151,7 +153,7 @@ procedure Rclada_Selftest.Static is
                           Info :        ROSIDL.Message_Info) is
          pragma Unreferenced (Info, Node);
 
-         Msg : constant access constant Handmade.Message :=
+         Msg : constant access Handmade.Message :=
                  Handmade.Utils.To_Message_Access (Dyn.To_Ptr);
       begin
          Topic_Done := True;
@@ -165,8 +167,12 @@ procedure Rclada_Selftest.Static is
          pragma Assert (Msg.Real   = Test_Real);
 
          --  Strings
+         pragma Assert (Get_String (Msg.Text) = Topic);
+         pragma Assert (+Msg.Bounded = Test_string); -- alternative syntax for Get_String
+
          --  TODO
 
+         Success := Success or True;
          Logging.Info ("Topic testing done");
       end Receiver;
 
@@ -197,6 +203,9 @@ procedure Rclada_Selftest.Static is
       Logging.Info ("Last built: "
                     & GNAT.Source_Info.Compilation_ISO_Date & " "
                     & GNAT.Source_Info.Compilation_Time);
+
+      pragma Assert (Success, "Some partial test failed!");
+
       Logging.Info ("Test successful");
       Logging.Info ("Elapsed seconds (computed):  " & Duration'Image (Clock.Now - Start));
       Logging.Info ("Elapsed seconds (from clock):" & Duration'Image (Clock.Elapsed));
