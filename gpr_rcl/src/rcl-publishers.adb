@@ -43,7 +43,7 @@ package body RCL.Publishers is
    --------------
 
    function Is_Valid (This : Publisher) return Boolean is
-     (To_Boolean
+     (Boolean
         (Rcl_Publisher_Is_Valid
              (Publisher => This.Impl'Access)));
 

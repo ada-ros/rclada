@@ -46,7 +46,7 @@ package body RCL.Timers is
       Canceled : aliased CX.Bool;
    begin
       Check (Rcl_Timer_Is_Canceled (This.Impl'Access, Canceled'Access));
-      return To_Boolean (Canceled);
+      return Boolean (Canceled);
    end Is_Canceled;
 
    --------------------------

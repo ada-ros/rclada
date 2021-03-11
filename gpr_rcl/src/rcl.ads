@@ -70,10 +70,4 @@ private
 
    procedure Check (Ret : Rcl_Error_Code);
 
-   Bool_False : constant CX.Bool := CX.Bool'First;
-   Bool_True  : constant CX.Bool := CX.Bool'Succ (Bool_False);
-   --  Saves future problems with CX.bool being made a new Boolean instead of char
-
-   function To_Boolean (Ret : CX.Bool) return Boolean is (Ret /= Bool_False);
-
 end RCL;

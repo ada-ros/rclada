@@ -48,7 +48,7 @@ package body RCL.Calendar is
    --------------
 
    function Is_Valid (This : in out Clock) return Boolean is
-     (This.Inited and then To_Boolean (Rcl_Clock_Valid (This.Impl'Access)));
+     (This.Inited and then Boolean (Rcl_Clock_Valid (This.Impl'Access)));
 
    ---------
    -- Now --

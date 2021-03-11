@@ -64,7 +64,7 @@ package body RCL.Nodes is
       declare
          use Ada.Calendar;
          Start     : constant Time    := Clock;
-         Available : aliased  CX.Bool := Bool_False;
+         Available : aliased  CX.Bool := False;
          Bother    :          Time    := Clock - 1.1;
       begin
          while Clock - Start < Timeout loop
@@ -74,7 +74,7 @@ package body RCL.Nodes is
                       Client'Access,
                       Available'Access));
 
-            exit when To_Boolean (Available);
+            exit when Available;
 
             if Clock - Bother >= 1.0 then
                Logging.Warn ("Service unavailaible, waiting...");
@@ -229,7 +229,7 @@ package body RCL.Nodes is
    begin
       This.Dispatchers.Finalize;
 
-      if To_Boolean (Rcl_Node_Is_Valid (This.Impl'Access)) then
+      if Rcl_Node_Is_Valid (This.Impl'Access) then
          This.Current_Executor.Remove (This);
          Check (Rcl_Node_Fini (This.Impl'Access));
       else
@@ -318,7 +318,7 @@ package body RCL.Nodes is
            (Rcl_Get_Topic_Names_And_Types
               (This.Impl'Access,
                This.Allocator.To_C,
-               (if Demangle then Bool_False else Bool_True), -- Note: in C side is No_Demangle (bool)
+               (if Demangle then False else True), -- Note: in C side is No_Demangle (bool)
                Arr.To_C));
       end return;
    end Graph_Topics;

@@ -10,13 +10,17 @@ project Rcl_Selftest is
    for Exec_Dir use "bin";
    for Main use (
                  "rclada_double_node.adb",
-                 "rclada_selftest.adb",
+                 "rclada_selftest-dynamic.adb",
+                 "rclada_selftest-static.adb",
                  "rclada_test_allocators.adb",
                  "rclada_test_multicore.adb"
-                );
+                );   
 
    package Builder is
       for Switches ("ada") use ("-j0", "-g");
+
+      for Executable ("rclada_selftest-dynamic.adb") use "rclada_selftest_dynamic";
+      for Executable ("rclada_selftest-static.adb") use "rclada_selftest_static";
    end Builder;
 
    package Compiler is

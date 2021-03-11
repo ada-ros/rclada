@@ -68,7 +68,7 @@ package body RCL.Subscriptions.Impl is
       --  if rcl_allocator_t is the expected type here.
    begin
       if Ret = RMW_RET_OK then
-         Info.Intra_Process := To_Boolean (Impl_Info.From_Intra_Process);
+         Info.Intra_Process := Boolean (Impl_Info.From_Intra_Process);
          return True;
       elsif Ret = RCL_RET_SUBSCRIPTION_TAKE_FAILED then
          return False;

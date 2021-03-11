@@ -126,7 +126,8 @@ ada_add_executables(
         bin
         # binaries
         rclada_double_node
-        rclada_selftest
+        rclada_selftest_dynamic
+        rclada_selftest_static
         rclada_test_allocators
         rclada_test_multicore
 )

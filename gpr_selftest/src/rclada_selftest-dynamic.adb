@@ -1,5 +1,4 @@
 with Ada.Command_Line; use Ada.Command_Line;
-with Ada.Numerics;
 with Ada.Text_IO; use Ada.Text_IO;
 
 with GNAT.Debug_Pools; use GNAT.Debug_Pools;
@@ -19,7 +18,7 @@ with ROSIDL.Typesupport;
 
 --  with System.Address_Image;
 
-procedure Rclada_Selftest is
+procedure Rclada_Selftest.Dynamic is
 
    use RCL;
    use ROSIDL.Types;
@@ -58,13 +57,6 @@ procedure Rclada_Selftest is
 
       Pub   :          Publishers.Publisher := Node.Publish (Support, Topic);
       Topic_Done :     Boolean := False with Volatile;
-
-      Test_Int  : constant := 6976;
-      Test_Real : constant := Ada.Numerics.Pi;
-      Test_Size : constant := 6;
-
-      Matrix_Indices : constant ROSIDL.Dynamic.Matrix_Indices := ( 2,  3, 4);
-      Matrix_Strides : constant ROSIDL.Dynamic.Matrix_Indices := (24, 12, 4);
 
       -------------------
       -- Assert_Matrix --
@@ -109,7 +101,7 @@ procedure Rclada_Selftest is
             --  Primitive types
             Msg ("number").As_Int64 := Test_Int;
             Msg ("text").Set_String (Topic);
-            Msg ("bounded_string").Set_String ("12345678");
+            Msg ("bounded_string").Set_String (Test_String);
             Msg ("real").As_Float64 := Test_Real;
 
             --  Structured types
@@ -189,9 +181,9 @@ procedure Rclada_Selftest is
          Logging.Info ("Got chatter");
 
          --  Primitive types
-         pragma Assert (Msg ("number").As_Int64 = 6976,  "int64 failed");
+         pragma Assert (Msg ("number").As_Int64 = Test_Int,  "int64 failed");
          pragma Assert (Msg ("text").Get_String = Topic, "string failed");
-         pragma Assert (Msg ("bounded_string").Get_String = "12345678", "bounded_string failed");
+         pragma Assert (Msg ("bounded_string").Get_String = Test_String, "bounded_string failed");
          pragma Assert (Msg ("real").As_Float64 = Test_Real, "float64 failed");
 
          --  Structured types
@@ -357,4 +349,4 @@ begin
    Contexts.Global_Context.Finalize;
 
    pragma Assert (Contexts.User_Count = 0, "Remaining user at test end");
-end Rclada_Selftest;
+end Rclada_Selftest.Dynamic;
