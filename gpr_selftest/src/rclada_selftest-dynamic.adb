@@ -42,7 +42,7 @@ procedure Rclada_Selftest.Dynamic is
                   ROSIDL.Typesupport.Get_Message_Support
                     ((if Argument_Count >= 1
                      then ROSIDL.Namespace (Argument (1))
-                     else "rosidl_generator_ada"),
+                     else "rclada"),
                      (if Argument_Count >= 2
                       then Argument (2)
                       else "Test"));

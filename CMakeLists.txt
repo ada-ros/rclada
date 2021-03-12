@@ -121,6 +121,14 @@ ada_generate_binding(
         ${_extra_headers}
 )
 
+# Generations of test messages
+rosidl_generate_interfaces(${PROJECT_NAME}
+        msg/Test.msg
+        srv/Test.srv
+        DEPENDENCIES std_msgs
+        )
+
+# Selftest executables. Some of these depend on the Test.msg/srv.
 ada_add_executables(
         gpr_selftest
         gpr_selftest
