@@ -26,6 +26,9 @@ ada_add_interfaces(
         DEPENDENCIES std_msgs
         )
 
+# We need to import our own messages for use in this same package
+ada_import_interfaces(rclada)
+
 # C imports for the Ada side
 ada_import_c_libraries(${rcutils_LIBRARIES})
 ada_import_c_libraries(${rcl_LIBRARIES})
