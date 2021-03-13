@@ -19,6 +19,13 @@ find_package(unique_identifier_msgs REQUIRED)
 # Ada imports
 find_package(rosidl_generator_ada REQUIRED)
 
+# Generations of test messages
+ada_add_interfaces(
+        msg/Test.msg
+        srv/Test.srv
+        DEPENDENCIES std_msgs
+        )
+
 # C imports for the Ada side
 ada_import_c_libraries(${rcutils_LIBRARIES})
 ada_import_c_libraries(${rcl_LIBRARIES})
@@ -120,13 +127,6 @@ ada_generate_binding(
         ${_headers}
         ${_extra_headers}
 )
-
-# Generations of test messages
-rosidl_generate_interfaces(${PROJECT_NAME}
-        msg/Test.msg
-        srv/Test.srv
-        DEPENDENCIES std_msgs
-        )
 
 # Selftest executables. Some of these depend on the Test.msg/srv.
 ada_add_executables(

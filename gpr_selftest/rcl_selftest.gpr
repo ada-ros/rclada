@@ -1,5 +1,5 @@
 with "rcl";
-with "ros2_typesupport_rclada";
+--  with "ros2_typesupport_rclada";
 
 project Rcl_Selftest is
 

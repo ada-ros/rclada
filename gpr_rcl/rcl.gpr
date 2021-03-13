@@ -2,7 +2,7 @@ with "clib_rcutils";
 with "clib_rcl";
 with "clib_rmw";
 -- with "clib_std_msgs_rosidl_typesupport_introspection_c";
-with "clib_typesupport_interface";
+-- with "clib_typesupport_interface";
 with "rosidl";
 
 library project Rcl is
