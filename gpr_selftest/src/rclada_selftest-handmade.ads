@@ -17,19 +17,19 @@ package Rclada_Selftest.Handmade is
    --  static generator. Chiefly, the following record.
 
    type Message is limited record
-      Number  : Types.Int64;
+      Number  : aliased Types.Int64;
       Text    : aliased Types.ROS_String; -- Still untested, to replace by a high-level type.
       Bounded : aliased Types.ROS_String;
-      Real    : Types.Float64;
+      Real    : aliased Types.Float64;
 
       Time    : Builtin_Interfaces_U_Msg_U_Time; -- Should be our own generated message, but for now...
    end record
      with Convention => C;
 
-   package Utils is New
+   package Utils is new
      ROSIDL.Static.Message
-       (Pkg  => "rosidl_generator_ada",
-        Name => "test",
+       (Pkg  => "rclada",
+        Name => "Test",
         Part => ROSIDL.Message,
         Msg  => Message);
 

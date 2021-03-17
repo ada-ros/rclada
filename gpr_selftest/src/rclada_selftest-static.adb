@@ -1,5 +1,4 @@
 with Ada.Unchecked_Conversion;
-with Ada.Command_Line; use Ada.Command_Line;
 with Ada.Text_IO; use Ada.Text_IO;
 
 with GNAT.Debug_Pools; use GNAT.Debug_Pools;
@@ -11,15 +10,19 @@ with RCL.Contexts;
 with RCL.Logging;
 with RCL.Nodes;
 with RCL.Publishers;
+with RCL.Subscriptions;
 with RCL.Timers;
 with RCL.Utils;
 
-with Rclada_Selftest.Handmade;
+--  with Rclada_Selftest.Handmade;
 
+with ROSIDL.Static.Rclada.Messages.Test;
 with ROSIDl.Types;
 with ROSIDl.Typesupport;
 
 procedure Rclada_Selftest.Static is
+
+   package ROS2 renames ROSIDL.Static;
 
    use RCL;
    use ROSIDL.Types;
@@ -42,13 +45,8 @@ procedure Rclada_Selftest.Static is
       Clock : Calendar.Clock;
 
       Support : constant ROSIDl.Typesupport.Message_Support :=
-                  ROSIDL.Typesupport.Get_Message_Support
-                    ((if Argument_Count >= 1
-                     then ROSIDL.Package_Name (Argument (1))
-                     else "rosidl_generator_ada"),
-                     (if Argument_Count >= 2
-                      then Argument (2)
-                      else "Test"));
+                  ROSIDL.Static.Rclada.Messages.Test.Handling.Support;
+      --  Static magic happening here
 
       Topic : constant String := "/rclada_test";
       Node  :          Nodes.Node := Nodes.Init
@@ -149,32 +147,32 @@ procedure Rclada_Selftest.Static is
       --------------
 
       procedure Receiver (Node : in out Nodes.Node'Class;
-                          Dyn  : in out ROSIDL.Dynamic.Message;
-                          Info :        ROSIDL.Message_Info) is
-         pragma Unreferenced (Info, Node);
-
-         Msg : constant access Handmade.Message :=
-                 Handmade.Utils.To_Message_Access (Dyn.To_Ptr);
+                          Msg  :        ROS2.Rclada.Messages.Test.Message;
+                          Info :        ROSIDL.Message_Info)
+      is
+         pragma Unreferenced (Node, Info);
       begin
          Topic_Done := True;
-
-         Dyn.Print_Metadata;
 
          Logging.Info ("Got chatter");
 
          --  Primitive types
-         pragma Assert (Msg.Number = Test_Int);
-         pragma Assert (Msg.Real   = Test_Real);
-
-         --  Strings
-         pragma Assert (Get_String (Msg.Text) = Topic);
-         pragma Assert (+Msg.Bounded = Test_string); -- alternative syntax for Get_String
+         pragma Assert (Msg.I = Test_Int);
+         --  pragma Assert (Msg.Real   = Test_Real);
+         --
+         --  --  Strings
+         --  pragma Assert (Get_String (Msg.Text) = Topic);
+         --  pragma Assert (+Msg.Bounded = Test_string); -- alternative syntax for Get_String
 
          --  TODO
 
          Success := Success or True;
          Logging.Info ("Topic testing done");
       end Receiver;
+
+      package Typed is new Subscriptions.Typed
+        (Handling => ROS2.Rclada.Messages.Test.Handling,
+         Callback => Receiver);
 
       --  TODO: test static service typesupport
       --  TODO: test static action typesupport
@@ -191,8 +189,16 @@ procedure Rclada_Selftest.Static is
       pragma Assert (Clock.Is_Valid, "Initialized clock says it's invalid!");
       Start := Clock.Now;
 
-      Node.Subscribe (Support, Topic, Receiver'Unrestricted_Access);
-      Node.Timer_Add (0.1,            Sender'Unrestricted_Access);
+      declare
+
+      begin
+         null;
+      end;
+
+      Typed.Subscribe (Node, Topic);
+
+      --  Node.Subscribe (Support, Topic, Receiver'Unrestricted_Access);
+      Node.Timer_Add (0.9,            Sender'Unrestricted_Access);
 
       while not Topic_Done loop
          Node.Spin;

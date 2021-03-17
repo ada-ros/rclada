@@ -1,5 +1,5 @@
 with "rcl";
---  with "ros2_typesupport_rclada";
+with "ros2_interfaces_rclada";
 
 project Rcl_Selftest is
 
@@ -14,7 +14,7 @@ project Rcl_Selftest is
                  "rclada_selftest-static.adb",
                  "rclada_test_allocators.adb",
                  "rclada_test_multicore.adb"
-                );   
+                );
 
    package Builder is
       for Switches ("ada") use ("-j0", "-g");
