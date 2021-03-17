@@ -30,6 +30,7 @@ package Rclada_Selftest.Handmade is
      ROSIDL.Static.Message
        (Pkg  => "rosidl_generator_ada",
         Name => "test",
+        Part => ROSIDL.Message,
         Msg  => Message);
 
    --  GENERATION END  --

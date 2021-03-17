@@ -41,7 +41,7 @@ procedure Rclada_Selftest.Dynamic is
       Support : constant ROSIDl.Typesupport.Message_Support :=
                   ROSIDL.Typesupport.Get_Message_Support
                     ((if Argument_Count >= 1
-                     then ROSIDL.Namespace (Argument (1))
+                     then ROSIDL.Package_Name (Argument (1))
                      else "rclada"),
                      (if Argument_Count >= 2
                       then Argument (2)
@@ -220,7 +220,7 @@ procedure Rclada_Selftest.Dynamic is
 
       Service_Support : constant ROSIDl.Typesupport.Service_Support :=
                           ROSIDL.Typesupport.Get_Service_Support
-                            ("rosidl_generator_ada", "Test");
+                            ("rclada", "Test");
 
       Service_Name : constant String := "rclada_test_service";
 
@@ -257,7 +257,8 @@ procedure Rclada_Selftest.Dynamic is
       end Client_Listener;
 
       Request : ROSIDL.Dynamic.Message :=
-                  ROSIDL.Dynamic.Init (Service_Support.Request_Support);
+                  ROSIDL.Dynamic.Init
+                    (Service_Support.Request_Support);
 
       Start : Calendar.Time;
 
