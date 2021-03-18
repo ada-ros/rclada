@@ -146,6 +146,9 @@ ada_add_executables(
 
 add_dependencies(
         gpr_selftest
-        ada_binding_rcl)
+        ada_binding_rcl
+#        ${PROJECT_NAME}  # This ensures (?) that messages created here are a dependency. 
+                          # Should not be needed as ada_add_library/ada_add_interfaces should also do it.
+)
 
 ada_end_package()

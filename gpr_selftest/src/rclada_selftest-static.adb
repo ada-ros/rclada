@@ -14,9 +14,17 @@ with RCL.Subscriptions;
 with RCL.Timers;
 with RCL.Utils;
 
---  with Rclada_Selftest.Handmade;
+--  These aren't strictly needed, but this way we check our basis for generation
+with Rclada_Selftest.Handmade.Message;
+with Rclada_Selftest.Handmade.Service;
+pragma Unreferenced (Rclada_Selftest.Handmade.Message);
+pragma Unreferenced (Rclada_Selftest.Handmade.Service);
 
+--  Static generated interface types
 with ROSIDL.Static.Rclada.Messages.Test;
+with ROSIDL.Static.Rclada.Services.Test;
+pragma Unreferenced (ROSIDL.Static.Rclada.Services.Test);
+
 with ROSIDl.Types;
 with ROSIDl.Typesupport;
 
@@ -157,12 +165,26 @@ procedure Rclada_Selftest.Static is
          Logging.Info ("Got chatter");
 
          --  Primitive types
-         pragma Assert (Msg.I = Test_Int);
-         --  pragma Assert (Msg.Real   = Test_Real);
-         --
-         --  --  Strings
-         --  pragma Assert (Get_String (Msg.Text) = Topic);
-         --  pragma Assert (+Msg.Bounded = Test_string); -- alternative syntax for Get_String
+         pragma Assert (Msg.Number = Test_Int);
+         pragma Assert (Msg.Real   = Test_Real);
+
+         --  Strings
+         pragma Assert (Get_String (Msg.Text) = Topic);
+         pragma Assert (+Msg.Bounded_String = Test_string); -- alternative syntax for Get_String
+
+         --  Static array of scalars
+         for I in Msg.Static_Array'Range loop
+            pragma Assert (Msg.Static_Array (I) = Int32 (I));
+         end loop;
+
+         --  Dynamic array of scalars
+         pragma Assert (Msg.Dynamic_Array.Size in Test_Size,
+                        "Unexpected size:" & Msg.Dynamic_Array.Size'Image);
+         for I in 1 .. Msg.Dynamic_Array.Size loop
+            pragma Assert
+              (Msg.Dynamic_Array.Data (I) = Float32 (I),
+               "Unexpected value:" & Msg.Dynamic_Array.Data (I)'Image);
+         end loop;
 
          --  TODO
 
@@ -198,7 +220,7 @@ procedure Rclada_Selftest.Static is
       Typed.Subscribe (Node, Topic);
 
       --  Node.Subscribe (Support, Topic, Receiver'Unrestricted_Access);
-      Node.Timer_Add (0.9,            Sender'Unrestricted_Access);
+      Node.Timer_Add (0.5,            Sender'Unrestricted_Access);
 
       while not Topic_Done loop
          Node.Spin;
