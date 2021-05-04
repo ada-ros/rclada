@@ -340,6 +340,31 @@ package body RCL.Nodes is
                      return            Publishers.Publisher is
       (Publishers.Impl.Init (This.Self, Msg_Type, Topic));
 
+   -------------------
+   -- Typed_Publish --
+   -------------------
+
+   package body Typed_Publish is
+
+      Pub : Publishers.Publisher :=
+              Node.Publish (Handling.Support, Topic);
+
+      -------------
+      -- Publish --
+      -------------
+
+      procedure Publish (Msg : Handling.Msg) is
+      begin
+         Pub.Publish (Msg'Address);
+      end Publish;
+
+      procedure Publish (Msg : Handling.Message) is
+      begin
+         Pub.Publish (Msg.Address);
+      end Publish;
+
+   end Typed_Publish;
+
    -----------
    -- Serve --
    -----------

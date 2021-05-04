@@ -55,10 +55,21 @@ package body RCL.Publishers is
                       Msg  : in out ROSIDL.Dynamic.Message)
    is
    begin
+      This.Publish (Msg.To_Ptr);
+   end Publish;
+
+   -------------
+   -- Publish --
+   -------------
+
+   procedure Publish (This : in out Publisher;
+                      Msg  : System.Address)
+   is
+   begin
       Check
         (Rcl_Publish
            (publisher   => This.Impl'Access,
-            ros_message => Msg.To_Ptr,
+            ros_message => Msg,
             Allocation  => null));
       --  TODO: what about Allocation (new in Crystal)? Seems to be the way
       --  to pass an allocator. Verify that a plain rcl_allocator_t is the

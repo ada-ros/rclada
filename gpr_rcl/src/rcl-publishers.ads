@@ -7,6 +7,8 @@ limited with RCL.Nodes;
 with ROSIDL.Dynamic;
 with ROSIDL.Typesupport;
 
+with System;
+
 package RCL.Publishers is
 
    type Publisher (Node : not null access Nodes.Node'Class) is
@@ -28,6 +30,12 @@ package RCL.Publishers is
    --  Blocking behavior of Publish is still under debate.
    --  See http://docs.ros2.org/ardent/api/rcl/publisher_8h.html#a082c7e5c9e8d8db2e857cc38f74b2580
    --  See https://github.com/ros2/ros2/issues/255
+
+   procedure Publish (This : in out Publisher;
+                      Msg  : System.Address);
+   --  Convenience for statically typed publishing, used by nodes. Users can
+   --  go through the node facilities, or use Msg'Address where Msg is a static
+   --  struct matching the C message (any of the ones under ROSIDL.Static.*
 
 private
 

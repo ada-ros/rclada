@@ -17,6 +17,7 @@ with Rcl_Node_H;         use Rcl_Node_H;
 with Rcl_Node_Options_H;
 
 with ROSIDL.Dynamic;
+with ROSIDL.Static.Message;
 with ROSIDL.Typesupport;
 
 package RCL.Nodes is
@@ -115,6 +116,19 @@ package RCL.Nodes is
                      Msg_Type :        ROSIDL.Typesupport.Message_Support;
                      Topic    :        String)
                      return            Publishers.Publisher;
+
+   generic
+      with package Handling is new ROSIDL.Static.Message (<>);
+      Node  : in out Nodes.Node'Class;
+      Topic : String;
+   package Typed_Publish is
+
+      --  Instantiating this package will create a publisher ready to use
+
+      procedure Publish (Msg : Handling.Msg);     -- Raw C type
+      procedure Publish (Msg : Handling.Message); -- Wrapped type
+
+   end Typed_Publish;
 
    -----------
    -- Serve --
