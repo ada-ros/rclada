@@ -41,14 +41,14 @@ package RCL.Nodes is
    ----------
    --  Classes overriding init MUST call the parent implementation
 
-   function Init (Name      : String;
-                  Namespace : String  := "/";
+   function Init (Name      : String       := Utils.Command_Name;
+                  Namespace : String       := "/";
                   Options   : Node_Options := Default_Options) return Node
      with Pre'Class => Name'Length > 0 and then Namespace'Length >= 0;
 
    procedure Init (This      : in out Node;
-                   Name      : String;
-                   Namespace : String  := "/";
+                   Name      : String       := Utils.Command_Name;
+                   Namespace : String       := "/";
                    Options   : Node_Options := Default_Options) with
      Pre'Class => Name'Length > 0 and then Namespace'Length >= 0;
 
@@ -123,7 +123,9 @@ package RCL.Nodes is
       Topic : String;
    package Typed_Publish is
 
-      --  Instantiating this package will create a publisher ready to use
+      --  Instantiating this package will create a publisher ready to use.
+      --  If you need several publishers with the same type and want to avoid
+      --  multiple instances, see the generic at RCL.Publishers.
 
       procedure Publish (Msg : Handling.Msg);     -- Raw C type
       procedure Publish (Msg : Handling.Message); -- Wrapped type

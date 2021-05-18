@@ -5,11 +5,14 @@ with Rcl_Publisher_H; use Rcl_Publisher_H;
 limited with RCL.Nodes;
 
 with ROSIDL.Dynamic;
+with ROSIDL.Static.Message;
 with ROSIDL.Typesupport;
 
 with System;
 
 package RCL.Publishers is
+
+   --  See Publishers.Typed for use with static messages
 
    type Publisher (Node : not null access Nodes.Node'Class) is
      new Ada.Finalization.Limited_Controlled with private;

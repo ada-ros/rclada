@@ -13,7 +13,8 @@ project Rcl_Selftest is
                  "rclada_selftest-dynamic.adb",
                  "rclada_selftest-static.adb",
                  "rclada_test_allocators.adb",
-                 "rclada_test_multicore.adb"
+                 "rclada_test_multicore.adb",
+                 "rclada_test_multiset.adb"
                 );
 
    package Builder is

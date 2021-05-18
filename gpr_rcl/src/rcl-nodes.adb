@@ -186,7 +186,7 @@ package body RCL.Nodes is
    -- Init --
    ----------
 
-   function Init (Name      : String;
+   function Init (Name      : String  := Utils.Command_Name;
                   Namespace : String  := "/";
                   Options   : Node_Options := Default_Options) return Node
    is
@@ -201,7 +201,7 @@ package body RCL.Nodes is
    ----------
 
    procedure Init (This      : in out Node;
-                   Name      : String;
+                   Name      : String  := Utils.Command_Name;
                    Namespace : String  := "/";
                    Options   : Node_Options := Default_Options)
    is

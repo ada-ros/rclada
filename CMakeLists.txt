@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(rclada VERSION 0.1.0)
 
+set_property(GLOBAL PROPERTY GLOBAL_DEPENDS_DEBUG_MODE 1)
+
 find_package(rclada_common REQUIRED)
 ada_begin_package()
 
@@ -24,7 +26,10 @@ rosidl_generate_interfaces(${PROJECT_NAME}
         )
 
 # We need to import our own messages for use in this same package
-ada_import_interfaces(${PROJECT_NAME})
+ada_import_interfaces(
+        ${PROJECT_NAME}
+        std_msgs        # we also use some std msgs in selftests
+)
 
 # C imports for the Ada side
 ada_import_c_libraries(${rcutils_LIBRARIES})
