@@ -5,7 +5,6 @@ with Rcl_Publisher_H; use Rcl_Publisher_H;
 limited with RCL.Nodes;
 
 with ROSIDL.Dynamic;
-with ROSIDL.Static.Message;
 with ROSIDL.Typesupport;
 
 with System;
