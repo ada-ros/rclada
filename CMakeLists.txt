@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(rclada VERSION 0.1.0)
 
-set_property(GLOBAL PROPERTY GLOBAL_DEPENDS_DEBUG_MODE 1)
+# To debug dependency graph:
+# set_property(GLOBAL PROPERTY GLOBAL_DEPENDS_DEBUG_MODE 1)
 
 find_package(rclada_common REQUIRED)
 ada_begin_package()
