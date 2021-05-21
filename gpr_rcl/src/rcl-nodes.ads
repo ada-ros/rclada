@@ -18,6 +18,7 @@ with Rcl_Node_Options_H;
 
 with ROSIDL.Dynamic;
 with ROSIDL.Static.Message;
+with ROSIDL.Static.Service;
 with ROSIDL.Typesupport;
 
 package RCL.Nodes is
@@ -140,6 +141,22 @@ package RCL.Nodes is
                     Support  :        ROSIDL.Typesupport.Service_Support;
                     Name     :        String;
                     Callback :        Services.Callback);
+
+
+   generic
+      with package Handling is new ROSIDL.Static.Service (<>);
+      Node : in out Nodes.Node'Class;
+      Name : String;
+      with procedure Callback
+        (This     : in out Nodes.Node'Class;
+         Request  :        Handling.Request_Handling.Raw_Message;
+         Response : in out Handling.Response_Handling.Raw_Message);
+   package Typed_Serve is
+
+      --  This package MUST be instantiated with the same lifetime as the node,
+      --  or things WILL burn'n'crash.
+
+   end Typed_Serve;
 
    ---------------
    -- Subscribe --

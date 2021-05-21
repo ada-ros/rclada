@@ -393,6 +393,32 @@ package body RCL.Nodes is
                                 Support  => Support));
    end Serve;
 
+   -----------------
+   -- Typed_Serve --
+   -----------------
+
+   package body Typed_Serve
+   is
+
+      ----------------------
+      -- Untyped_Callback --
+      ----------------------
+
+      procedure Untyped_Callback (Node : in out Nodes.Node'Class;
+                                  Req  : in out ROSIDL.Dynamic.Message;
+                                  Resp : in out ROSIDL.Dynamic.Message)
+      is
+      begin
+         Callback
+           (Node,
+            Handling.Request_Handling.To_Message_Access (Req.To_Ptr).all,
+            Handling.Response_Handling.To_Message_Access (Resp.To_Ptr).all);
+      end Untyped_Callback;
+
+   begin
+      Node.Serve (Handling.Support, Name, Untyped_Callback'Unrestricted_Access);
+   end Typed_Serve;
+
    ----------
    -- Spin --
    ----------
