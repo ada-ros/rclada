@@ -308,12 +308,20 @@ package body RCL.Impl.Wait is
                   Timeout : ROS2_Duration := Forever) return Wait_Outcomes
    is
       use Rcl_Types_H;
-
-      Ret : constant Rcl_Ret_T :=
-              Rcl_Wait (This.Impl'Access,
-                        C.long (Timeout * 1_000_000_000.0)); -- Nanosecs
    begin
-      case Ret is
+
+      if Timeout < 0.0 then
+         return Wait (This, Timeout => 0.0);
+         --  Otherwise something wraps around in the C side and waits forever
+      end if;
+
+      declare
+
+         Ret : constant Rcl_Ret_T :=
+                 Rcl_Wait (This.Impl'Access,
+                           C.Long (Timeout * 1_000_000_000.0)); -- Nanosecs
+      begin
+         case Ret is
          when RMW_RET_OK =>
             return Triggered;
          when RMW_RET_TIMEOUT =>
@@ -321,7 +329,8 @@ package body RCL.Impl.Wait is
          when others =>
             Logging.Warn ("Wait failed with code" & Ret'Img);
             return Error;
-      end case;
+         end case;
+      end;
    end Wait;
 
 end RCL.Impl.Wait;
