@@ -1,3 +1,7 @@
+with "clib_rcutils";
+with "clib_rcl";
+with "clib_rmw";
+
 with "rcl";
 with "ros2_interfaces_rclada";
 

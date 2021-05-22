@@ -3,6 +3,7 @@ with Ada.Finalization;
 with Rcl_Publisher_H; use Rcl_Publisher_H;
 
 limited with RCL.Nodes;
+with RCL.Options;
 
 with ROSIDL.Dynamic;
 with ROSIDL.Typesupport;
@@ -11,16 +12,20 @@ with System;
 
 package RCL.Publishers is
 
+   subtype Options is RCL.Options.Topic_Options;
+   Defaults : Options renames RCL.Options.Topic_Defaults;
+
    --  See Publishers.Typed for use with static messages
 
    type Publisher (Node : not null access Nodes.Node'Class) is
      new Ada.Finalization.Limited_Controlled with private;
 
-   --  Use the Node to get a publisher directly, or the init function below
+   --  Use the Node to get a publisher directly
 
    procedure Init (This     : in out Publisher;
                    Msg_Type :        ROSIDL.Typesupport.Message_Support;
-                   Topic    :        String);
+                   Topic    :        String;
+                   Options  :        Publishers.Options := Defaults);
 
    overriding
    procedure Finalize (This : in out Publisher);

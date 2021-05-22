@@ -38,6 +38,7 @@ ada_import_interfaces(
 ada_import_c_libraries(${rcutils_LIBRARIES})
 ada_import_c_libraries(${rcl_LIBRARIES})
 ada_import_c_libraries(${rcl_action_LIBRARIES})
+ada_import_c_libraries(${rmw_LIBRARIES})
 
 # Find header folders
 ada_find_package_include_dir(_action_msgs_include ${action_msgs_DIR})
@@ -112,6 +113,7 @@ set(_extra_headers
         ${_rmw_include}/rmw/topic_endpoint_info.h
         ${_rmw_include}/rmw/topic_endpoint_info_array.h
         ${_rmw_include}/rmw/types.h
+        ${_rmw_include}/rmw/qos_profiles.h
 
         # UNIQUE IDENTIFIERS (required by action_msgs)
         ${_unique_identifier_msgs_include}/unique_identifier_msgs/msg/detail/uuid__struct.h

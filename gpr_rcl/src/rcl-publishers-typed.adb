@@ -17,10 +17,11 @@ package body RCL.Publishers.Typed is
    -- Init --
    ----------
 
-   function Init (Topic : String) return Publisher
+   function Init (Topic : String;
+                  Options : Publishers.Options := Defaults) return Publisher
    is (Ada.Finalization.Limited_Controlled with
        Untyped => new Publishers.Publisher'
-         (Node.Publish (Handling.Support, Topic)));
+         (Node.Publish (Handling.Support, Topic, Options)));
 
    -------------
    -- Publish --

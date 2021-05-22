@@ -4,7 +4,6 @@ with Ada.Exceptions;
 with RCL.Clients.Impl;
 with RCL.Contexts;
 with RCL.Logging;
-with RCL.Publishers.Impl;
 with RCL.Services.Impl;
 with RCL.Subscriptions.Impl;
 
@@ -395,9 +394,14 @@ package body RCL.Nodes is
 
    function Publish (This     : in out Node;
                      Msg_Type :        ROSIDL.Typesupport.Message_Support;
-                     Topic    :        String)
+                     Topic    :        String;
+                     Options  :        Publishers.Options := Publishers.Defaults)
                      return            Publishers.Publisher is
-      (Publishers.Impl.Init (This.Self, Msg_Type, Topic));
+   begin
+      return Result : Publishers.Publisher (This.Self) do
+         Result.Init (Msg_Type, Topic, Options);
+      end return;
+   end Publish;
 
    -------------------
    -- Typed_Publish --
@@ -406,7 +410,7 @@ package body RCL.Nodes is
    package body Typed_Publish is
 
       Pub : Publishers.Publisher :=
-              Node.Publish (Handling.Support, Topic);
+              Node.Publish (Handling.Support, Topic, Options);
 
       -------------
       -- Publish --
@@ -515,14 +519,45 @@ package body RCL.Nodes is
    procedure Subscribe (This     : in out Node;
                         Msg_Type :        ROSIDL.Typesupport.Message_Support;
                         Topic    :        String;
-                        Callback :        Subscriptions.Callback)
+                        Callback :        Subscriptions.Callback;
+                        Options  :        Subscriptions.Options := Subscriptions.Defaults)
    is
       Sub : constant Subscriptions.Impl.C_Subscription :=
-              Subscriptions.Impl.Init (This, Msg_Type, Topic);
+              Subscriptions.Impl.Init (This, Msg_Type, Topic, Options);
    begin
       This.Dispatchers.Insert
         (Subscription_Dispatcher'(This.Self, Sub, Callback, Msg_Type));
    end Subscribe;
+
+   ---------------------
+   -- Typed_Subscribe --
+   ---------------------
+
+   procedure Typed_Subscribe (Node  : in out Nodes.Node'Class;
+                              Topic :        String;
+                              Options  :        Subscriptions.Options := Subscriptions.Defaults)
+   is
+
+      ----------------------
+      -- Untyped_Callback --
+      ----------------------
+
+      procedure Untyped_Callback (Node : in out Nodes.Node'Class;
+                                  Msg  : in out ROSIDL.Dynamic.Message;
+                                  Info :        ROSIDL.Message_Info)
+      is
+      begin
+         Callback (Node,
+                   Handling.To_Message_Access (Msg.To_Ptr).all,
+                   Info);
+      end Untyped_Callback;
+
+   begin
+      Node.Subscribe (Msg_Type => Handling.Support,
+                      Topic    => Topic,
+                      Callback => Untyped_Callback'Unrestricted_Access,
+                      Options  => Options);
+   end Typed_Subscribe;
 
    ---------------
    -- Timer_Add --

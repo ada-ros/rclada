@@ -10,7 +10,9 @@ package RCL.Publishers.Typed is
 
    type Publisher (<>) is tagged limited private;
 
-   function Init (Topic : String) return Publisher;
+   function Init (Topic   : String;
+                  Options : Publishers.Options := Defaults)
+                  return Publisher;
 
    procedure Publish (This : in out Publisher;
                       Msg  : Handling.Message); -- Wrapped type

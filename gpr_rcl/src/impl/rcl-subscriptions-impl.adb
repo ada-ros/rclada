@@ -18,9 +18,11 @@ package body RCL.Subscriptions.Impl is
 
    function Init (Node     : in out Nodes.Node;
                   Msg_Type :        ROSIDL.Typesupport.Message_Support;
-                  Topic    :        String) return C_Subscription
+                  Topic    :        String;
+                  Options  :        Subscriptions.Options := Defaults)
+                  return C_Subscription
    is
-      Opts : aliased constant Rcl_Subscription_Options_T :=
+      Opts : aliased Rcl_Subscription_Options_T :=
                Rcl_Subscription_Get_default_Options;
 
       type Ptr is access constant Rosidl_Message_Type_Support_T;
@@ -29,6 +31,9 @@ package body RCL.Subscriptions.Impl is
         Ada.Unchecked_Conversion (ROSIDL.Typesupport.Msg_Support_Handle,
                                   Ptr);
    begin
+      Opts.QoS       := Options.QoS_Profile;
+      Opts.Allocator := Options.Allocator.To_C.all;
+
       return Sub : C_Subscription := (Impl => Rcl_Get_Zero_Initialized_Subscription) do
          Check (Rcl_Subscription_Init
                   (Sub.Impl'Access,

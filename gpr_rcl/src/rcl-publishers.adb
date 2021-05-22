@@ -11,8 +11,12 @@ package body RCL.Publishers is
 
    procedure Init (This     : in out Publisher;
                    Msg_Type :        ROSIDL.Typesupport.Message_Support;
-                   Topic    :        String) is
+                   Topic    :        String;
+                   Options  :        Publishers.Options := Defaults) is
    begin
+      This.Opts.Qos       := Options.QoS_Profile;
+      This.Opts.Allocator := Options.Allocator.To_C.all;
+   --
       Check
         (Rcl_Publisher_Init
            (This.Impl'Access,

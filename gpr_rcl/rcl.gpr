@@ -1,11 +1,14 @@
 with "clib_rcutils";
 with "clib_rcl";
 with "clib_rmw";
+with "clib_rmw_implementation";
 with "rosidl";
 
 with "ros2_interfaces_rclada"; -- Messages Defined in This Same package
 
 library project Rcl is
+
+   for Create_Missing_Dirs use "True";
 
    for Languages use ("ada", "c");
 
@@ -28,6 +31,7 @@ library project Rcl is
    package Compiler is
       for Switches ("ada") use ("-gnatVa", "-gnatwa", "-g", "-O2", "-gnato",
                                 "-fstack-check", "-gnata", "-gnat12",
+                                "-gnatX", -- Enable Experimental Because Why not
                                 "-fPIC")
                                & ROSIDL.Style_Check_Switches;
 

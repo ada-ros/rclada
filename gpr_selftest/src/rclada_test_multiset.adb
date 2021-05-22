@@ -1,7 +1,6 @@
 with RCL.Logging;
 with RCL.Nodes;
 with RCL.Publishers.Typed;
-with RCL.Subscriptions;
 
 with ROSIDL.Static.Rclada.Std_Msgs.Messages.String; use ROSIDL.Static.Rclada;
 with ROSIDL.Types;
@@ -55,17 +54,17 @@ procedure Rclada_Test_Multiset is
    procedure Listen_1 is new Listener ("listener 1");
    procedure Listen_2 is new Listener ("listener 2");
 
-   package Listener_1 is new Subscriptions.Typed
+   procedure Subscribe_1 is new Nodes.Typed_Subscribe
      (Std_Msgs.Messages.String.Handling,
       Listen_1);
 
-   package Listener_2 is new Subscriptions.Typed
+   Procedure Subscribe_2 is new Nodes.Typed_Subscribe
      (Std_Msgs.Messages.String.Handling,
       Listen_2);
 
 begin
-   Listener_1.Subscribe (Node, Topic_1);
-   Listener_2.Subscribe (Node, Topic_2);
+   Subscribe_1 (Node, Topic_1);
+   Subscribe_2 (Node, Topic_2);
 
    ROSIDL.Types.Set_String (Msg.Data.Data, "hello 1");
    Pub1.Publish (Msg);

@@ -10,7 +10,6 @@ with RCL.Contexts;
 with RCL.Logging;
 with RCL.Nodes;
 with RCL.Publishers;
-with RCL.Subscriptions;
 with RCL.Timers;
 with RCL.Utils;
 
@@ -192,7 +191,7 @@ procedure Rclada_Selftest.Static is
          Logging.Info ("Topic testing done");
       end Receiver;
 
-      package Typed is new Subscriptions.Typed
+      procedure Subscribe is new Nodes.Typed_Subscribe
         (Handling => ROS2.Rclada.Messages.Test.Handling,
          Callback => Receiver);
 
@@ -217,7 +216,7 @@ procedure Rclada_Selftest.Static is
          null;
       end;
 
-      Typed.Subscribe (Node, Topic);
+      Subscribe (Node, Topic);
 
       --  Node.Subscribe (Support, Topic, Receiver'Unrestricted_Access);
       Node.Timer_Add (0.5,            Sender'Unrestricted_Access);

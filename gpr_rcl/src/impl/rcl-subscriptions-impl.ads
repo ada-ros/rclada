@@ -14,7 +14,9 @@ package RCL.Subscriptions.Impl is
 
    function Init (Node     : in out Nodes.Node;
                   Msg_Type :        ROSIDL.Typesupport.Message_Support;
-                  Topic    :        String) return C_Subscription;
+                  Topic    :        String;
+                  Options  :        Subscriptions.Options := Defaults)
+                  return C_Subscription;
 
    procedure Finalize (This : in out C_Subscription; Node : access Rcl_Node_T);
 

@@ -4,6 +4,9 @@
 #include "rcl/subscription.h"
 #include "rcl/wait.h"
 
+#include "rmw/qos_profiles.h"
+#include "rmw/types.h"
+
 #define ADDR_OR_NULL(elem) (elem != NULL ? elem->impl : NULL);
 
 /*
@@ -62,4 +65,16 @@ const void * rclada_wait_set_timer_check (rcl_wait_set_t *set, int i) {
   }
   else
     return ADDR_OR_NULL(set->timers[i]);
+}
+
+/*
+ * IMPORT THE QOS DEFAULTS, which are not visible otherwise bc they're declared static
+ */
+
+rmw_qos_profile_t get_rmw_qos_profile_default(void) {
+  return rmw_qos_profile_default;
+}
+
+rmw_qos_profile_t get_rmw_qos_profile_sensor_data(void) {
+  return rmw_qos_profile_sensor_data;
 }

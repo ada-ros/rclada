@@ -145,18 +145,20 @@ package RCL.Nodes is
 
    function Publish (This     : in out Node;
                      Msg_Type :        ROSIDL.Typesupport.Message_Support;
-                     Topic    :        String)
+                     Topic    :        String;
+                     Options  :        Publishers.Options := Publishers.Defaults)
                      return            Publishers.Publisher;
 
    generic
       with package Handling is new ROSIDL.Static.Message (<>);
-      Node  : in out Nodes.Node'Class;
-      Topic : String;
+      Node    : in out Nodes.Node'Class;
+      Topic   : String;
+      Options : Publishers.Options := Publishers.Defaults;
    package Typed_Publish is
 
       --  Instantiating this package will create a publisher ready to use.
       --  If you need several publishers with the same type and want to avoid
-      --  multiple instances, see the generic at RCL.Publishers.
+      --  multiple instances, see the generic at RCL.Publishers.Typed
 
       procedure Publish (Msg : Handling.C_Message);     -- Raw C type
       procedure Publish (Msg : Handling.Message); -- Wrapped type
@@ -195,7 +197,21 @@ package RCL.Nodes is
    procedure Subscribe (This     : in out Node;
                         Msg_Type :        ROSIDL.Typesupport.Message_Support;
                         Topic    :        String;
-                        Callback :        Subscriptions.Callback);
+                        Callback :        Subscriptions.Callback;
+                        Options  :        Subscriptions.Options := Subscriptions.Defaults);
+
+   ---------------------
+   -- Typed_Subscribe --
+   ---------------------
+
+   generic
+      with package Handling is new ROSIDL.Static.Message (<>);
+      with procedure Callback (Node : in out Nodes.Node'Class;
+                               Msg  :        Handling.C_Message;
+                               Info :        ROSIDL.Message_Info);
+   procedure Typed_Subscribe (Node     : in out Nodes.Node'Class;
+                              Topic    :        String;
+                              Options  :        Subscriptions.Options := Subscriptions.Defaults);
 
    ---------------
    -- Timer_Add --
