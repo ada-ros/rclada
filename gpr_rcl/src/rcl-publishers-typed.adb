@@ -37,7 +37,7 @@ package body RCL.Publishers.Typed is
    -------------
 
    procedure Publish (This : in out Publisher;
-                      Msg  : Handling.Msg) is
+                      Msg  : Handling.C_Message) is
    begin
       This.Untyped.Publish (Msg'Address);
    end Publish;

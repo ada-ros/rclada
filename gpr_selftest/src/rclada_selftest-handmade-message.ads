@@ -31,10 +31,10 @@ package Rclada_Selftest.Handmade.Message is
 
    package Handling is new
      ROSIDL.Static.Message
-       (Pkg  => "rclada",
-        Name => "Test",
-        Part => ROSIDL.Message,
-        Msg  => Message);
+       (Pkg        => "rclada",
+        Name       => "Test",
+        Part       => ROSIDL.Message,
+        C_Message  => Message);
 
    --  GENERATION END  --
 

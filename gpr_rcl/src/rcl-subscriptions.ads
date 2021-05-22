@@ -10,7 +10,7 @@ package RCL.Subscriptions is
    generic
       with package Handling is new ROSIDL.Static.Message (<>);
       with procedure Callback (Node : in out Nodes.Node'Class;
-                               Msg  :        Handling.Msg;
+                               Msg  :        Handling.C_Message;
                                Info :        ROSIDL.Message_Info);
    package Typed is
 

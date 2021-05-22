@@ -88,8 +88,10 @@ package RCL.Nodes is
                          Support  :        ROSIDL.Typesupport.Service_Support;
                          Name     :        String;
                          Request  :        ROSIDL.Dynamic.Message;
-                         Timeout  :        ROS2_Duration := Forever)
-                         return            ROSIDL.Dynamic.Shared_Message;
+                         Timeout  :        ROS2_Duration := Forever;
+                         Connect_Timeout : ROS2_Duration := Forever)
+                         return            ROSIDL.Dynamic.Shared_Message
+     with Pre => Timeout >= Connect_Timeout;
    --  See the documentation on Client_Call below
 
    procedure Client_Call (This     : in out Node;
@@ -97,17 +99,45 @@ package RCL.Nodes is
                           Name     :        String;
                           Request  :        ROSIDL.Dynamic.Message;
                           Callback :        Clients.Callback;
-                          Timeout  :        ROS2_Duration := 0.0);
+                          Timeout  :        ROS2_Duration := 0.0;
+                          Connect_Timeout : ROS2_Duration := 0.0)
+     with Pre => Timeout >= Connect_Timeout;
    --  If Timeout > 0.0 the call will block for as much time
-   --    or raise RCL_Timeout.
+   --    or raise RCL_Timeout. Timeouts are both measured from call start.
+   --    It makes no sense to have Timeout < Connect_Timeout, so it will raise.
    --    In either case the callback won't be called after the call returns.
    --    It's thus safe to use a local callback for blocking calls
    --    The node will be spun internally so calls to other unrelated callbacks
    --       might happen nonetheless.
    --  BLOCKING concurrency depends on internal concurrency of ROS2.
    --    At this time I'm unsure if this would be advisable.
-   --  Note that, even in the non-blocking case, a certain amount of blocking
-   --    might happen until the service becomes available to the client.
+   --  If Connect_Timeout > 0.0, then the call will wait for the server to be
+   --    up for as much time. Otherwise it will assume it is up, and the call
+   --    may silently be lost.
+
+   generic
+      with package Handling is new ROSIDL.Static.Service (<>);
+   function Typed_Client_Call_Func
+     (This            : in out Node'Class;
+      Name            :        String;
+      Request         :        Handling.Request_Message;
+      Timeout         :        ROS2_Duration := Forever;
+      Connect_Timeout :        ROS2_Duration := Forever)
+      return                   Handling.Response_Handling.Shared_Message;
+
+   generic
+      with package Handling is new ROSIDL.Static.Service (<>);
+      with procedure Callback
+        (Node     : in out Nodes.Node'Class;
+         Response :        Handling.Response_Raw_Message);
+   procedure Typed_Client_Call_Proc
+        (This            : in out Node'Class;
+         Name            :        String;
+         Request         :        Handling.Request_Message;
+         Timeout         :        ROS2_Duration := 0.0;
+         Connect_Timeout :        ROS2_Duration := 0.0);
+   --  This procedure MUST be instantiated with the same lifetime as the node,
+   --  or things WILL burn'n'crash.
 
    -------------
    -- Publish --
@@ -128,7 +158,7 @@ package RCL.Nodes is
       --  If you need several publishers with the same type and want to avoid
       --  multiple instances, see the generic at RCL.Publishers.
 
-      procedure Publish (Msg : Handling.Msg);     -- Raw C type
+      procedure Publish (Msg : Handling.C_Message);     -- Raw C type
       procedure Publish (Msg : Handling.Message); -- Wrapped type
 
    end Typed_Publish;

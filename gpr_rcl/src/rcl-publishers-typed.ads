@@ -16,7 +16,7 @@ package RCL.Publishers.Typed is
                       Msg  : Handling.Message); -- Wrapped type
 
    procedure Publish (This : in out Publisher;
-                      Msg  : Handling.Msg);     -- Raw C type
+                      Msg  : Handling.C_Message);     -- Raw C type
 
 private
 

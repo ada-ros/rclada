@@ -16,7 +16,12 @@ limited with RCL.Executors;
 
 with Rcl_Types_H;
 
+with ROSIDL.Types;
+
 package RCL is
+
+   package Types renames ROSIDL.Types;
+   --  Shorthand for client confort
 
    ROS_Exception : exception;
    --  Raised on errors from the C layer

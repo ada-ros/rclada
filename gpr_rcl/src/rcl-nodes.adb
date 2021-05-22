@@ -98,20 +98,20 @@ package body RCL.Nodes is
                          Support  :        ROSIDL.Typesupport.Service_Support;
                          Name     :        String;
                          Request  :        ROSIDL.Dynamic.Message;
-                         Timeout  :        ROS2_Duration := Forever)
+                         Timeout  :        ROS2_Duration := Forever;
+                         Connect_Timeout : ROS2_Duration := Forever)
                          return            ROSIDL.Dynamic.Shared_Message
       is
          use Ada.Calendar;
          Start : constant Time := Clock;
    begin
-      Client_Call_Prepare (This     => This,
-                           Support  => Support,
-                           Name     => Name,
-                           Request  => Request,
-                           Callback => null,
-                           Blocking => True,
-                           Timeout  => Timeout);
-
+      Client_Call_Prepare (This      => This,
+                           Support   => Support,
+                           Name      => Name,
+                           Request   => Request,
+                           Callback  => null,
+                           Blocking  => True,
+                           Timeout   => Connect_Timeout);
       loop
          This.Spin (Once   => True,
                     During => Timeout - (Clock - Start));
@@ -142,21 +142,23 @@ package body RCL.Nodes is
                           Name     :        String;
                           Request  :        ROSIDL.Dynamic.Message;
                           Callback :        Clients.Callback;
-                          Timeout  :        ROS2_Duration := 0.0)
+                          Timeout  :        ROS2_Duration := 0.0;
+                          Connect_Timeout : ROS2_Duration := 0.0)
    is
    begin
       if Timeout = 0.0 then
-         Client_Call_Prepare (This     => This,
-                              Support  => Support,
-                              Name     => Name,
-                              Request  => Request,
-                              Callback => Callback,
-                              Blocking => False,
-                              Timeout  => Forever); -- Only for the connection attempt
+         Client_Call_Prepare (This      => This,
+                              Support   => Support,
+                              Name      => Name,
+                              Request   => Request,
+                              Callback  => Callback,
+                              Blocking  => False,
+                              Timeout   => Connect_Timeout);
       else
          declare
             Response : constant ROSIDL.Dynamic.Shared_Message :=
-                         This.Client_Call (Support, Name, Request, Timeout);
+                         This.Client_Call
+                           (Support, Name, Request, Timeout, Connect_Timeout);
          begin
             Callback (This.Self.all, Response.Msg.all);
          end;
@@ -181,6 +183,63 @@ package body RCL.Nodes is
 
       This.Dispatchers.Delete (Ptr);
    end Client_Free;
+
+   ----------------------------
+   -- Typed_Client_Call_Func --
+   ----------------------------
+
+   function Typed_Client_Call_Func
+     (This            : in out Node'Class;
+      Name            :        String;
+      Request         :        Handling.Request_Message;
+      Timeout         :        ROS2_Duration := Forever;
+      Connect_Timeout :        ROS2_Duration := Forever)
+         return                   Handling.Response_Handling.Shared_Message
+   is
+      Response : constant ROSIDL.Dynamic.Shared_Message :=
+                   This.Client_Call
+                     (Support         => Handling.Support,
+                      Name            => Name,
+                      Request         => Request.Dynamic,
+                      Timeout         => Timeout,
+                      Connect_Timeout => Connect_Timeout);
+   begin
+      return Handling.Response_Handling.New_Shared_Message (Response);
+   end Typed_Client_Call_Func;
+
+   ----------------------------
+   -- Typed_Client_Call_Proc --
+   ----------------------------
+
+   procedure Typed_Client_Call_Proc
+     (This            : in out Node'Class;
+      Name            :        String;
+      Request         :        Handling.Request_Message;
+      Timeout         :        ROS2_Duration := 0.0;
+      Connect_Timeout :        ROS2_Duration := 0.0)
+   is
+
+      ----------------------
+      -- Untyped_Callback --
+      ----------------------
+
+      procedure Untyped_Callback (Node     : in out Nodes.Node'Class;
+                                  Response :        ROSIDL.Dynamic.Message)
+      is
+      begin
+         Callback
+           (Node,
+            Handling.Response_Handling.To_Message_Access (Response.To_Ptr).all);
+      end Untyped_Callback;
+
+   begin
+      This.Client_Call (Support         => Handling.Support,
+                        Name            => Name,
+                        Request         => Request.Dynamic,
+                        Callback        => Untyped_Callback'Unrestricted_Access,
+                        Timeout         => Timeout,
+                        Connect_Timeout => Connect_Timeout);
+   end Typed_Client_Call_Proc;
 
    ----------
    -- Init --
@@ -353,7 +412,7 @@ package body RCL.Nodes is
       -- Publish --
       -------------
 
-      procedure Publish (Msg : Handling.Msg) is
+      procedure Publish (Msg : Handling.C_Message) is
       begin
          Pub.Publish (Msg'Address);
       end Publish;

@@ -3,6 +3,8 @@ with "ros2_interfaces_rclada";
 
 project Rcl_Selftest is
 
+   for Create_Missing_Dirs use "True";
+
    for Languages use ("Ada");
 
    for Source_Dirs use ("src");

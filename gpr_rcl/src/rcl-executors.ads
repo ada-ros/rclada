@@ -50,8 +50,10 @@ package RCL.Executors is
 
    function Spin_Once (This    : in out Executor;
                        Timeout :        ROS2_Duration;
-                       Node    : access Nodes.Node'Class := null) return Boolean;
-   --  Will spin on the given node or all of them when null
+                       Node    : access Nodes.Node'Class := null)
+                       return Boolean;
+   --  Will spin on the given node or all of them when null. Returns True if
+   --  some event was processed.
 
    procedure Shutdown (This : in out Executor) is null;
    --  Concurrent executors must be shut down or otherwise they do not finalize (tasks inside)
