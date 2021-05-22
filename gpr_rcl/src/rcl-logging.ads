@@ -7,6 +7,13 @@ package RCL.Logging with Elaborate_Body is
    type Levels is range
      RCUTILS_LOG_SEVERITY_UNSET .. RCUTILS_LOG_SEVERITY_FATAL;
 
+   Level_Unset : constant := RCUTILS_LOG_SEVERITY_UNSET;
+   Level_Debug : constant := RCUTILS_LOG_SEVERITY_DEBUG;
+   Level_Info  : constant := RCUTILS_LOG_SEVERITY_INFO;
+   Level_Warn  : constant := RCUTILS_LOG_SEVERITY_WARN;
+   Level_Error : constant := RCUTILS_LOG_SEVERITY_ERROR;
+   Level_Fatal : constant := RCUTILS_LOG_SEVERITY_FATAL;
+
    type Log_Location (<>) is private;
 
    function Location (Subprogram  : String  := GNAT.Source_Info.Enclosing_Entity;
@@ -24,6 +31,10 @@ package RCL.Logging with Elaborate_Body is
                  );
    --  Not really practical to be called directly, intended to be used by
    --  the others:
+
+   procedure Set_Level (Severity : Levels;
+                        Name     : String := "");
+   --  Sets the minimum level that will be output. Default is INFO.
 
    procedure Debug (Message  : String;
                     Locate   : Boolean      := False;

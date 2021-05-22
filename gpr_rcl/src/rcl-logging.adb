@@ -34,6 +34,20 @@ package body RCL.Logging is
                    To_C (Message).To_Ptr);
    end Log;
 
+   ---------------
+   -- Set_Level --
+   ---------------
+
+   procedure Set_Level (Severity : Levels;
+                        Name     : String := "")
+   is
+   begin
+      Check (Rcutils_Logging_Set_Logger_Level
+             (Name  => To_C ((if Name /= ""
+                              then Name
+                              else Names.To_String (Global_Name))).To_Ptr,
+              Level => C.Int (Severity)));
+   end Set_Level;
 
    -----------
    -- Debug --
