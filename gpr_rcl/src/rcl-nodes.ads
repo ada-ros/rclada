@@ -90,8 +90,7 @@ package RCL.Nodes is
                          Request  :        ROSIDL.Dynamic.Message;
                          Timeout  :        ROS2_Duration := Forever;
                          Connect_Timeout : ROS2_Duration := Forever)
-                         return            ROSIDL.Dynamic.Shared_Message
-     with Pre => Timeout >= Connect_Timeout;
+                         return            ROSIDL.Dynamic.Shared_Message;
    --  See the documentation on Client_Call below
 
    procedure Client_Call (This     : in out Node;
