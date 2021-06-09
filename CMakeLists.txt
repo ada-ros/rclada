@@ -15,6 +15,7 @@ find_package(rcutils REQUIRED)
 find_package(rmw REQUIRED)
 find_package(std_msgs REQUIRED)                 # Dependency of our test messages
 find_package(std_srvs REQUIRED)                 # Export standard services to clients
+find_package(test_msgs REQUIRED)                # To stress the message generator
 find_package(unique_identifier_msgs REQUIRED)   # Required by actions
 
 # Ada imports
@@ -31,7 +32,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 ada_import_interfaces(
         ${PROJECT_NAME}
         std_msgs        # we also use some std msgs in selftests
-        std_srvs        #
+        std_srvs        # (same)
+        test_msgs       # just because, to test our generator
 )
 
 # C imports for the Ada side
