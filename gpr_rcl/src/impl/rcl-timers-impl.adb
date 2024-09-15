@@ -25,18 +25,30 @@ package body RCL.Timers.Impl is
    is
    begin
       return This : Timer (Node) do
-         This.Impl     := Rcl_Get_Zero_Initialized_Timer;
-
-         --  TODO: allow using a clock not the global/default one hidden here
-         Check
-           (Rcl_Timer_Init
-              (Timer     => This.Impl'Access,
-               Clock     => Default_Clock.To_C,
-               Context   => Contexts.Global_Context.To_C,
-               Period    => To_Nanoseconds (Period),
-               Callback  => null,
-               Allocator => Allocator.To_C.all));
+         Init (This, Period, Allocator);
       end return;
+   end Init;
+
+   ----------
+   -- Init --
+   ----------
+
+   procedure Init (This      : in out Timer;
+                   Period    : Duration;
+                   Allocator : Allocators.Handle)
+   is
+   begin
+      This.Impl     := Rcl_Get_Zero_Initialized_Timer;
+
+      --  TODO: allow using a clock not the global/default one hidden here
+      Check
+        (Rcl_Timer_Init
+           (Timer     => This.Impl'Access,
+            Clock     => Default_Clock.To_C,
+            Context   => Contexts.Global_Context.To_C,
+            Period    => To_Nanoseconds (Period),
+            Callback  => null,
+            Allocator => Allocator.To_C.all));
    end Init;
 
 begin

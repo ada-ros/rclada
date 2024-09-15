@@ -51,7 +51,7 @@ private
    function Using (This      : Topic_Options;
                    Allocator : aliased in out Allocators.Allocator)
                    return Topic_Options
-   is (Allocator   => Allocator'Access,
+   is (Allocator   => Allocator'Unchecked_Access,
        Qos_Profile => This.QoS_Profile);
 
 end RCL.Options;

@@ -1,7 +1,7 @@
-with Rcl_Client_H;  use Rcl_Client_H;
-with Rcl_Service_H; use Rcl_Service_H;
+with Rcl_Rcl_Client_H;  use Rcl_Rcl_Client_H;
+with Rcl_Rcl_Service_H; use Rcl_Rcl_Service_H;
 
-with Rmw_Types_H; use Rmw_Types_H;
+with Rmw_Rmw_Types_H; use Rmw_Rmw_Types_H;
 
 with RCL.Executors;
 with RCL.Impl.Callbacks;
@@ -79,7 +79,7 @@ package body RCL.Impl.Dispatchers is
         (Rcl_Take_Request
            (This.Service.To_C,
             Header'Access,
-            Request.To_Ptr));
+            Request.Msg.To_Ptr));
 
       This.Current_Executor.Call
         (Callbacks.Service_Callback'(Node          => This.Node,
@@ -101,7 +101,7 @@ package body RCL.Impl.Dispatchers is
       Sub  : Subscriptions.Impl.C_Subscription := This.Subscription;
    begin
       if Subscriptions.Impl.Take_Raw (Sub,
-                                      Msg.To_Ptr,
+                                      Msg.Msg.To_Ptr,
                                       Info)
       then
          This.Current_Executor.Call

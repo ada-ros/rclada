@@ -1,18 +1,19 @@
 with GNAT.Source_Info;
 
-with Rcutils_Logging_H; use Rcutils_Logging_H;
+with Rcutils_Rcutils_Logging_H; use Rcutils_Rcutils_Logging_H;
 
 package RCL.Logging with Elaborate_Body is
 
    type Levels is range
-     RCUTILS_LOG_SEVERITY_UNSET .. RCUTILS_LOG_SEVERITY_FATAL;
+     RCUTILS_LOG_SEVERITY_RCUTILS_LOG_SEVERITY_UNSET ..
+       RCUTILS_LOG_SEVERITY_RCUTILS_LOG_SEVERITY_FATAL;
 
-   Level_Unset : constant := RCUTILS_LOG_SEVERITY_UNSET;
-   Level_Debug : constant := RCUTILS_LOG_SEVERITY_DEBUG;
-   Level_Info  : constant := RCUTILS_LOG_SEVERITY_INFO;
-   Level_Warn  : constant := RCUTILS_LOG_SEVERITY_WARN;
-   Level_Error : constant := RCUTILS_LOG_SEVERITY_ERROR;
-   Level_Fatal : constant := RCUTILS_LOG_SEVERITY_FATAL;
+   Level_Unset : constant := RCUTILS_LOG_SEVERITY_RCUTILS_LOG_SEVERITY_UNSET;
+   Level_Debug : constant := RCUTILS_LOG_SEVERITY_RCUTILS_LOG_SEVERITY_DEBUG;
+   Level_Info  : constant := RCUTILS_LOG_SEVERITY_RCUTILS_LOG_SEVERITY_INFO;
+   Level_Warn  : constant := RCUTILS_LOG_SEVERITY_RCUTILS_LOG_SEVERITY_WARN;
+   Level_Error : constant := RCUTILS_LOG_SEVERITY_RCUTILS_LOG_SEVERITY_ERROR;
+   Level_Fatal : constant := RCUTILS_LOG_SEVERITY_RCUTILS_LOG_SEVERITY_FATAL;
 
    type Log_Location (<>) is private;
 

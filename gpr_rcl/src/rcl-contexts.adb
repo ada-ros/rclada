@@ -3,10 +3,10 @@ with Ada.Exceptions; use Ada.Exceptions;
 with RCL.Allocators;
 with RCL.Logging;
 
-with Rcl_Init_H;         use Rcl_Init_H;
-with Rcl_Init_Options_H; use Rcl_Init_Options_H;
+with Rcl_Rcl_Init_H;         use Rcl_Rcl_Init_H;
+with Rcl_Rcl_Init_Options_H; use Rcl_Rcl_Init_Options_H;
 
-with Rcutils_Error_Handling_H; use Rcutils_Error_Handling_H;
+with Rcutils_Rcutils_Error_Handling_H; use Rcutils_Rcutils_Error_Handling_H;
 
 with System.Atomic_Counters; use System.Atomic_Counters;
 

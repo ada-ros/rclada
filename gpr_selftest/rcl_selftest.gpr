@@ -1,6 +1,4 @@
-with "clib_rcutils";
-with "clib_rcl";
-with "clib_rmw";
+with "rclada_linker_imports";
 
 with "rcl";
 with "ros2_interfaces_rclada";
@@ -19,8 +17,8 @@ project Rcl_Selftest is
                  "rclada_selftest-dynamic.adb",
                  "rclada_selftest-static.adb",
                  "rclada_test_allocators.adb",
-                 "rclada_test_multicore.adb",
-                 "rclada_test_multiset.adb"
+                 "rclada_test_multicore.adb"
+                 --  "rclada_test_multiset.adb" -- Triggers A Bug in Gnat 13
                 );
 
    package Builder is

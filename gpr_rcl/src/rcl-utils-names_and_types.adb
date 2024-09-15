@@ -1,9 +1,9 @@
 with Ada.Exceptions; use Ada.Exceptions;
-with Ada.Unchecked_Conversion;
+--  with Ada.Unchecked_Conversion;
 
 with RCL.Logging;
 
-with Rcutils_Types_String_Array_H; use Rcutils_Types_String_Array_H;
+with Rcutils_Rcutils_Types_String_Array_H; use Rcutils_Rcutils_Types_String_Array_H;
 
 package body RCL.Utils.Names_And_Types is
 

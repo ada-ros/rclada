@@ -1,5 +1,5 @@
-with Rcl_Node_H;         use Rcl_Node_H;
-with Rcl_Subscription_H; use Rcl_Subscription_H;
+with Rcl_Rcl_Node_H;         use Rcl_Rcl_Node_H;
+with Rcl_Rcl_Subscription_H; use Rcl_Rcl_Subscription_H;
 
 with ROSIDL.Typesupport;
 

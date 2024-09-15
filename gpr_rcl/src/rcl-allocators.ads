@@ -1,6 +1,6 @@
 with Ada.Finalization; use Ada.Finalization;
 
-with Rcl_Allocator_H; use Rcl_Allocator_H;
+with Rcl_Rcl_Allocator_H; use Rcl_Rcl_Allocator_H;
 
 with System.Storage_Pools; use System.Storage_Pools;
 

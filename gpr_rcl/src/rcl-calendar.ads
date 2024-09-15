@@ -2,7 +2,7 @@ with Ada.Finalization; use Ada.Finalization;
 
 with RCL.Allocators;
 
-with Rcl_Time_H; use Rcl_Time_H;
+with Rcl_Rcl_Time_H; use Rcl_Rcl_Time_H;
 
 package RCL.Calendar is
 

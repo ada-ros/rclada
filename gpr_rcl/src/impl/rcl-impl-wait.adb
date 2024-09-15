@@ -2,8 +2,8 @@ with RCL.Logging;
 with RCL.Subscriptions;
 with RCL.Timers.Impl;
 
-with Rcl_Types_H;
-with Rmw_Ret_Types_H; use Rmw_Ret_Types_H;
+with Rcl_Rcl_Types_H;
+with Rmw_Rmw_Ret_Types_H; use Rmw_Rmw_Ret_Types_H;
 
 package body RCL.Impl.Wait is
 
@@ -307,7 +307,7 @@ package body RCL.Impl.Wait is
    function Wait (This    : in out Set;
                   Timeout : ROS2_Duration := Forever) return Wait_Outcomes
    is
-      use Rcl_Types_H;
+      use Rcl_Rcl_Types_H;
    begin
 
       if Timeout < 0.0 then

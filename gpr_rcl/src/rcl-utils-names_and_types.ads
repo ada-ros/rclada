@@ -1,7 +1,7 @@
 with Ada.Finalization;
 with Ada.Iterator_Interfaces;
 
-with rmw_names_and_types_h; use Rmw_Names_And_Types_H;
+with rmw_rmw_names_and_types_h; use rmw_Rmw_Names_And_Types_H;
 
 package RCL.Utils.Names_And_Types is
 

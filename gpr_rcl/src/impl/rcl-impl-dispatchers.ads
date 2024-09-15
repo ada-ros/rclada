@@ -1,7 +1,7 @@
 limited with RCL.Executors;
 limited with RCL.Nodes;
 
-private with Rcl_Node_H;
+private with Rcl_Rcl_Node_H;
 
 with RCL.Clients.Impl;
 with RCL.Services.Impl;
@@ -147,7 +147,7 @@ package RCL.Impl.Dispatchers is
 
 private
 
-   use Rcl_Node_H;
+   use Rcl_Rcl_Node_H;
 
    use all type Timers.Timer;
 

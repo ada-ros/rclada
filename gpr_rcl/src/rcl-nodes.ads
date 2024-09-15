@@ -12,9 +12,9 @@ with RCL.Timers.Impl;
 with RCL.Utils.Names_And_Types;
 with RCL.Utils.String_Arrays;
 
-with Rcl_Allocator_H;    use Rcl_Allocator_H;
-with Rcl_Node_H;         use Rcl_Node_H;
-with Rcl_Node_Options_H;
+with Rcl_Rcl_Allocator_H;    use Rcl_Rcl_Allocator_H;
+with Rcl_Rcl_Node_H;         use Rcl_Rcl_Node_H;
+with Rcl_Rcl_Node_Options_H; use Rcl_Rcl_Node_Options_H;
 
 with ROSIDL.Dynamic;
 with ROSIDL.Static.Message;
@@ -268,7 +268,7 @@ private
 
    use all type Impl.Dispatchers.Handle;
 
-   function To_C (Options : Node_Options) return Rcl_Node_Options_H.Rcl_Node_Options_T;
+   function To_C (Options : Node_Options) return Rcl_Rcl_Node_Options_H.Rcl_Node_Options_T;
 
    use Impl.Dispatchers;
 
@@ -303,7 +303,7 @@ private
       --  Are derived from Options, no need to initialize
       Allocator   : Allocators.Handle := Allocators.Global_Allocator;
 
-      C_Options   : aliased Rcl_Node_Options_H.Rcl_Node_Options_T;
+      C_Options   : aliased Rcl_Node_Options_T;
    end record;
 
    procedure Base_Init (This : in out Node'Class);

@@ -1,8 +1,8 @@
-with Rcl_Service_H; use Rcl_Service_H;
-with Rcl_Timer_H;   use Rcl_Timer_H;
-with Rcl_Types_H;   use Rcl_Types_H;
+with Rcl_Rcl_Service_H; use Rcl_Rcl_Service_H;
+with Rcl_Rcl_Timer_H;   use Rcl_Rcl_Timer_H;
+with Rcl_Rcl_Types_H;   use Rcl_Rcl_Types_H;
 
-with Rmw_Ret_Types_H; use Rmw_Ret_Types_H;
+with Rmw_Rmw_Ret_Types_H; use Rmw_Rmw_Ret_Types_H;
 
 with RCL.Logging;
 with RCL.Timers.Impl;

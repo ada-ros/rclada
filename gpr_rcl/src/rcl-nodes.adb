@@ -7,11 +7,10 @@ with RCL.Logging;
 with RCL.Services.Impl;
 with RCL.Subscriptions.Impl;
 
-with Rcl_Client_H;       use Rcl_Client_H;
-with Rcl_Graph_H;        use Rcl_Graph_H;
-with Rcl_Node_Options_H; use Rcl_Node_Options_H;
-with Rcl_Service_H;      use Rcl_Service_H;
-with Rcl_Timer_H;        use Rcl_Timer_H;
+with Rcl_Rcl_Client_H;       use Rcl_Rcl_Client_H;
+with Rcl_Rcl_Graph_H;        use Rcl_Rcl_Graph_H;
+with Rcl_Rcl_Service_H;      use Rcl_Rcl_Service_H;
+with Rcl_Rcl_Timer_H;        use Rcl_Rcl_Timer_H;
 
 with ROSIDL.Impl;
 
@@ -437,7 +436,8 @@ package body RCL.Nodes is
                     Name     :        String;
                     Callback :        Services.Callback)
    is
-      Srv        : aliased Rcl_Service_T := Rcl_Get_Zero_Initialized_Service;
+      Srv        : aliased Rcl_Rcl_Service_H.Rcl_Service_T :=
+                     Rcl_Get_Zero_Initialized_Service;
       Opts       : aliased constant Rcl_Service_Options_T :=
                      Rcl_Service_Get_Default_Options;
    begin
@@ -566,15 +566,17 @@ package body RCL.Nodes is
    function Timer_Add (This     : in out Node;
                        Period   :        Duration;
                        Callback :        Timers.Callback)
-                       return            Timers.Timer is
+                       return            Timers.Timer
+   is
+      Timer : Timers.Timer (This.Self);
    begin
-      return Timer : constant Timers.Timer := Timers.Impl.Init (This'Access, Period, This.Options.Allocator) do
-         This.Dispatchers.Insert
-           (Timer_Dispatcher'
-              (This.Self,
-               Timer,
-               Callback));
-      end return;
+      Timers.Impl.Init (Timer, Period, This.Allocator);
+      This.Dispatchers.Insert
+        (Timer_Dispatcher'
+           (This.Self,
+            Timer,
+            Callback));
+      return Timer;
    end Timer_Add;
 
    ---------------
@@ -651,7 +653,7 @@ package body RCL.Nodes is
       Defaults : constant Rcl_Node_Options_T := Rcl_Node_Get_Default_Options;
    begin
       return Rcl_Node_Options_T'
-        (Domain_Id            => Defaults.Domain_Id,
+        (Rosout_Qos           => Defaults.Rosout_Qos,
          Allocator            => Options.Allocator.To_C.all,
          Use_Global_Arguments => Defaults.Use_Global_Arguments,
          Arguments            => Defaults.Arguments,

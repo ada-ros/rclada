@@ -2,7 +2,7 @@ pragma Ada_2005;
 pragma Style_Checks (Off);
 
 --  with Interfaces.C; use Interfaces.C;
-with Rcutils_Allocator_H;
+with Rcutils_Rcutils_Allocator_H;
 
 package Rcl_Allocator_H is
 
@@ -25,6 +25,6 @@ package Rcl_Allocator_H is
 
    --  VERIFIED NEEDED in FOXY
 
-   type rcl_allocator_t is new Rcutils_Allocator_H.rcutils_allocator_t;  -- /home/jano/local/ros2/ros2_rolling/install/include/rcl/allocator.h:25
+   type rcl_allocator_t is new Rcutils_Rcutils_Allocator_H.rcutils_allocator_t;  -- /home/jano/local/ros2/ros2_rolling/install/include/rcl/allocator.h:25
 
 end Rcl_Allocator_H;

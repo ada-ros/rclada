@@ -1,7 +1,7 @@
 with Ada.Finalization;
 with Ada.Iterator_Interfaces;
 
-with Rcutils_Types_String_Array_H; use Rcutils_Types_String_Array_H;
+with Rcutils_Rcutils_Types_String_Array_H; use Rcutils_Rcutils_Types_String_Array_H;
 
 package RCL.Utils.String_Arrays is
 

@@ -58,7 +58,7 @@ package body RCL.Logging is
                     Location : Log_Location := Logging.Location;
                     Name     : String       := "") is
    begin
-      Log (Levels (RCUTILS_LOG_SEVERITY_DEBUG),
+      Log (Levels (RCUTILS_LOG_SEVERITY_RCUTILS_LOG_SEVERITY_DEBUG),
            Message,
            Locate,
            Location,
@@ -74,7 +74,7 @@ package body RCL.Logging is
                     Location : Log_Location := Logging.Location;
                     Name     : String       := "") is
    begin
-      Log (Levels (RCUTILS_LOG_SEVERITY_INFO),
+      Log (Levels (RCUTILS_LOG_SEVERITY_RCUTILS_LOG_SEVERITY_INFO),
            Message,
            Locate,
            Location,
@@ -90,7 +90,7 @@ package body RCL.Logging is
                     Location : Log_Location := Logging.Location;
                     Name     : String       := "") is
    begin
-      Log (Levels (RCUTILS_LOG_SEVERITY_WARN),
+      Log (Levels (RCUTILS_LOG_SEVERITY_RCUTILS_LOG_SEVERITY_WARN),
            Message,
            Locate,
            Location,
@@ -106,7 +106,7 @@ package body RCL.Logging is
                     Location : Log_Location := Logging.Location;
                     Name     : String       := "") is
    begin
-      Log (Levels (RCUTILS_LOG_SEVERITY_ERROR),
+      Log (Levels (RCUTILS_LOG_SEVERITY_RCUTILS_LOG_SEVERITY_ERROR),
            Message,
            Locate,
            Location,
@@ -122,7 +122,7 @@ package body RCL.Logging is
                     Location : Log_Location := Logging.Location;
                     Name     : String       := "") is
    begin
-      Log (Levels (RCUTILS_LOG_SEVERITY_FATAL),
+      Log (Levels (RCUTILS_LOG_SEVERITY_RCUTILS_LOG_SEVERITY_FATAL),
            Message,
            Locate,
            Location,

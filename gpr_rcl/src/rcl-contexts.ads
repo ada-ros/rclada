@@ -1,6 +1,6 @@
 with Ada.Finalization;
 
-with Rcl_Context_H;
+with Rcl_Rcl_Context_H;
 
 package RCL.Contexts is
 
@@ -30,7 +30,7 @@ package RCL.Contexts is
    ---------------
 
    function To_C (This : aliased in out Context)
-                  return access Rcl_Context_H.Rcl_Context_T;
+                  return access Rcl_Rcl_Context_H.Rcl_Context_T;
 
 
    overriding procedure Initialize (Context : in out Contexts.Context);
@@ -45,7 +45,7 @@ package RCL.Contexts is
 
 private
 
-   use Rcl_Context_H;
+   use Rcl_Rcl_Context_H;
 
    type States is (Initialized, Finalized);
 
@@ -55,7 +55,7 @@ private
    end record;
 
    function To_C (This : aliased in out Context)
-                  return access Rcl_Context_H.Rcl_Context_T is
+                  return access Rcl_Rcl_Context_H.Rcl_Context_T is
      (This.Impl'Access);
 
 end RCL.Contexts;

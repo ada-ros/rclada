@@ -9,7 +9,7 @@ with RCL.Services.Impl;
 limited with RCL.Subscriptions.Impl;
 with RCL.Timers;
 
-with Rcl_Wait_H; use Rcl_Wait_H;
+with Rcl_Rcl_Wait_H; use Rcl_Rcl_Wait_H;
 
 with System;
 

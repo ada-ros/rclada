@@ -14,7 +14,7 @@ with Interfaces.C.Strings; pragma Unreferenced (Interfaces.C.Strings);
 
 limited with RCL.Executors;
 
-with Rcl_Types_H;
+with Rcl_Rcl_Types_H;
 
 with ROSIDL.Types;
 
@@ -71,7 +71,7 @@ private
    pragma Warnings (On);
    --  GPL 2018 has redefined that bool and versions prior now complain
 
-   subtype Rcl_Error_Code is Rcl_Types_H.Rcl_Ret_T;
+   subtype Rcl_Error_Code is Rcl_Rcl_Types_H.Rcl_Ret_T;
 
    procedure Check (Ret : Rcl_Error_Code);
 

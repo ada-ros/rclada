@@ -4,7 +4,7 @@ with RCL.Services.Impl;
 with RCL.Subscriptions;
 with RCL.Timers;
 
-with Rmw_Types_H; use Rmw_Types_H;
+with Rmw_Rmw_Types_H; use Rmw_Rmw_Types_H;
 
 with ROSIDL.Impl;
 with ROSIDL.Typesupport;

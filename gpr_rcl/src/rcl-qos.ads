@@ -1,5 +1,5 @@
 --  with Rmw_Qos_Profiles_H; use Rmw_Qos_Profiles_H;
-with Rmw_Types_H;        use Rmw_Types_H;
+with Rmw_Rmw_Types_H;        use Rmw_Rmw_Types_H;
 
 package RCL.QoS is
 

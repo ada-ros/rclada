@@ -1,4 +1,4 @@
-with Rmw_Ret_Types_H; use Rmw_Ret_Types_H;
+with Rmw_Rmw_Ret_Types_H; use Rmw_Rmw_Ret_Types_H;
 
 package body RCL is
 
@@ -24,8 +24,8 @@ package body RCL is
    -- Check --
    -----------
 
-   procedure Check (Ret : rcl_types_h.Rcl_Ret_T) is
-      procedure Internal is new Generic_Check (Rcl_Types_H.Rcl_Ret_T);
+   procedure Check (Ret : rcl_rcl_types_h.Rcl_Ret_T) is
+      procedure Internal is new Generic_Check (Rcl_Rcl_Types_H.Rcl_Ret_T);
    begin
       Internal (Ret);
    end Check;

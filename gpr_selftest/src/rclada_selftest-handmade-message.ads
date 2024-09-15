@@ -1,5 +1,5 @@
-with Builtin_Interfaces_Msg_Detail_Time_Ustruct_H;
-use  Builtin_Interfaces_Msg_Detail_Time_Ustruct_H;
+with Builtin_Interfaces_Builtin_Interfaces_Msg_Detail_Time_Ustruct_H;
+use  Builtin_Interfaces_Builtin_Interfaces_Msg_Detail_Time_Ustruct_H;
 
 with ROSIDL.Static.Message;
 with ROSIDL.Types;

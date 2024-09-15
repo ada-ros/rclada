@@ -256,7 +256,7 @@ procedure Rclada_Selftest.Dynamic is
          Logging.Info ("Client testing done");
       end Client_Listener;
 
-      Request : ROSIDL.Dynamic.Message :=
+      Request : constant ROSIDL.Dynamic.Message :=
                   ROSIDL.Dynamic.Init
                     (Service_Support.Request_Support);
 
@@ -313,7 +313,7 @@ procedure Rclada_Selftest.Dynamic is
                                         Request,
                                         Timeout => 5.0);
       begin
-         Logging.Info ("Got reply, sum is" & Response ("sum").As_Uint64.Image);
+         Logging.Info ("Got reply, sum is" & Response.Msg ("sum").As_Uint64.Image);
          Logging.Info ("Client blocking (function) testing done");
       end;
 

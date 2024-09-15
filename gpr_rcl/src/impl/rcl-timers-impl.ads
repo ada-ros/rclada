@@ -14,6 +14,11 @@ package RCL.Timers.Impl is
    --  Note: the timer won't work by itself; it must be created through
    --  Node facilities
 
+   procedure Init (This : in out Timer;
+                   Period    : Duration;
+                   Allocator : Allocators.Handle);
+   --  Workaround for the previous func that triggers a dangling access discriminant
+
    function To_C (This : aliased Timer) return access constant Rcl_Timer_T;
 
    function To_C_Var (This : aliased in out Timer) return access Rcl_Timer_T;
