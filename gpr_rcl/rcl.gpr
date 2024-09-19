@@ -36,6 +36,7 @@ library project Rcl is
 
       --  Silence irrelevant warnings
       for Switches ("*_h.ads") use Compiler'Switches ("ada") & ("-gnatwU");
+      for Local_Configuration_Pragmas use "gnat.adc";
    end Compiler;
 
    package Binder is
